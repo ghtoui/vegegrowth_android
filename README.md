@@ -1,1 +1,4 @@
-# vegegrowth_android
+# 野菜の成長管理androidアプリ
+
+野菜ごとに撮った写真と大きさを管理する。
+
