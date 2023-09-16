@@ -6,9 +6,6 @@ jobs:
       - image: cimg/android:2023.07
     steps:
       - checkout
-      - run:
-          name: copy local.properties
-          command: cp ./.circleci/local.properties.ci local.properties
       - restore_cache:
           key: jars-{{ checksum "build.gradle.kts" }}-{{ checksum  "app/build.gradle.kts" }}
       - run: ./gradlew androidDependencies
