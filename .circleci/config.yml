@@ -17,8 +17,16 @@ jobs:
       - run:
           command: sudo gem install bundler:2.4.12
       - run:
-          name: ktlint-check
-          command: ./gradlew --continue ktlintCheck
+          name: ktlint Check
+          command: |
+            ./gradlew --continue ktlintCheck
+            cp build/reports/ktlint/ktlint.json ktlint_report.json
+
+      - run:
+        name: Run Danger
+        command: |
+          gem install Danger
+          danger
 
 workflows:
   test:
