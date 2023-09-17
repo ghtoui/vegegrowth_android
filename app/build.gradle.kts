@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "jp.co.fuller_inc.akita.internship2023"
+    namespace = "com.moritoui.vegegrowthapp"
     compileSdk = 33
 
     defaultConfig {
-        applicationId = "jp.co.fuller_inc.akita.internship2023"
+        applicationId = "com.moritoui.vegegrowthapp"
         minSdk = 26
         targetSdk = 33
         versionCode = 1
