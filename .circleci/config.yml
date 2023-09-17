@@ -1,47 +1,221 @@
+# This code is licensed from CircleCI to the user under the MIT license.
+# See here for details: https://circleci.com/developer/ja/orbs/licensing
 version: 2.1
-
-orbs:
-  android: circleci/android@1.0.3
+description: Acomodeo's maven jobs
 
 jobs:
-  build-and-test:
-    docker:
-      - image: cimg/android:2023.07
-    steps:
-      - checkout
-      - restore_cache:
-          key: jars-{{ checksum "build.gradle.kts" }}-{{ checksum  "app/build.gradle.kts" }}
-      - run: ./gradlew androidDependencies
-      - save_cache:
-          paths:
-            - ~/.gradle
-          key: jars-{{ checksum "build.gradle.kts" }}-{{ checksum  "app/build.gradle.kts" }}
+    checkout_code:
+        description: Checks out the Code from Github and publishes it to the Workspace
+        working_directory: ~/app
+        docker:
+            - image: alpine/git
+        steps:
+            - checkout
+            - persist_to_workspace:
+                  name: Save repository
+                  root: "~"
+                  paths:
+                      - app
 
-      # - run:
-      #     command: sudo gem install bundler:2.4.12
-      # - run:
-      #     command: bundle install --path vendor/bundle
-      # - run:
-      #     name: ktlint-check
-      #     command: ./gradlew --continue ktlintCheck
-      # 
-      # - run:
-      #     name: test
-      #     command: ./gradlew testDebug --stacktrace
-      # 
-      # - run:
-      #     name: jacoco-report
-      #     command: ./gradlew jacocoTestReport
-      # 
-      # - run:
-      #     name: merge-jacoco
-      #     command: ./gradlew mergeJacoco
-      # 
-      # - run:
-      #     name: run-danger-file
-      #     command: bundle exec danger --verbose
+    lint:
+        description: Runs ktlint on the code
+        working_directory: ~/app
+        docker:
+          - image: adoptopenjdk/openjdk11:alpine
+        steps:
+            - attach_workspace:
+                  name: Restore repository
+                  at: "~"
+            - run:
+                  name: Download latest ktlint version
+                  command: |
+                      apk add curl
+                      get_latest_release() {
+                          curl --silent "https://api.github.com/repos/$1/releases/latest" |
+                          grep '"tag_name":' |
+                          sed -E 's/.*"([^"]+)".*/\1/'
+                      }
+                      KTLINT=$(get_latest_release pinterest/ktlint)
+                      echo Using Ktlint $KTLINT
+                      curl -sSLO https://github.com/pinterest/ktlint/releases/download/$KTLINT/ktlint
+                      chmod a+x ktlint
+            - run:
+                  name: Download linting rules
+                  command: |
+                      apk add curl
+                      get_latest_rule() {
+                            curl -s https://jitpack.io/api/builds/com.github.mhlz/ktlint-rules/latest |  
+                            grep '"version" :' |   
+                            sed -E 's/.*"([^"]+)".*/\1/'
+                      }
+                      RULES=$(get_latest_rule)
+                      echo Using linting rules commit $RULES 
+                      curl -sSL https://jitpack.io/com/github/mhlz/ktlint-rules/$RULES/ktlint-rules-RULES.jar --output ktlint-rules.jar
+            - run:
+                  name: Lint app
+                  command: ./ktlint -R ./ktlint-rules.jar
 
-workflows:
-  test:
-    jobs:
-      - build-and-test
+    build:
+        description: Builds the source code
+        working_directory: ~/app
+        docker:
+          - image: adoptopenjdk/openjdk11:alpine
+        steps:
+            - attach_workspace:
+                  name: Restore repository
+                  at: "~"
+            - run:
+                  name: Generate cache key
+                  command: date +%Y-%m > .circle-cache-key
+            - restore_cache:
+                  name: Restore dependencies
+                  key: deps-{{checksum ".circle-cache-key"}}-
+            - run:
+                  name: Set version
+                  command: ./mvnw -B versions:set -DnewVersion=${CIRCLE_BRANCH}-SNAPSHOT
+            - run:
+                  name: Compile app
+                  command: ./mvnw -Dspring-boot.run.jvmArguments="--illegal-access=permit" -B -s settings.xml -DskipTests -U clean install
+            - persist_to_workspace:
+                  name: Save compiled app
+                  root: "~"
+                  paths:
+                      - app
+            - save_cache:
+                  name: Save dependencies
+                  key: deps-{{checksum ".circle-cache-key"}}-{{ .Environment.CIRCLE_SHA1 }}-{{ .Environment.CIRCLE_WORKFLOW_ID }}
+                  paths:
+                      - ~/.m2
+
+    test:
+        description: Runs tests
+        parameters:
+            coverage_report:
+                type: boolean
+                default: false
+        working_directory: ~/app
+        docker:
+            - image: adoptopenjdk/openjdk11:alpine
+            - image: rabbitmq:3.6
+            - image: mongo
+              command: [mongod]
+            - image: redis:3.2
+        steps:
+            - run:
+                  name: Install Certificates
+                  command: apk add ca-certificates
+            - attach_workspace:
+                  name: Restore compiled app
+                  at: "~"
+            - run:
+                  name: Generate cache key
+                  command: date +%Y-%m > .circle-cache-key
+            - restore_cache:
+                  name: Restore dependencies
+                  keys:
+                      - deps-{{checksum ".circle-cache-key"}}-{{ .Environment.CIRCLE_SHA1 }}-{{ .Environment.CIRCLE_WORKFLOW_ID }}
+                      - deps-{{checksum ".circle-cache-key"}}-{{ .Environment.CIRCLE_SHA1 }}
+                      - deps-{{checksum ".circle-cache-key"}}-
+            - run:
+                  name: Run tests
+                  command: ./mvnw -Dspring-boot.run.jvmArguments="--illegal-access=permit" -B install -s settings.xml
+            - store_test_results:
+                  name: Store test results
+                  path: ~/app/surefire-reports
+            - when:
+                  condition: << parameters.coverage_report >>
+                  steps:
+                      - persist_to_workspace:
+                            name: Save coverage reports
+                            root: ~/app/reporting/target/site/jacoco-aggregate
+                            paths:
+                                - jacoco.xml
+
+    report-coverage:
+        parameters:
+            prometheus_gateway_url:
+                type: string
+        working_directory: ~/app
+        docker:
+            - image: node:10-alpine
+        steps:
+            - run:
+                  name: Install dependencies
+                  command: apk add openssh git curl
+            - run:
+                  name: Add Github to ssh config
+                  command: mkdir ~/.ssh/ && echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
+            - run:
+                  name: Set Github npm registery of acomodeo
+                  command: echo -e "@acomodeo:registry=https://npm.pkg.github.com/\n" > .npmrc
+            - run:
+                  name: Login to Acomodeo private github npm registry
+                  command: npm set //npm.pkg.github.com/:_authToken=$GITHUB_NPM_TOKEN
+            - run:
+                  name: Install coverage_sampler
+                  command: npm i @acomodeo/coverage-sampler
+            - attach_workspace:
+                  at: coverage-reports
+            - run:
+                  name: Parse coverage report
+                  command: npx coverage-sampler --repository $CIRCLE_PROJECT_REPONAME --branch $CIRCLE_BRANCH jacoco < coverage-reports/jacoco.xml > coverage-reports/coverage-samples.prom
+            - run:
+                  name: Upload samples
+                  command: curl --fail --data-binary @coverage-reports/coverage-samples.prom -u $PROMETHEUS_PUSHGATEWAY_USERNAME:$PROMETHEUS_PUSHGATEWAY_PASSWORD << parameters.prometheus_gateway_url >>/repository/$CIRCLE_PROJECT_REPONAME/branch/$CIRCLE_BRANCH
+
+    deploy:
+        parameters:
+            webhook_url:
+                type: string
+            maven_registry_domain:
+                type: string
+        working_directory: ~/app
+        docker:
+          - image: adoptopenjdk/openjdk11:alpine
+        steps:
+            - attach_workspace:
+                  name: Restore compiled app
+                  at: "~"
+            - run:
+                  name: Generate cache key
+                  command: date +%Y-%m > .circle-cache-key
+            - restore_cache:
+                  name: Restore dependencies
+                  keys:
+                      - deps-{{checksum ".circle-cache-key"}}-{{ .Environment.CIRCLE_SHA1 }}-{{ .Environment.CIRCLE_WORKFLOW_ID }}
+                      - deps-{{checksum ".circle-cache-key"}}-{{ .Environment.CIRCLE_SHA1 }}
+                      - deps-{{checksum ".circle-cache-key"}}-
+            - run:
+                  name: Deploy app
+                  command: ./mvnw -B -s settings.xml -DskipTests deploy | tee mvn.log
+            - run:
+                  name: Trigger builder webhook
+                  command: |
+                      apk add curl
+                      artifacts=$(grep 'Uploading.*jar' mvn.log | grep -v sources.jar | sed -e 's/^.*<< parameters.maven_registry_domain >>//')
+                      for artifact in ${artifacts};
+                      do
+                      curl --fail "<< parameters.webhook_url >>?location=${artifact}&branch=${CIRCLE_BRANCH}&jver=11"
+                      done
+
+    rebuild-dependencies:
+        description: Rebuild leb dependencies
+        parameters:
+            dependencies:
+                description: leb dependencies
+                type: string
+        docker:
+            - image: cimg/ruby:2.7.1-node
+        steps:
+            - run:
+                  name: Validate terraform code 4ed1ae3601b98417fc3b49b9a05d8299cd067854
+                  command: |
+                      printf "Validating terraform code\n"
+                      for i in <<parameters.dependencies>>; do
+                          echo "test: $i"
+                          curl --request POST \
+                              --url https://circleci.com/api/v2/project/github/Acomodeo/$i/pipeline \
+                              --header 'Circle-Token: 4ed1ae3601b98417fc3b49b9a05d8299cd067854' \
+                              --header 'content-type: application/json'
+                      done
+
