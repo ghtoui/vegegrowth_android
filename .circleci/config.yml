@@ -30,9 +30,9 @@ jobs:
       #     name: merge-jacoco
       #     command: ./gradlew mergeJacoco
 
-      - run:
-          name: run-danger-file
-          command: bundle exec danger --verbose
+      # - run:
+      #     name: run-danger-file
+      #     command: bundle exec danger --verbose
 
 workflows:
   test:
