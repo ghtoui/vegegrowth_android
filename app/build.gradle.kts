@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "jp.co.fuller_inc.akita.internship2023"
+    namespace = "com.moritoui.vegegrowthapp"
     compileSdk = 33
 
     defaultConfig {
-        applicationId = "jp.co.fuller_inc.akita.internship2023"
+        applicationId = "com.moritoui.vegegrowthapp"
         minSdk = 26
         targetSdk = 33
         versionCode = 1
@@ -51,6 +51,7 @@ android {
 }
 
 dependencies {
+
     implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
     implementation("androidx.activity:activity-compose:1.7.2")
@@ -59,7 +60,6 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
-    implementation("androidx.navigation:navigation-compose:2.7.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
