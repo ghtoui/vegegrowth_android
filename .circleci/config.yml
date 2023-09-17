@@ -1,46 +1,22 @@
 version: 2.1
 
+orbs:
+  android: circleci/android@1.0.3
+
 jobs:
-  build-and-test:
-    docker:
-      - image: cimg/android:2023.07
+  build-android:
+    executor: android/android
+
     steps:
       - checkout
-      - restore_cache:
-          key: jars-{{ checksum "build.gradle.kts" }}-{{ checksum  "app/build.gradle.kts" }}
-      - run: ./gradlew androidDependencies
-      - save_cache:
-          paths:
-            - ~/.gradle
-          key: jars-{{ checksum "build.gradle.kts" }}-{{ checksum  "app/build.gradle.kts" }}
+      - android/restore-build-cache
+      - android/restore-gradle-cache
+      - run:
+          name: Run Android tests
+          command: ./gradlew androidApp:testDebugUnitTest
+      - android/save-gradle-cache
+      - android/save-build-cache
 
-      # - run:
-      #     name: ktlint-check
-      #     command: ./gradlew ktlintCheck
+      - store_artifacts:
+          path: androidApp/build/outputs/apk/debug
 
-      # - run:
-      #     name: test
-      #     command: ./gradlew testDebug --stacktrace
-      # 
-      # - run:
-      #     name: jacoco-report
-      #     command: ./gradlew jacocoTestReport
-      # 
-      # - run:
-      #     name: merge-jacoco
-      #     command: ./gradlew mergeJacoco
-
-      # - run:
-      #     name: run-danger-file
-      #     command: bundle exec danger --verbose
-
-workflows:
-  test:
-    jobs:
-      - build-and-test
-
-# ■ 参考 ■
-# Android プロジェクトの継続的インテグレーション
-# https://circleci.com/ja/blog/building-android-on-circleci/
-# 3年の運用で編み出した CircleCI 超設計大全
-# https://qiita.com/dodonki1223/items/98dbdac6f31f9b486ecf
