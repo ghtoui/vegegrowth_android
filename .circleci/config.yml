@@ -1,8 +1,5 @@
 version: 2.1
 
-orbs:
-  android: circleci/android@1.0.3
-
 jobs:
   build-and-test:
     docker:
@@ -17,31 +14,14 @@ jobs:
             - ~/.gradle
           key: jars-{{ checksum "build.gradle.kts" }}-{{ checksum  "app/build.gradle.kts" }}
 
-      # - run:
-      #     command: sudo gem install bundler:2.4.12
-      # - run:
-      #     command: bundle install --path vendor/bundle
-      # - run:
-      #     name: ktlint-check
-      #     command: ./gradlew --continue ktlintCheck
-      # 
-      # - run:
-      #     name: test
-      #     command: ./gradlew testDebug --stacktrace
-      # 
-      # - run:
-      #     name: jacoco-report
-      #     command: ./gradlew jacocoTestReport
-      # 
-      # - run:
-      #     name: merge-jacoco
-      #     command: ./gradlew mergeJacoco
-      # 
-      # - run:
-      #     name: run-danger-file
-      #     command: bundle exec danger --verbose
+      - run:
+          command: sudo gem install bundler:2.4.12
+      - run:
+          name: ktlint Check
+          command: ./gradlew --continue ktlintCheck
 
 workflows:
   test:
     jobs:
       - build-and-test
+
