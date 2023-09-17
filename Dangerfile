@@ -1,6 +1,9 @@
-[ruby]
-github.dismiss_out_of_range_messages
+# frozen_string_literal: true
 
-checkstyle_format.base_path = '/repo'
-checkstyle_format.report 'build/reports/ktlint/ktlint-main.xml'
-[/ruby]
+#source "https://rubygems.org"
+
+#git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
+
+# gem "rails"
+#gem "danger"
+message "Hello World!"
