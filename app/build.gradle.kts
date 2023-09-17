@@ -70,11 +70,3 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 }
-
-tasks.create<JavaExec>("ktlintCheck") {
-    mainClass.set("com.pinterest.ktlint.Main")
-    args = listOf(
-        "src/**/*.kt"
-    )
-    isIgnoreExitValue = true
-}
