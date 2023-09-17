@@ -22,17 +22,17 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.moritoui.vegegrowthapp.R
 import com.moritoui.vegegrowthapp.model.VegeCategory
 import com.moritoui.vegegrowthapp.model.VegeItem
@@ -60,25 +60,26 @@ fun FirstAppTopBar(onClick: () -> Unit, modifier: Modifier = Modifier) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FirstScreen() {
-    var isOpenDialog by rememberSaveable { mutableStateOf(false) }
-    var inputText by rememberSaveable { mutableStateOf("") }
+fun FirstScreen(
+    viewModel: FirstScreenViewModel = viewModel()
+) {
+    val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
         topBar = {
-            FirstAppTopBar(onClick = { inputText = ""; isOpenDialog = true }) }
+            FirstAppTopBar(onClick = { viewModel.updateState(isOpenDialog = true, inputText = "") }) }
     ) { it ->
         Box(modifier = Modifier.padding(it)) {
             ScrollView()
         }
     }
     AddAlertWindow(
-        isOpenDialog = isOpenDialog,
-        inputText = inputText,
-        onValueChange = { inputText = it },
-        onConfirmClick = { isOpenDialog = false },
-        onDismissClick = { isOpenDialog = false }
-        )
+        isOpenDialog = uiState.isOpenDialog,
+        inputText = uiState.inputText,
+        onValueChange = { viewModel.updateState(inputText = it) },
+        onConfirmClick = { viewModel.updateState(isOpenDialog = false) },
+        onDismissClick = { viewModel.updateState(isOpenDialog = false) }
+    )
 }
 
 @Composable
@@ -146,13 +147,12 @@ fun AddAlertWindow(
             // ここが空だとウィンドウ外をタップしても何も起こらない
             onDismissRequest = { },
             title = {
-                Text(text = "追加したい野菜の名前を入力してください")
+                Text(text = stringResource(R.string.addtextfield_describe))
             },
             text = {
                 TextField(
                     value = inputText,
                     onValueChange = { onValueChange(it) },
-                    label = { "名前入力" },
                     singleLine = true
                 )
             },
@@ -169,7 +169,8 @@ fun AddAlertWindow(
                 ) {
                     Text("キャンセル")
                 }
-            })
+            }
+        )
     }
 }
 
