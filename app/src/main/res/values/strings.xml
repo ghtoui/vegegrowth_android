@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">vegegrowthApp</string>
+    <string name="addtextfield_describe">追加したい野菜の名前を入力してください</string>
 </resources>
