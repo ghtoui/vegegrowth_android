@@ -20,3 +20,7 @@ jobs:
       - store_artifacts:
           path: androidApp/build/outputs/apk/debug
 
+workflows:
+  build-all:
+    jobs:
+      - build-android
