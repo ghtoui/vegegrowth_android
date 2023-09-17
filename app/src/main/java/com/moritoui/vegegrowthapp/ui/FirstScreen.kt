@@ -42,11 +42,13 @@ import com.moritoui.vegegrowthapp.model.VegeItemList
 @Composable
 fun FirstAppTopBar(onClick: () -> Unit, modifier: Modifier = Modifier) {
     TopAppBar(
-        title = { Text(
-            text  = "管理画面",
-            textAlign = TextAlign.Center,
-            modifier = modifier
-        ) },
+        title = {
+            Text(
+                text = "管理画面",
+                textAlign = TextAlign.Center,
+                modifier = modifier
+            )
+        },
         actions = {
             IconButton(onClick = { onClick() }) {
                 Icon(
@@ -96,8 +98,8 @@ fun ScrollView(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun VegeItem(item: VegeItem, onClick: () -> Unit = { } ,modifier: Modifier = Modifier) {
-    val categoryIcon = when(item.category) {
+fun VegeItem(item: VegeItem, onClick: () -> Unit = { }, modifier: Modifier = Modifier) {
+    val categoryIcon = when (item.category) {
         VegeCategory.leaf -> painterResource(id = R.drawable.leaf)
         VegeCategory.flower -> painterResource(id = R.drawable.flower)
     }

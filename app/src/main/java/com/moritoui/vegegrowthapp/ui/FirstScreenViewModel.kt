@@ -6,16 +6,19 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-data class FirstScreenUiState (
+data class FirstScreenUiState(
     val isOpenDialog: Boolean = false,
     val inputText: String = ""
 )
-class FirstScreenViewModel: ViewModel() {
+
+class FirstScreenViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(FirstScreenUiState())
     val uiState: StateFlow<FirstScreenUiState> = _uiState.asStateFlow()
 
-    fun updateState(isOpenDialog: Boolean = _uiState.value.isOpenDialog,
-                    inputText: String = _uiState.value.inputText) {
+    fun updateState(
+        isOpenDialog: Boolean = _uiState.value.isOpenDialog,
+        inputText: String = _uiState.value.inputText
+    ) {
         _uiState.update { currentState ->
             currentState.copy(
                 isOpenDialog = isOpenDialog,
