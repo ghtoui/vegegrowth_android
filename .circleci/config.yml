@@ -20,6 +20,8 @@ jobs:
           name: ktlint Check
           command: |
             ./gradlew --continue ktlintCheck
+            if [ ! -e build/reports/ktlint/ktlint.json ]; then
+              echo "{}" > build/reports/ktlint/ktlint.json
             cp build/reports/ktlint/ktlint.json ktlint_report.json
 
       - run:
