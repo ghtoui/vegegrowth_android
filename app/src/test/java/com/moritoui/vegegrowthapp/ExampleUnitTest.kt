@@ -1,7 +1,5 @@
 package com.moritoui.vegegrowthapp
-
 import junit.framework.TestCase.assertEquals
-
 import org.junit.Test
 
 /**
