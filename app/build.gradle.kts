@@ -67,3 +67,18 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 }
+
+configurations {
+    ktlint
+}
+
+// チェック
+tasks.create<JavaExec>("ktlintCheck") {
+    description = "Check Kotlin code style."
+    mainClass.set("com.pinterest.ktlint.Main")
+    args = listOf(
+        "src/**/*.kt",
+        "--reporter=checkstyle,output=${buildDir}/reports/ktlint/ktlint-result.xml",
+    )
+    isIgnoreExitValue = true
+}
