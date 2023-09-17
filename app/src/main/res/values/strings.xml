@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">vegegrowthApp</string>
+    <string name="register_button">登録</string>
+    <string name="take_picture_button">撮影</string>
+    <string name="picture_none_message">撮影した写真がここに表示されます</string>
+    <string name="picture_description">撮影した画像</string>
 </resources>
