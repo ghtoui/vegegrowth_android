@@ -23,10 +23,10 @@ jobs:
             cp build/reports/ktlint/ktlint.json ktlint_report.json
 
       - run:
-        name: Run Danger
-        command: |
-          gem install Danger
-          danger
+          name: Run Danger
+          command: |
+            gem install Danger
+            danger
 
 workflows:
   test:
