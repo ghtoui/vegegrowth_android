@@ -20,12 +20,6 @@ jobs:
           name: ktlint Check
           command: ./gradlew --continue ktlintCheck
 
-      - run:
-          name: Run Danger
-          command: |
-            gem install Danger
-            danger
-
 workflows:
   test:
     jobs:
