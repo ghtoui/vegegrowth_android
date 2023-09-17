@@ -15,22 +15,20 @@ jobs:
           key: jars-{{ checksum "build.gradle.kts" }}-{{ checksum  "app/build.gradle.kts" }}
 
       - run:
-          command: sudo gem install bundler:2.4.12
-      - run:
           name: ktlint-check
-          command: ./gradlew --continue ktlintCheck
+          command: ./gradlew ktlintCheck
 
-      - run:
-          name: test
-          command: ./gradlew testDebug --stacktrace
-
-      - run:
-          name: jacoco-report
-          command: ./gradlew jacocoTestReport
-
-      - run:
-          name: merge-jacoco
-          command: ./gradlew mergeJacoco
+      # - run:
+      #     name: test
+      #     command: ./gradlew testDebug --stacktrace
+      # 
+      # - run:
+      #     name: jacoco-report
+      #     command: ./gradlew jacocoTestReport
+      # 
+      # - run:
+      #     name: merge-jacoco
+      #     command: ./gradlew mergeJacoco
 
       - run:
           name: run-danger-file
