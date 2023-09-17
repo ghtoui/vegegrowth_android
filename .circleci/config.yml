@@ -1,49 +1,39 @@
 version: 2.1
-setup: true
-orbs:
-  orb-tools: circleci/orb-tools@11.1.3
-  shellcheck: circleci/shellcheck@3.1
+
+jobs:
+  build-and-test:
+    docker:
+      - image: cimg/android:2023.07
+    steps:
+      - checkout
+      - restore_cache:
+          key: jars-{{ checksum "build.gradle.kts" }}-{{ checksum  "app/build.gradle.kts" }}
+      - run: ./gradlew androidDependencies
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: jars-{{ checksum "build.gradle.kts" }}-{{ checksum  "app/build.gradle.kts" }}
+
+      - run:
+          command: sudo gem install bundler:2.4.12
+      - run:
+          name: ktlint-check
+          command: ./gradlew --continue ktlintMainSourceSetCheck
+
+      # - run:
+      #     name: run-danger-file
+      #     command: bundle exec danger --verbose
 
 workflows:
-  lint-pack:
+  test:
     jobs:
-      - orb-tools/lint:
-          filters:
-            tags:
-              only: /v.*/
-      - orb-tools/pack:
-          filters:
-            tags:
-              only: /v.*/
-      - orb-tools/review:
-          filters:
-            tags:
-              only: /v.*/
-      - shellcheck/check:
-          exclude: SC2148,SC2038,SC2086,SC2002,SC2016
-          filters:
-            tags:
-              only: /v.*/
-      - orb-tools/publish:
-          orb-name: idanelh/ktlint
-          vcs-type: << pipeline.project.type >>
-          requires:
-            [orb-tools/lint, orb-tools/review, orb-tools/pack, shellcheck/check]
-          context: ktlint_publish
-          filters:
-            branches:
-              only:
-                - master
-            tags:
-              only: /v.*/
-      # Triggers the next workflow in the Orb Development Kit.
-      - orb-tools/continue:
-          pipeline-number: << pipeline.number >>
-          vcs-type: << pipeline.project.type >>
-          requires: [orb-tools/publish]
-          filters:
-            branches:
-              only:
-                - master
-            tags:
-              only: /v.*/
+      - build-and-test
+
+# ■ memo ■
+# チェックコマンド： circleci config validate
+#
+# ■ 特に参考にしたサイト ■
+# Android プロジェクトの継続的インテグレーション
+# https://circleci.com/ja/blog/building-android-on-circleci/
+# 3年の運用で編み出した CircleCI 超設計大全
+# https://qiita.com/dodonki1223/items/98dbdac6f31f9b486ecf
