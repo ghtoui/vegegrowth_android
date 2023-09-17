@@ -1,6 +1,9 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("org.jlleitschuh.gradle.ktlint") version "10.3.0"
 }
 
 android {
@@ -66,4 +69,12 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+}
+
+tasks.create<JavaExec>("ktlintCheck") {
+    mainClass.set("com.pinterest.ktlint.Main")
+    args = listOf(
+        "src/**/*.kt"
+    )
+    isIgnoreExitValue = true
 }
