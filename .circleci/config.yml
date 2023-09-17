@@ -4,23 +4,44 @@ orbs:
   android: circleci/android@1.0.3
 
 jobs:
-  build-android:
-    executor: android/android
-
+  build-and-test:
+    docker:
+      - image: cimg/android:2023.07
     steps:
       - checkout
-      - android/restore-build-cache
-      - android/restore-gradle-cache
-      - run:
-          name: Run Android tests
-          command: ./gradlew androidApp:testDebugUnitTest
-      - android/save-gradle-cache
-      - android/save-build-cache
+      - restore_cache:
+          key: jars-{{ checksum "build.gradle.kts" }}-{{ checksum  "app/build.gradle.kts" }}
+      - run: ./gradlew androidDependencies
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: jars-{{ checksum "build.gradle.kts" }}-{{ checksum  "app/build.gradle.kts" }}
 
-      - store_artifacts:
-          path: androidApp/build/outputs/apk/debug
+      # - run:
+      #     command: sudo gem install bundler:2.4.12
+      # - run:
+      #     command: bundle install --path vendor/bundle
+      # - run:
+      #     name: ktlint-check
+      #     command: ./gradlew --continue ktlintCheck
+      # 
+      # - run:
+      #     name: test
+      #     command: ./gradlew testDebug --stacktrace
+      # 
+      # - run:
+      #     name: jacoco-report
+      #     command: ./gradlew jacocoTestReport
+      # 
+      # - run:
+      #     name: merge-jacoco
+      #     command: ./gradlew mergeJacoco
+      # 
+      # - run:
+      #     name: run-danger-file
+      #     command: bundle exec danger --verbose
 
 workflows:
-  build-all:
+  test:
     jobs:
-      - build-android
+      - build-and-test
