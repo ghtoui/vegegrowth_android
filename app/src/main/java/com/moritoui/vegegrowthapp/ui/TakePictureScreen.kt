@@ -54,7 +54,7 @@ fun TakePicScreen(
                 title = "撮影画面",
             ) {
             }
-        } ){ it ->
+        }) { it ->
         Column(
             modifier = Modifier
                 .fillMaxSize()

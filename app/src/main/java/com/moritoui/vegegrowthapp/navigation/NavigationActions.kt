@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun AddItem(onAddClick: () -> Unit) {
-    IconButton(onClick = { onAddClick() } ) {
+    IconButton(onClick = { onAddClick() }) {
         Icon(
             Icons.Filled.Add,
             contentDescription = "追加"
