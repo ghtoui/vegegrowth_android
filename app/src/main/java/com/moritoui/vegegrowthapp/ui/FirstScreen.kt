@@ -33,7 +33,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.moritoui.vegegrowthapp.R
+import com.moritoui.vegegrowthapp.model.Screen
 import com.moritoui.vegegrowthapp.model.VegeCategory
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegeItemList
@@ -63,16 +66,30 @@ fun FirstAppTopBar(onClick: () -> Unit, modifier: Modifier = Modifier) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FirstScreen(
-    viewModel: FirstScreenViewModel = viewModel()
+    viewModel: FirstScreenViewModel = viewModel(),
+    navController: NavHostController
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
         topBar = {
-            FirstAppTopBar(onClick = { viewModel.updateState(isOpenDialog = true, inputText = "") }) }
+            FirstAppTopBar(onClick = { viewModel.updateState(isOpenDialog = true, inputText = "") })
+        }
     ) { it ->
         Box(modifier = Modifier.padding(it)) {
-            ScrollView()
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 24.dp, top = 48.dp, end = 24.dp)
+            ) {
+                items(VegeItemList.getVegeList()) { item ->
+                    VegeItem(item = item, onClick = {
+                        navController.navigate(Screen.TakePictureScreen.route) {
+                            popUpTo(navController.graph.startDestinationId)
+                        }
+                    })
+                }
+            }
         }
     }
     AddAlertWindow(
@@ -85,25 +102,12 @@ fun FirstScreen(
 }
 
 @Composable
-fun ScrollView(modifier: Modifier = Modifier) {
-    LazyColumn(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(start = 24.dp, top = 48.dp, end = 24.dp)
-    ) {
-        items(VegeItemList.getVegeList()) { item ->
-            VegeItem(item = item)
-        }
-    }
-}
-
-@Composable
 fun VegeItem(item: VegeItem, onClick: () -> Unit = { }, modifier: Modifier = Modifier) {
     val categoryIcon = when (item.category) {
         VegeCategory.leaf -> painterResource(id = R.drawable.leaf)
         VegeCategory.flower -> painterResource(id = R.drawable.flower)
     }
-    val iconTint = when(item.category) {
+    val iconTint = when (item.category) {
         VegeCategory.leaf -> Color.Green
         VegeCategory.flower -> Color.Magenta
     }
@@ -111,7 +115,7 @@ fun VegeItem(item: VegeItem, onClick: () -> Unit = { }, modifier: Modifier = Mod
         modifier = modifier
             .fillMaxWidth()
             .height(48.dp)
-            .clickable(onClick = { onClick }),
+            .clickable(onClick = { onClick() }),
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -179,5 +183,5 @@ fun AddAlertWindow(
 @Preview
 @Composable
 fun FirstScreenPreview() {
-    FirstScreen()
+    FirstScreen(navController = rememberNavController())
 }
