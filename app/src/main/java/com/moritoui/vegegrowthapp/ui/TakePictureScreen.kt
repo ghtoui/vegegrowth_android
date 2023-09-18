@@ -40,6 +40,7 @@ import com.moritoui.vegegrowthapp.navigation.Screen
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TakePicScreen(
+    name: String,
     navController: NavHostController
 ) {
     var takePicImage by rememberSaveable { mutableStateOf<Bitmap?>(null) }
@@ -51,7 +52,7 @@ fun TakePicScreen(
         topBar = {
             NavigationAppTopBar(
                 navController = navController,
-                title = "撮影画面",
+                title = name,
             ) {
             }
         }
@@ -104,8 +105,7 @@ fun PictureView(
 
 @Composable
 fun TakeButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    onClick: () -> Unit
 ) {
     Button(
         onClick = { onClick() }
@@ -118,8 +118,7 @@ fun TakeButton(
 
 @Composable
 fun RecordButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    onClick: () -> Unit
 ) {
     Button(
         onClick = { onClick() }
@@ -133,5 +132,5 @@ fun RecordButton(
 @Preview
 @Composable
 fun TakePicPreview() {
-    TakePicScreen(navController = rememberNavController())
+    TakePicScreen(name = "テスト", navController = rememberNavController())
 }

@@ -42,8 +42,11 @@ fun Navigation(
         composable(Screen.FirstScreen.route) {
             FirstScreen(navController = navController)
         }
-        composable(Screen.TakePictureScreen.route) {
-            TakePicScreen(navController = navController)
+        composable("${Screen.TakePictureScreen.route}/{name}") { backStackEntry ->
+            TakePicScreen(
+                name = backStackEntry.arguments?.getString("name") ?: "",
+                navController = navController
+            )
         }
         composable(Screen.ManageVegeScreen.route) {
             Text("manageView", modifier = Modifier.safeDrawingPadding())
