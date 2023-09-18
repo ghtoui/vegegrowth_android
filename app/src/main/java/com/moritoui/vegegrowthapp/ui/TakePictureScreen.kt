@@ -10,12 +10,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,14 +33,13 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.moritoui.vegegrowthapp.R
 import com.moritoui.vegegrowthapp.navigation.NavigationAppTopBar
-import com.moritoui.vegegrowthapp.navigation.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,6 +51,8 @@ fun TakePicScreen(
     val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
         takePicImage = bitmap
     }
+    var isOpenDialog by rememberSaveable { mutableStateOf(false) }
+    var inputText by rememberSaveable { mutableStateOf("") }
 
     Scaffold(
         topBar = {
@@ -68,13 +74,20 @@ fun TakePicScreen(
             TakeButton(onClick = { cameraLauncher.launch() })
             if (takePicImage != null) {
                 RecordButton(onClick = {
-                    navController.navigate(Screen.ManageVegeScreen.route) {
-                        popUpTo(navController.graph.startDestinationId)
-                    }
+                    inputText = ""
+                    isOpenDialog = true
                 })
             }
         }
     }
+
+    RegisterAlertWindow(
+        isOpenDialog = isOpenDialog,
+        inputText = inputText,
+        onValueChange = { inputText = it },
+        onConfirmClick = { isOpenDialog = false },
+        onDismissClick = { isOpenDialog = false}
+    )
 }
 
 @Composable
@@ -129,8 +142,65 @@ fun RecordButton(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun RegisterAlertWindow(
+    isOpenDialog: Boolean,
+    inputText: String,
+    onValueChange: (String) -> Unit,
+    onConfirmClick: () -> Unit,
+    onDismissClick: () -> Unit
+) {
+    if (isOpenDialog) {
+        AlertDialog(
+            // ここが空だとウィンドウ外をタップしても何も起こらない
+            onDismissRequest = { },
+            title = {
+                Text(text = stringResource(R.string.register_text_field_describe))
+            },
+            text = {
+                TextField(
+                    value = inputText,
+                    onValueChange = { onValueChange(it) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    label = {
+                        Text(
+                            text = "cm",
+                            textAlign = TextAlign.End,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { onConfirmClick() }
+                ) {
+                    Text("登録")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { onDismissClick() }
+                ) {
+                    Text("キャンセル")
+                }
+            }
+        )
+    }
+}
+
 @Preview
 @Composable
 fun TakePicPreview() {
-    TakePicScreen(name = "テスト", navController = rememberNavController())
+    var isOpenDialog by rememberSaveable { mutableStateOf(true) }
+    var inputText by rememberSaveable { mutableStateOf("") }
+    RegisterAlertWindow(
+        isOpenDialog = isOpenDialog,
+        inputText = inputText,
+        onValueChange = { inputText = it },
+        onConfirmClick = { isOpenDialog = false },
+        onDismissClick = { isOpenDialog = false}
+    )
 }
