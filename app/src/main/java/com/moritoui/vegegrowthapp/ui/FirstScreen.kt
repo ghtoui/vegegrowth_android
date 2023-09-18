@@ -37,10 +37,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.moritoui.vegegrowthapp.R
-import com.moritoui.vegegrowthapp.model.Screen
 import com.moritoui.vegegrowthapp.model.VegeCategory
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegeItemList
+import com.moritoui.vegegrowthapp.navigation.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -117,12 +117,12 @@ fun FirstScreen(
 @Composable
 fun VegeItem(item: VegeItem, onClick: () -> Unit = { }, modifier: Modifier = Modifier) {
     val categoryIcon = when (item.category) {
-        VegeCategory.leaf -> painterResource(id = R.drawable.leaf)
-        VegeCategory.flower -> painterResource(id = R.drawable.flower)
+        VegeCategory.Leaf -> painterResource(id = R.drawable.leaf)
+        VegeCategory.Flower -> painterResource(id = R.drawable.flower)
     }
     val iconTint = when (item.category) {
-        VegeCategory.leaf -> Color.Green
-        VegeCategory.flower -> Color.Magenta
+        VegeCategory.Leaf -> Color.Green
+        VegeCategory.Flower -> Color.Magenta
     }
     Row(
         modifier = modifier

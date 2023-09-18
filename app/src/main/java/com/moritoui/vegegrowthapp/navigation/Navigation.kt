@@ -1,4 +1,4 @@
-package com.moritoui.vegegrowthapp.model
+package com.moritoui.vegegrowthapp.navigation
 
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.Text

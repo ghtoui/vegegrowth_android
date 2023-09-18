@@ -45,15 +45,17 @@ fun TakePicScreen() {
     ) {
         PictureView(image = takePicImage?.asImageBitmap())
         TakeButton(onClick = { cameraLauncher.launch() })
-        if(takePicImage != null) {
+        if (takePicImage != null) {
             RecordButton(onClick = { })
         }
     }
 }
 
 @Composable
-fun PictureView(image: ImageBitmap?,
-                modifier: Modifier = Modifier.size(300.dp)) {
+fun PictureView(
+    image: ImageBitmap?,
+    modifier: Modifier = Modifier.size(300.dp)
+) {
     if (image != null) {
         Image(
             image,
@@ -62,7 +64,8 @@ fun PictureView(image: ImageBitmap?,
             contentScale = ContentScale.Fit
         )
     } else {
-        Box(modifier = modifier.background(Color.White),
+        Box(
+            modifier = modifier.background(Color.White),
             contentAlignment = Alignment.Center
         ) {
             Text(
@@ -77,7 +80,8 @@ fun PictureView(image: ImageBitmap?,
 @Composable
 fun TakeButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier) {
+    modifier: Modifier = Modifier
+) {
     Button(
         onClick = { onClick() }
     ) {

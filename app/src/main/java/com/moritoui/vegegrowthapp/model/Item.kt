@@ -6,6 +6,6 @@ data class VegeItem(
 )
 
 enum class VegeCategory {
-    leaf,
-    flower
+    Leaf,
+    Flower
 }

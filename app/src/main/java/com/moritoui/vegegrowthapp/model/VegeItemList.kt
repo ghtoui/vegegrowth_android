@@ -5,63 +5,63 @@ object VegeItemList {
         return listOf(
             VegeItem(
                 name = "レタス",
-                category = VegeCategory.leaf
+                category = VegeCategory.Leaf
             ),
             VegeItem(
                 name = "キャベツ",
-                category = VegeCategory.leaf
+                category = VegeCategory.Leaf
             ),
             VegeItem(
                 name = "トマト",
-                category = VegeCategory.leaf
+                category = VegeCategory.Leaf
             ),
             VegeItem(
                 name = "きゅうり",
-                category = VegeCategory.leaf
+                category = VegeCategory.Leaf
             ),
             VegeItem(
                 name = "花",
-                category = VegeCategory.flower
+                category = VegeCategory.Flower
             ),
             VegeItem(
                 name = "レタス",
-                category = VegeCategory.leaf
+                category = VegeCategory.Leaf
             ),
             VegeItem(
                 name = "キャベツ",
-                category = VegeCategory.leaf
+                category = VegeCategory.Leaf
             ),
             VegeItem(
                 name = "トマト",
-                category = VegeCategory.leaf
+                category = VegeCategory.Leaf
             ),
             VegeItem(
                 name = "きゅうり",
-                category = VegeCategory.leaf
+                category = VegeCategory.Leaf
             ),
             VegeItem(
                 name = "花",
-                category = VegeCategory.flower
+                category = VegeCategory.Flower
             ),
             VegeItem(
                 name = "レタス",
-                category = VegeCategory.leaf
+                category = VegeCategory.Leaf
             ),
             VegeItem(
                 name = "キャベツ",
-                category = VegeCategory.leaf
+                category = VegeCategory.Leaf
             ),
             VegeItem(
                 name = "トマト",
-                category = VegeCategory.leaf
+                category = VegeCategory.Leaf
             ),
             VegeItem(
                 name = "きゅうり",
-                category = VegeCategory.leaf
+                category = VegeCategory.Leaf
             ),
             VegeItem(
                 name = "花",
-                category = VegeCategory.flower
+                category = VegeCategory.Flower
             ),
         )
     }
