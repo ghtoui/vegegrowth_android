@@ -9,19 +9,24 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.sharp.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -37,6 +42,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.moritoui.vegegrowthapp.R
 import com.moritoui.vegegrowthapp.navigation.NavigationAppTopBar
@@ -45,8 +51,11 @@ import com.moritoui.vegegrowthapp.navigation.NavigationAppTopBar
 @Composable
 fun TakePicScreen(
     name: String,
-    navController: NavHostController
+    navController: NavHostController,
+    viewModel: TakePictureScreenViewModel = viewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+
     var takePicImage by rememberSaveable { mutableStateOf<Bitmap?>(null) }
     val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
         takePicImage = bitmap
@@ -73,20 +82,19 @@ fun TakePicScreen(
             PictureView(image = takePicImage?.asImageBitmap())
             TakeButton(onClick = { cameraLauncher.launch() })
             if (takePicImage != null) {
-                RecordButton(onClick = {
-                    inputText = ""
-                    isOpenDialog = true
-                })
+                RecordButton(onClick = { viewModel.openRegisterDialog() })
             }
         }
     }
 
     RegisterAlertWindow(
-        isOpenDialog = isOpenDialog,
-        inputText = inputText,
-        onValueChange = { inputText = it },
-        onConfirmClick = { isOpenDialog = false },
-        onDismissClick = { isOpenDialog = false}
+        isOpenDialog = uiState.isOpenDialog,
+        inputText = uiState.inputText,
+        isSuccessInputText = uiState.isSuccessInputText,
+        isBeforeInputText = uiState.isBeforeInputText,
+        onValueChange = { viewModel.checkInputText(it) },
+        onConfirmClick = { viewModel.closeRegisterDialog() },
+        onDismissClick = { viewModel.closeRegisterDialog() }
     )
 }
 
@@ -147,6 +155,8 @@ fun RecordButton(
 fun RegisterAlertWindow(
     isOpenDialog: Boolean,
     inputText: String,
+    isSuccessInputText: Boolean,
+    isBeforeInputText: Boolean,
     onValueChange: (String) -> Unit,
     onConfirmClick: () -> Unit,
     onDismissClick: () -> Unit
@@ -159,32 +169,64 @@ fun RegisterAlertWindow(
                 Text(text = stringResource(R.string.register_text_field_describe))
             },
             text = {
-                TextField(
-                    value = inputText,
-                    onValueChange = { onValueChange(it) },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    label = {
-                        Text(
-                            text = "cm",
-                            textAlign = TextAlign.End,
-                            modifier = Modifier.fillMaxWidth()
-                        )
+                Column() {
+                    TextField(
+                        value = inputText,
+                        onValueChange = { onValueChange(it) },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        label = {
+                            Text(
+                                text = "cm",
+                                textAlign = TextAlign.End,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    )
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        if (!isSuccessInputText && !isBeforeInputText) {
+                            Icon(
+                                Icons.Sharp.Warning,
+                                contentDescription = null,
+                                tint = Color.Red
+                            )
+                            Text(
+                                text = "正しい数値を入力してください",
+                                color = Color.Red
+                            )
+                        } else {
+                            // elseにこれをしないと上が表示できない
+                            // recompose の関係？わからん
+                            Text("")
+                        }
                     }
-                )
+                }
             },
             confirmButton = {
-                TextButton(
-                    onClick = { onConfirmClick() }
-                ) {
-                    Text("登録")
+                if (isSuccessInputText && !isBeforeInputText) {
+                    TextButton(
+                        onClick = { onConfirmClick() }
+                    ) {
+                        Text("登録", color = Color.Blue)
+                    }
+                } else {
+                    TextButton(
+                        onClick = { }
+                    ) {
+                        Text(
+                            text = "登録",
+                            color = Color.Gray
+                        )
+                    }
                 }
             },
             dismissButton = {
                 TextButton(
                     onClick = { onDismissClick() }
                 ) {
-                    Text("キャンセル")
+                    Text("戻る", color = Color.Blue)
                 }
             }
         )
@@ -196,11 +238,23 @@ fun RegisterAlertWindow(
 fun TakePicPreview() {
     var isOpenDialog by rememberSaveable { mutableStateOf(true) }
     var inputText by rememberSaveable { mutableStateOf("") }
+    var isSuccessInputText  by rememberSaveable { mutableStateOf(false) }
+    var isBeforeInputText  by rememberSaveable { mutableStateOf(true) }
+
     RegisterAlertWindow(
         isOpenDialog = isOpenDialog,
         inputText = inputText,
-        onValueChange = { inputText = it },
+        isSuccessInputText = isSuccessInputText,
+        isBeforeInputText = isBeforeInputText,
+        onValueChange = {
+            inputText = it
+            isSuccessInputText = when (inputText.toDoubleOrNull()) {
+                null -> false
+                else -> true
+            }
+            isBeforeInputText = false
+        },
         onConfirmClick = { isOpenDialog = false },
-        onDismissClick = { isOpenDialog = false}
+        onDismissClick = { isOpenDialog = false }
     )
 }
