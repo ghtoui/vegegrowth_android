@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,24 +31,46 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.moritoui.vegegrowthapp.R
+import com.moritoui.vegegrowthapp.navigation.NavigationAppTopBar
+import com.moritoui.vegegrowthapp.navigation.Screen
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TakePicScreen() {
+fun TakePicScreen(
+    navController: NavHostController
+) {
     var takePicImage by rememberSaveable { mutableStateOf<Bitmap?>(null) }
     val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
         takePicImage = bitmap
     }
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceEvenly
-    ) {
-        PictureView(image = takePicImage?.asImageBitmap())
-        TakeButton(onClick = { cameraLauncher.launch() })
-        if (takePicImage != null) {
-            RecordButton(onClick = { })
+    Scaffold(
+        topBar = {
+            NavigationAppTopBar(
+                navController = navController,
+                title = "撮影画面",
+            ) {
+            }
+        } ){ it ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceEvenly
+        ) {
+            PictureView(image = takePicImage?.asImageBitmap())
+            TakeButton(onClick = { cameraLauncher.launch() })
+            if (takePicImage != null) {
+                RecordButton(onClick = {
+                    navController.navigate(Screen.ManageVegeScreen.route) {
+                        popUpTo(navController.graph.startDestinationId)
+                    }
+                })
+            }
         }
     }
 }
@@ -97,7 +121,7 @@ fun RecordButton(
     modifier: Modifier = Modifier
 ) {
     Button(
-        onClick = { onClick }
+        onClick = { onClick() }
     ) {
         Text(
             text = stringResource(R.string.register_button)
@@ -108,5 +132,5 @@ fun RecordButton(
 @Preview
 @Composable
 fun TakePicPreview() {
-    TakePicScreen()
+    TakePicScreen(navController = rememberNavController())
 }
