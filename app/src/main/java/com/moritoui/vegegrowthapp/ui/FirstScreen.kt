@@ -44,9 +44,11 @@ import com.moritoui.vegegrowthapp.model.VegeItemList
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FirstAppTopBar(onBackClick: () -> Unit = { },
-                   onAddClick: () -> Unit,
-                   modifier: Modifier = Modifier) {
+fun FirstAppTopBar(
+    onAddClick: () -> Unit,
+    onBackClick: () -> Unit = { },
+    modifier: Modifier = Modifier
+) {
     TopAppBar(
         title = {
             Text(
