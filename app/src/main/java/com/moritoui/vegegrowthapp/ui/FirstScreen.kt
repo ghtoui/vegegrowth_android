@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -43,7 +44,9 @@ import com.moritoui.vegegrowthapp.model.VegeItemList
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FirstAppTopBar(onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun FirstAppTopBar(onBackClick: () -> Unit = { },
+                   onAddClick: () -> Unit,
+                   modifier: Modifier = Modifier) {
     TopAppBar(
         title = {
             Text(
@@ -52,8 +55,16 @@ fun FirstAppTopBar(onClick: () -> Unit, modifier: Modifier = Modifier) {
                 modifier = modifier
             )
         },
+        navigationIcon = {
+            IconButton(onClick = { onBackClick() }) {
+                Icon(
+                    Icons.Filled.ArrowBack,
+                    contentDescription = "戻る"
+                )
+            }
+        },
         actions = {
-            IconButton(onClick = { onClick() }) {
+            IconButton(onClick = { onAddClick() }) {
                 Icon(
                     Icons.Filled.Add,
                     contentDescription = "追加"
@@ -73,7 +84,7 @@ fun FirstScreen(
 
     Scaffold(
         topBar = {
-            FirstAppTopBar(onClick = { viewModel.updateState(isOpenDialog = true, inputText = "") })
+            FirstAppTopBar(onAddClick = { viewModel.updateState(isOpenDialog = true, inputText = "") })
         }
     ) { it ->
         Box(modifier = Modifier.padding(it)) {

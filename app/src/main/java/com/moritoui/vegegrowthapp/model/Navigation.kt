@@ -1,5 +1,6 @@
 package com.moritoui.vegegrowthapp.model
 
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -25,8 +26,14 @@ fun Navigation(
         navController = navController,
         startDestination = Screen.FirstScreen.route
     ) {
-        composable(Screen.FirstScreen.route) { FirstScreen(navController = navController) }
-        composable(Screen.TakePictureScreen.route) { Text("takePicture") }
-        composable(Screen.ManageVegeScreen.route) { Text("manageView") }
+        composable(Screen.FirstScreen.route) {
+            FirstScreen(navController = navController)
+        }
+        composable(Screen.TakePictureScreen.route) {
+            Text("takePicture", modifier = Modifier.safeDrawingPadding())
+        }
+        composable(Screen.ManageVegeScreen.route) {
+            Text("manageView", modifier = Modifier.safeDrawingPadding())
+        }
     }
 }
