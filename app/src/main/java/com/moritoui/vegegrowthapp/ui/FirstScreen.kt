@@ -52,7 +52,9 @@ fun FirstScreen(
                 navController = navController,
                 title = "管理画面"
             ) {
-                AddItem(onAddClick = { viewModel.updateState(isOpenDialog = true) })
+                AddItem(onAddClick = {
+                    viewModel.updateState(isOpenDialog = true, inputText = "")
+                })
             }
         }
     ) { it ->
