@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
@@ -183,23 +184,24 @@ fun RegisterAlertWindow(
                             )
                         }
                     )
+                    // if文で空の要素を作りたいときは、modifierで高さとかを指定しとかないと表示されない時がある
                     Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        modifier = Modifier
+                            .height(24.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         if (!isSuccessInputText && !isBeforeInputText) {
                             Icon(
                                 Icons.Sharp.Warning,
                                 contentDescription = null,
-                                tint = Color.Red
+                                tint = Color.Red,
+                                modifier = Modifier
                             )
                             Text(
                                 text = "正しい数値を入力してください",
                                 color = Color.Red
                             )
-                        } else {
-                            // elseにこれをしないと上が表示できない
-                            // recompose の関係？わからん
-                            Text("")
                         }
                     }
                 }
@@ -238,8 +240,8 @@ fun RegisterAlertWindow(
 fun TakePicPreview() {
     var isOpenDialog by rememberSaveable { mutableStateOf(true) }
     var inputText by rememberSaveable { mutableStateOf("") }
-    var isSuccessInputText  by rememberSaveable { mutableStateOf(false) }
-    var isBeforeInputText  by rememberSaveable { mutableStateOf(true) }
+    var isSuccessInputText by rememberSaveable { mutableStateOf(false) }
+    var isBeforeInputText by rememberSaveable { mutableStateOf(true) }
 
     RegisterAlertWindow(
         isOpenDialog = isOpenDialog,
