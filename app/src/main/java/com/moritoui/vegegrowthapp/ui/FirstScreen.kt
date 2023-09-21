@@ -9,19 +9,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -30,51 +25,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.moritoui.vegegrowthapp.R
-import com.moritoui.vegegrowthapp.model.Screen
 import com.moritoui.vegegrowthapp.model.VegeCategory
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegeItemList
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun FirstAppTopBar(
-    onAddClick: () -> Unit,
-    onBackClick: () -> Unit = { },
-    modifier: Modifier = Modifier
-) {
-    TopAppBar(
-        title = {
-            Text(
-                text = "管理画面",
-                textAlign = TextAlign.Center,
-                modifier = modifier
-            )
-        },
-        navigationIcon = {
-            IconButton(onClick = { onBackClick() }) {
-                Icon(
-                    Icons.Filled.ArrowBack,
-                    contentDescription = "戻る"
-                )
-            }
-        },
-        actions = {
-            IconButton(onClick = { onAddClick() }) {
-                Icon(
-                    Icons.Filled.Add,
-                    contentDescription = "追加"
-                )
-            }
-        }
-    )
-}
+import com.moritoui.vegegrowthapp.navigation.AddItem
+import com.moritoui.vegegrowthapp.navigation.NavigationAppTopBar
+import com.moritoui.vegegrowthapp.navigation.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -86,7 +48,14 @@ fun FirstScreen(
 
     Scaffold(
         topBar = {
-            FirstAppTopBar(onAddClick = { viewModel.updateState(isOpenDialog = true, inputText = "") })
+            NavigationAppTopBar(
+                navController = navController,
+                title = "管理画面"
+            ) {
+                AddItem(onAddClick = {
+                    viewModel.updateState(isOpenDialog = true, inputText = "")
+                })
+            }
         }
     ) { it ->
         Box(modifier = Modifier.padding(it)) {
@@ -95,9 +64,9 @@ fun FirstScreen(
                     .fillMaxWidth()
                     .padding(start = 24.dp, top = 48.dp, end = 24.dp)
             ) {
-                items(VegeItemList.getVegeList()) { item ->
+                itemsIndexed(VegeItemList.getVegeList()) { index, item ->
                     VegeItem(item = item, onClick = {
-                        navController.navigate(Screen.TakePictureScreen.route) {
+                        navController.navigate("${Screen.TakePictureScreen.route}/$index") {
                             popUpTo(navController.graph.startDestinationId)
                         }
                     })
@@ -117,12 +86,12 @@ fun FirstScreen(
 @Composable
 fun VegeItem(item: VegeItem, onClick: () -> Unit = { }, modifier: Modifier = Modifier) {
     val categoryIcon = when (item.category) {
-        VegeCategory.leaf -> painterResource(id = R.drawable.leaf)
-        VegeCategory.flower -> painterResource(id = R.drawable.flower)
+        VegeCategory.Leaf -> painterResource(id = R.drawable.leaf)
+        VegeCategory.Flower -> painterResource(id = R.drawable.flower)
     }
     val iconTint = when (item.category) {
-        VegeCategory.leaf -> Color.Green
-        VegeCategory.flower -> Color.Magenta
+        VegeCategory.Leaf -> Color.Green
+        VegeCategory.Flower -> Color.Magenta
     }
     Row(
         modifier = modifier

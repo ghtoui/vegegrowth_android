@@ -8,7 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
-import com.moritoui.vegegrowthapp.model.Navigation
+import com.moritoui.vegegrowthapp.navigation.Navigation
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 
 class MainActivity : ComponentActivity() {
