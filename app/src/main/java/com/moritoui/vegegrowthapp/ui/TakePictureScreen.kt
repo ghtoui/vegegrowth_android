@@ -1,6 +1,5 @@
 package com.moritoui.vegegrowthapp.ui
 
-import android.graphics.Bitmap
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.launch
@@ -9,19 +8,25 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.sharp.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -32,33 +37,38 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.moritoui.vegegrowthapp.R
 import com.moritoui.vegegrowthapp.navigation.NavigationAppTopBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TakePicScreen(
-    name: String,
-    navController: NavHostController
+    index: Int,
+    navController: NavHostController,
+    viewModel: TakePictureScreenViewModel = viewModel(
+        factory = TakePictureScreenViewModel.TakePictureFactory(index, LocalContext.current.applicationContext)
+    )
 ) {
-    var takePicImage by rememberSaveable { mutableStateOf<Bitmap?>(null) }
+
+    val uiState by viewModel.uiState.collectAsState()
     val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
-        takePicImage = bitmap
+        viewModel.setImage(bitmap)
     }
-    var isOpenDialog by rememberSaveable { mutableStateOf(false) }
-    var inputText by rememberSaveable { mutableStateOf("") }
 
     Scaffold(
         topBar = {
             NavigationAppTopBar(
                 navController = navController,
-                title = name,
+                title = uiState.vegeName
             ) {
             }
         }
@@ -66,34 +76,34 @@ fun TakePicScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(it),
+                .padding(it)
+                .padding(start = 24.dp, top = 24.dp, end = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
-            PictureView(image = takePicImage?.asImageBitmap())
+            PictureView(image = uiState.takePicImage?.asImageBitmap())
             TakeButton(onClick = { cameraLauncher.launch() })
-            if (takePicImage != null) {
-                RecordButton(onClick = {
-                    inputText = ""
-                    isOpenDialog = true
-                })
+            if (uiState.takePicImage != null) {
+                RecordButton(onClick = { viewModel.openRegisterDialog() })
             }
         }
     }
 
     RegisterAlertWindow(
-        isOpenDialog = isOpenDialog,
-        inputText = inputText,
-        onValueChange = { inputText = it },
-        onConfirmClick = { isOpenDialog = false },
-        onDismissClick = { isOpenDialog = false}
+        isOpenDialog = uiState.isOpenDialog,
+        inputText = uiState.inputText,
+        isSuccessInputText = uiState.isSuccessInputText,
+        isBeforeInputText = uiState.isBeforeInputText,
+        onValueChange = { viewModel.checkInputText(it) },
+        onConfirmClick = { viewModel.registerVegeData() },
+        onDismissClick = { viewModel.closeRegisterDialog() }
     )
 }
 
 @Composable
 fun PictureView(
     image: ImageBitmap?,
-    modifier: Modifier = Modifier.size(300.dp)
+    modifier: Modifier = Modifier.aspectRatio(1f / 1f)
 ) {
     if (image != null) {
         Image(
@@ -104,7 +114,8 @@ fun PictureView(
         )
     } else {
         Box(
-            modifier = modifier.background(Color.White),
+            modifier = modifier
+                .background(Color.LightGray),
             contentAlignment = Alignment.Center
         ) {
             Text(
@@ -147,6 +158,8 @@ fun RecordButton(
 fun RegisterAlertWindow(
     isOpenDialog: Boolean,
     inputText: String,
+    isSuccessInputText: Boolean,
+    isBeforeInputText: Boolean,
     onValueChange: (String) -> Unit,
     onConfirmClick: () -> Unit,
     onDismissClick: () -> Unit
@@ -159,32 +172,65 @@ fun RegisterAlertWindow(
                 Text(text = stringResource(R.string.register_text_field_describe))
             },
             text = {
-                TextField(
-                    value = inputText,
-                    onValueChange = { onValueChange(it) },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    label = {
-                        Text(
-                            text = "cm",
-                            textAlign = TextAlign.End,
-                            modifier = Modifier.fillMaxWidth()
-                        )
+                Column() {
+                    TextField(
+                        value = inputText,
+                        onValueChange = { onValueChange(it) },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        label = {
+                            Text(
+                                text = "cm",
+                                textAlign = TextAlign.End,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    )
+                    // if文で空の要素を作りたいときは、modifierで高さとかを指定しとかないと表示されない時がある
+                    Row(
+                        modifier = Modifier
+                            .height(24.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        if (!isSuccessInputText && !isBeforeInputText) {
+                            Icon(
+                                Icons.Sharp.Warning,
+                                contentDescription = null,
+                                tint = Color.Red,
+                                modifier = Modifier
+                            )
+                            Text(
+                                text = "正しい数値を入力してください",
+                                color = Color.Red
+                            )
+                        }
                     }
-                )
+                }
             },
             confirmButton = {
-                TextButton(
-                    onClick = { onConfirmClick() }
-                ) {
-                    Text("登録")
+                if (isSuccessInputText && !isBeforeInputText) {
+                    TextButton(
+                        onClick = { onConfirmClick() }
+                    ) {
+                        Text("登録", color = Color.Blue)
+                    }
+                } else {
+                    TextButton(
+                        onClick = { }
+                    ) {
+                        Text(
+                            text = "登録",
+                            color = Color.Gray
+                        )
+                    }
                 }
             },
             dismissButton = {
                 TextButton(
                     onClick = { onDismissClick() }
                 ) {
-                    Text("キャンセル")
+                    Text("戻る", color = Color.Blue)
                 }
             }
         )
@@ -196,11 +242,28 @@ fun RegisterAlertWindow(
 fun TakePicPreview() {
     var isOpenDialog by rememberSaveable { mutableStateOf(true) }
     var inputText by rememberSaveable { mutableStateOf("") }
-    RegisterAlertWindow(
-        isOpenDialog = isOpenDialog,
-        inputText = inputText,
-        onValueChange = { inputText = it },
-        onConfirmClick = { isOpenDialog = false },
-        onDismissClick = { isOpenDialog = false}
+    var isSuccessInputText by rememberSaveable { mutableStateOf(false) }
+    var isBeforeInputText by rememberSaveable { mutableStateOf(true) }
+
+    TakePicScreen(
+        index = 1,
+        navController = rememberNavController()
     )
+
+//    RegisterAlertWindow(
+//        isOpenDialog = isOpenDialog,
+//        inputText = inputText,
+//        isSuccessInputText = isSuccessInputText,
+//        isBeforeInputText = isBeforeInputText,
+//        onValueChange = {
+//            inputText = it
+//            isSuccessInputText = when (inputText.toDoubleOrNull()) {
+//                null -> false
+//                else -> true
+//            }
+//            isBeforeInputText = false
+//        },
+//        onConfirmClick = { isOpenDialog = false },
+//        onDismissClick = { isOpenDialog = false }
+//    )
 }
