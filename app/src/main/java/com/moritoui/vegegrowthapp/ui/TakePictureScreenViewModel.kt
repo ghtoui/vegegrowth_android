@@ -112,7 +112,7 @@ class TakePictureScreenViewModel constructor(
     fun registerVegeData() {
         // そもそもボタンが押せないようにしているから、inputTextとtakePicImageはnullにならないはず
         vegeList.add(
-            VegetableRepository (
+            VegetableRepository(
                 itemUuid = vegeItem.uuid.toString(),
                 uuid = UUID.randomUUID().toString(),
                 name = vegeItem.name,
@@ -163,7 +163,7 @@ class TakePictureScreenViewModel constructor(
                 json = br.readLine()
             }
         } catch (e: IOException) {
-            Log.d("Error", "File Read Error${jsonFilePath}")
+            Log.d("Error", "File Read Error$jsonFilePath")
         }
         return json
     }

@@ -66,7 +66,7 @@ fun FirstScreen(
             ) {
                 itemsIndexed(VegeItemList.getVegeList()) { index, item ->
                     VegeItem(item = item, onClick = {
-                        navController.navigate("${Screen.TakePictureScreen.route}/${index}") {
+                        navController.navigate("${Screen.TakePictureScreen.route}/$index") {
                             popUpTo(navController.graph.startDestinationId)
                         }
                     })
