@@ -42,9 +42,9 @@ fun Navigation(
         composable(Screen.FirstScreen.route) {
             FirstScreen(navController = navController)
         }
-        composable("${Screen.TakePictureScreen.route}/{name}") { backStackEntry ->
+        composable("${Screen.TakePictureScreen.route}/{index}") { backStackEntry ->
             TakePicScreen(
-                name = backStackEntry.arguments?.getString("name") ?: "",
+                index = backStackEntry.arguments?.getInt("index")?: 0,
                 navController = navController
             )
         }

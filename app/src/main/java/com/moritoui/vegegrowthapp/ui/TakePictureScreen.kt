@@ -1,6 +1,5 @@
 package com.moritoui.vegegrowthapp.ui
 
-import android.graphics.Bitmap
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.launch
@@ -10,11 +9,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.Warning
@@ -38,6 +37,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -45,30 +45,30 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.moritoui.vegegrowthapp.R
 import com.moritoui.vegegrowthapp.navigation.NavigationAppTopBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TakePicScreen(
-    name: String,
+    index: Int,
     navController: NavHostController,
-    viewModel: TakePictureScreenViewModel = viewModel()
+    viewModel: TakePictureScreenViewModel = viewModel(
+        factory = TakePictureScreenViewModel.TakePictureFactory(index, LocalContext.current.applicationContext)
+    )
 ) {
-    val uiState by viewModel.uiState.collectAsState()
 
-    var takePicImage by rememberSaveable { mutableStateOf<Bitmap?>(null) }
+    val uiState by viewModel.uiState.collectAsState()
     val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
-        takePicImage = bitmap
+        viewModel.setImage(bitmap)
     }
-    var isOpenDialog by rememberSaveable { mutableStateOf(false) }
-    var inputText by rememberSaveable { mutableStateOf("") }
 
     Scaffold(
         topBar = {
             NavigationAppTopBar(
                 navController = navController,
-                title = name,
+                title = uiState.vegeName
             ) {
             }
         }
@@ -76,13 +76,14 @@ fun TakePicScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(it),
+                .padding(it)
+                .padding(start = 24.dp, top = 24.dp, end = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
-            PictureView(image = takePicImage?.asImageBitmap())
+            PictureView(image = uiState.takePicImage?.asImageBitmap())
             TakeButton(onClick = { cameraLauncher.launch() })
-            if (takePicImage != null) {
+            if (uiState.takePicImage != null) {
                 RecordButton(onClick = { viewModel.openRegisterDialog() })
             }
         }
@@ -94,7 +95,7 @@ fun TakePicScreen(
         isSuccessInputText = uiState.isSuccessInputText,
         isBeforeInputText = uiState.isBeforeInputText,
         onValueChange = { viewModel.checkInputText(it) },
-        onConfirmClick = { viewModel.closeRegisterDialog() },
+        onConfirmClick = { viewModel.registerVegeData() },
         onDismissClick = { viewModel.closeRegisterDialog() }
     )
 }
@@ -102,7 +103,7 @@ fun TakePicScreen(
 @Composable
 fun PictureView(
     image: ImageBitmap?,
-    modifier: Modifier = Modifier.size(300.dp)
+    modifier: Modifier = Modifier.aspectRatio(1f / 1f)
 ) {
     if (image != null) {
         Image(
@@ -113,7 +114,8 @@ fun PictureView(
         )
     } else {
         Box(
-            modifier = modifier.background(Color.White),
+            modifier = modifier
+                .background(Color.LightGray),
             contentAlignment = Alignment.Center
         ) {
             Text(
@@ -243,20 +245,25 @@ fun TakePicPreview() {
     var isSuccessInputText by rememberSaveable { mutableStateOf(false) }
     var isBeforeInputText by rememberSaveable { mutableStateOf(true) }
 
-    RegisterAlertWindow(
-        isOpenDialog = isOpenDialog,
-        inputText = inputText,
-        isSuccessInputText = isSuccessInputText,
-        isBeforeInputText = isBeforeInputText,
-        onValueChange = {
-            inputText = it
-            isSuccessInputText = when (inputText.toDoubleOrNull()) {
-                null -> false
-                else -> true
-            }
-            isBeforeInputText = false
-        },
-        onConfirmClick = { isOpenDialog = false },
-        onDismissClick = { isOpenDialog = false }
+    TakePicScreen(
+        index = 1,
+        navController = rememberNavController()
     )
+
+//    RegisterAlertWindow(
+//        isOpenDialog = isOpenDialog,
+//        inputText = inputText,
+//        isSuccessInputText = isSuccessInputText,
+//        isBeforeInputText = isBeforeInputText,
+//        onValueChange = {
+//            inputText = it
+//            isSuccessInputText = when (inputText.toDoubleOrNull()) {
+//                null -> false
+//                else -> true
+//            }
+//            isBeforeInputText = false
+//        },
+//        onConfirmClick = { isOpenDialog = false },
+//        onDismissClick = { isOpenDialog = false }
+//    )
 }

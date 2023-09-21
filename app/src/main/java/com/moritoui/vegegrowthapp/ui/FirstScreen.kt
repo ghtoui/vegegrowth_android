@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -64,9 +64,9 @@ fun FirstScreen(
                     .fillMaxWidth()
                     .padding(start = 24.dp, top = 48.dp, end = 24.dp)
             ) {
-                items(VegeItemList.getVegeList()) { item ->
+                itemsIndexed(VegeItemList.getVegeList()) { index, item ->
                     VegeItem(item = item, onClick = {
-                        navController.navigate("${Screen.TakePictureScreen.route}/${item.name}") {
+                        navController.navigate("${Screen.TakePictureScreen.route}/${index}") {
                             popUpTo(navController.graph.startDestinationId)
                         }
                     })
