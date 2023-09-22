@@ -1,6 +1,5 @@
 package com.moritoui.vegegrowthapp.navigation
 
-import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -19,6 +18,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.moritoui.vegegrowthapp.ui.FirstScreen
+import com.moritoui.vegegrowthapp.ui.ManageScreen
 import com.moritoui.vegegrowthapp.ui.TakePicScreen
 
 sealed class Screen(
@@ -49,7 +49,9 @@ fun Navigation(
             )
         }
         composable(Screen.ManageVegeScreen.route) {
-            Text("manageView", modifier = Modifier.safeDrawingPadding())
+            ManageScreen(
+                navController = navController
+            )
         }
     }
 }

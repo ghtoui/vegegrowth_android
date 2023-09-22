@@ -47,7 +47,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.moritoui.vegegrowthapp.R
+import com.moritoui.vegegrowthapp.navigation.NavigateItem
 import com.moritoui.vegegrowthapp.navigation.NavigationAppTopBar
+import com.moritoui.vegegrowthapp.navigation.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -70,6 +72,11 @@ fun TakePicScreen(
                 navController = navController,
                 title = uiState.vegeName
             ) {
+                NavigateItem {
+                    navController.navigate(Screen.ManageVegeScreen.route) {
+                        popUpTo(navController.graph.startDestinationId)
+                    }
+                }
             }
         }
     ) { it ->
