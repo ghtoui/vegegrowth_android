@@ -130,9 +130,10 @@ fun DetailData(modifier: Modifier = Modifier) {
         modifier = modifier
             .padding(start = 24.dp, end = 24.dp, bottom = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(24.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Column(
+            modifier = Modifier.weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(text = "2023-3-12 17時")
@@ -169,12 +170,11 @@ fun MemoTopBar(
     modifier: Modifier = Modifier.fillMaxWidth(),
     onEditClick: () -> Unit
 ) {
-    IconButton(
-        modifier = modifier,
-        onClick = { onEditClick() }
+    Box(modifier = modifier,
+        contentAlignment = Alignment.BottomEnd
     ) {
-        Box(modifier = modifier,
-            contentAlignment = Alignment.BottomEnd
+        IconButton(
+            onClick = { onEditClick() }
         ) {
             Icon(
                 Icons.Filled.Edit,
