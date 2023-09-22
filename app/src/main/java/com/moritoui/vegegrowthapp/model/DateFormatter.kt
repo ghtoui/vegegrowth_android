@@ -1,6 +1,7 @@
 package com.moritoui.vegegrowthapp.model
 
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 class DateFormatter {
@@ -12,5 +13,11 @@ class DateFormatter {
 
     fun dateToString(dateTime: LocalDateTime): String {
         return dateTime.format(customFormatter)
+    }
+
+    fun stringToEpochTime(stringDateTime: String): Long {
+        val datetime = stringToDate(stringDateTime)
+        val instant = datetime.atZone(ZoneId.systemDefault()).toInstant()
+        return instant.toEpochMilli()
     }
 }
