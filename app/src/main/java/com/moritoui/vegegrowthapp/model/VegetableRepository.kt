@@ -10,4 +10,5 @@ data class VegetableRepository(
     val name: String,
     val size: Double,
     var memo: String,
+    val date: String
 )
