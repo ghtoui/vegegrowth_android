@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,6 +30,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,6 +41,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.drawText
@@ -48,6 +49,7 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.moritoui.vegegrowthapp.R
@@ -60,10 +62,14 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun ManageScreen(
-    navController: NavHostController
+    index: Int,
+    navController: NavHostController,
+    viewModel: ManageScreenViewModel = viewModel(
+        factory = ManageScreenViewModel.ManageScreenFactory(index, LocalContext.current.applicationContext)
+    )
 ) {
-    val pagerCount = 5
-    val pagerState = rememberPagerState(initialPage = 0)
+    val uiState by viewModel.uiState.collectAsState()
+
     val scope = rememberCoroutineScope()
 
     Scaffold(
@@ -93,7 +99,7 @@ fun ManageScreen(
                     )
             ) {
                 DrawLineChart(
-                    currentIndex = pagerState.currentPage,
+                    currentIndex = uiState.pagerState.currentPage,
                     detailData = "2023-3-12 17時\n1日目\n10cm",
                     modifier = Modifier
                         .fillMaxSize()
@@ -101,12 +107,12 @@ fun ManageScreen(
                 )
             }
             ImageCarousel(
-                pagerCount = pagerCount,
-                pagerState = pagerState,
+                pagerCount = uiState.pagerCount,
+                pagerState = uiState.pagerState,
                 modifier = Modifier.weight(1f),
                 currentImageBarHeight = 5,
                 // ボトムバークリックでも画像遷移できるように -> Coroutineが必要
-                onImageBottomBarClick = { scope.launch { pagerState.animateScrollToPage(it) } },
+                onImageBottomBarClick = { scope.launch { viewModel.moveImage(it) } },
                 currentImageBarModifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 72.dp, top = 12.dp, end = 72.dp, bottom = 8.dp)
@@ -163,7 +169,7 @@ fun DrawLineChart(
             style = Stroke(width = 4f)
         )
 
-        if (pointX != null && pointY != null) {
+        if (pointX != null) {
             // 点の描画
             drawCircle(
                 color = Color.Red,
@@ -283,7 +289,7 @@ fun MemoData(modifier: Modifier = Modifier) {
 
 @Composable
 fun MemoTopBar(
-    modifier: Modifier = Modifier.fillMaxWidth(),
+    modifier: Modifier = Modifier,
     onEditClick: () -> Unit
 ) {
     Row(
@@ -322,6 +328,9 @@ fun MemoTopBar(
 fun ManageScreenPreview() {
     VegegrowthAppTheme {
         val navController = rememberNavController()
-        ManageScreen(navController = navController)
+        ManageScreen(
+            index = 1,
+            navController = navController
+        )
     }
 }

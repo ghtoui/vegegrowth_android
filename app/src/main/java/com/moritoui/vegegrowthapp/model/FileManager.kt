@@ -60,6 +60,7 @@ class FileManager(
     }
 
     fun parseFromJson(json: String?): MutableList<VegetableRepository> {
+        return VegetableRepositoryList.getVegeRepositoryList().toMutableList()
         return when (json) {
             null -> mutableListOf()
             else -> Json.decodeFromString(json)
