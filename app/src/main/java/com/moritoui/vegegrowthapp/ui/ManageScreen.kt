@@ -4,6 +4,8 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,12 +27,14 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -41,7 +45,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -52,6 +55,7 @@ import com.moritoui.vegegrowthapp.model.DateFormatter
 import com.moritoui.vegegrowthapp.model.VegetableRepositoryList
 import com.moritoui.vegegrowthapp.navigation.NavigationAppTopBar
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -60,6 +64,7 @@ fun ManageScreen(
 ) {
     val pagerCount = 5
     val pagerState = rememberPagerState(initialPage = 0)
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
@@ -78,34 +83,35 @@ fun ManageScreen(
         ) {
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(3.dp)
-                    .background(Color.Black)
-            )
-            DrawLineChart(
-                currentIndex = pagerState.currentPage,
-                detailData = "2023-3-12 17時\n1日目\n10cm",
-                modifier = Modifier
-                    .weight(1f)
                     .fillMaxSize()
-                    .padding(start = 24.dp, top = 16.dp, end = 24.dp, bottom = 16.dp)
-            )
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(3.dp)
-                    .background(Color.Black)
-            )
+                    .weight(1f)
+                    .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp)
+                    .background(MaterialTheme.colorScheme.primaryContainer.copy(0.1f))
+                    .border(
+                        width = 4.dp,
+                        color = MaterialTheme.colorScheme.onSurface.copy(0.05f)
+                    )
+            ) {
+                DrawLineChart(
+                    currentIndex = pagerState.currentPage,
+                    detailData = "2023-3-12 17時\n1日目\n10cm",
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp)
+                )
+            }
             ImageCarousel(
                 pagerCount = pagerCount,
                 pagerState = pagerState,
                 modifier = Modifier.weight(1f),
                 currentImageBarHeight = 5,
+                // ボトムバークリックでも画像遷移できるように -> Coroutineが必要
+                onImageBottomBarClick = { scope.launch { pagerState.animateScrollToPage(it)}},
                 currentImageBarModifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 72.dp, top = 12.dp, end = 72.dp)
+                    .padding(start = 72.dp, top = 12.dp, end = 72.dp, bottom = 8.dp)
             )
-            DetailData(modifier = Modifier.weight(0.5f))
+            DetailData(modifier = Modifier.weight(0.7f))
         }
     }
 }
@@ -180,6 +186,7 @@ fun ImageCarousel(
     pagerState: PagerState,
     modifier: Modifier = Modifier,
     currentImageBarHeight: Int,
+    onImageBottomBarClick: (Int) -> Unit,
     currentImageBarModifier: Modifier = Modifier
 ) {
     Column(
@@ -192,12 +199,16 @@ fun ImageCarousel(
             state = pagerState,
             pageCount = pagerCount,
             contentPadding = PaddingValues(start = 24.dp, top = 12.dp, end = 24.dp),
-            pageSpacing = 8.dp
+            pageSpacing = 8.dp,
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color.LightGray),
+                    .background(MaterialTheme.colorScheme.primaryContainer.copy(0.1f))
+                    .border(
+                        width = 4.dp,
+                        color = MaterialTheme.colorScheme.onSurface.copy(0.05f)
+                    ),
                 contentAlignment = Alignment.Center
             ) {
                 Image(
@@ -219,10 +230,12 @@ fun ImageCarousel(
                     else -> Color.LightGray
                 }
                 Box(
+                    // タップで画面遷移できるようにする
                     modifier = Modifier
                         .weight(1f)
                         .height(currentImageBarHeight.dp)
                         .background(backGroundColor)
+                        .clickable(onClick = { onImageBottomBarClick(it) })
                 )
             }
         }
@@ -237,7 +250,11 @@ fun DetailData(modifier: Modifier = Modifier) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        MemoData()
+        MemoData(
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.onSurface.copy(0.05f))
+                .padding(start = 12.dp, end = 12.dp)
+        )
     }
 }
 
@@ -247,17 +264,17 @@ fun MemoData(modifier: Modifier = Modifier) {
     Scaffold(
         topBar = {
             MemoTopBar(
+                modifier = modifier,
                 onEditClick = { }
             )
-        },
-        modifier = modifier
+        }
     ) {
         LazyColumn(modifier = modifier.padding(it)) {
             items(1) {
                 Text(
-                    text = "aiueo\n".repeat(30),
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxSize()
+                    text = "こんにちは,".repeat(30),
+                    modifier = Modifier
+                        .fillMaxSize()
                 )
             }
         }
