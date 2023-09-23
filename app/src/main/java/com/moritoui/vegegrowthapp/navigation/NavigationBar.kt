@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -76,7 +77,7 @@ fun NavigationAppTopBar(
             navigationIcon = {
                 if (navBackStackEntry?.destination?.route != Screen.FirstScreen.route) {
                     IconButton(onClick = {
-                        navController.popBackStack()
+                        navController.navigateUp()
                     }) {
                         Icon(
                             Icons.Filled.ArrowBack,
@@ -90,4 +91,13 @@ fun NavigationAppTopBar(
             }
         )
     }
+}
+
+@Preview
+@Composable
+fun NavigationAppTopBarPreview() {
+    NavigationAppTopBar(
+        navController = rememberNavController(),
+        title = "preview"
+    )
 }
