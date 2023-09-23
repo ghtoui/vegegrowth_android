@@ -1,7 +1,5 @@
 package com.moritoui.vegegrowthapp.ui
 
-// importの順序違いエラーが出るので直せる余裕が出るまで無効にする
-// ktlint-disable
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Environment
@@ -31,7 +29,6 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-// ktlint-enable
 
 data class TakePictureScreenUiState(
     val vegeName: String = "",
