@@ -60,7 +60,6 @@ fun TakePicScreen(
         factory = TakePictureScreenViewModel.TakePictureFactory(index, LocalContext.current.applicationContext)
     )
 ) {
-
     val uiState by viewModel.uiState.collectAsState()
     val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
         viewModel.setImage(bitmap)
@@ -73,7 +72,7 @@ fun TakePicScreen(
                 title = uiState.vegeName
             ) {
                 NavigateItem {
-                    navController.navigate(Screen.ManageVegeScreen.route) {
+                    navController.navigate("${Screen.ManageVegeScreen.route}/${viewModel.getIndex()}") {
                         popUpTo(navController.graph.startDestinationId)
                     }
                 }

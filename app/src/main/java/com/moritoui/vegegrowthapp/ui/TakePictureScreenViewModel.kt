@@ -25,8 +25,8 @@ data class TakePictureScreenUiState(
 )
 
 class TakePictureScreenViewModel constructor(
-    index: Int,
-    private val applicationContext: Context
+    private val index: Int,
+    applicationContext: Context
 ) : ViewModel() {
     private val dateFormatter = DateFormatter()
     private val fileManager: FileManager
@@ -132,5 +132,9 @@ class TakePictureScreenViewModel constructor(
             isSuccessInputText = isSuccessInputText,
             isBeforeInputText = false
         )
+    }
+
+    fun getIndex(): Int {
+        return index
     }
 }

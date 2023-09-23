@@ -49,8 +49,9 @@ fun Navigation(
                 navController = navController
             )
         }
-        composable(Screen.ManageVegeScreen.route) {
+        composable("${Screen.ManageVegeScreen.route}/{index}") { backStackEntry ->
             ManageScreen(
+                index = backStackEntry.arguments?.getInt("index") ?: 0,
                 navController = navController
             )
         }
