@@ -23,7 +23,7 @@ data class ManageScreenUiState(
 class ManageScreenViewModel constructor(
     index: Int,
     applicationContext: Context
-    ) : ViewModel() {
+) : ViewModel() {
     private val fileManager: FileManager
     private var vegeItem: VegeItem
     private var vegeRepositoryList: MutableList<VegetableRepository>
@@ -41,7 +41,7 @@ class ManageScreenViewModel constructor(
         updateState(
             pagerCount = vegeRepositoryList.size - 1,
             vegeRepositoryList = vegeRepositoryList
-            )
+        )
     }
 
     @OptIn(ExperimentalFoundationApi::class)
