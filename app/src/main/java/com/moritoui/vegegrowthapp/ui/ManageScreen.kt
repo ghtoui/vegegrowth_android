@@ -106,7 +106,7 @@ fun ManageScreen(
                 modifier = Modifier.weight(1f),
                 currentImageBarHeight = 5,
                 // ボトムバークリックでも画像遷移できるように -> Coroutineが必要
-                onImageBottomBarClick = { scope.launch { pagerState.animateScrollToPage(it)}},
+                onImageBottomBarClick = { scope.launch { pagerState.animateScrollToPage(it) } },
                 currentImageBarModifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 72.dp, top = 12.dp, end = 72.dp, bottom = 8.dp)
