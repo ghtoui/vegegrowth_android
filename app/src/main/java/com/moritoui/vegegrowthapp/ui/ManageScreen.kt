@@ -51,6 +51,7 @@ import com.moritoui.vegegrowthapp.R
 import com.moritoui.vegegrowthapp.model.DateFormatter
 import com.moritoui.vegegrowthapp.model.VegetableRepositoryList
 import com.moritoui.vegegrowthapp.navigation.NavigationAppTopBar
+import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -244,9 +245,11 @@ fun DetailData(modifier: Modifier = Modifier) {
 @Composable
 fun MemoData(modifier: Modifier = Modifier) {
     Scaffold(
-        topBar = { MemoTopBar(
-            onEditClick = { }
-        )},
+        topBar = {
+            MemoTopBar(
+                onEditClick = { }
+            )
+        },
         modifier = modifier
     ) {
         LazyColumn(modifier = modifier.padding(it)) {
@@ -300,6 +303,8 @@ fun MemoTopBar(
 @Composable
 @Preview
 fun ManageScreenPreview() {
-    val navController = rememberNavController()
-    ManageScreen(navController = navController)
+    VegegrowthAppTheme {
+        val navController = rememberNavController()
+        ManageScreen(navController = navController)
+    }
 }
