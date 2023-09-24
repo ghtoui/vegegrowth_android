@@ -100,7 +100,6 @@ fun ManageScreen(
             ) {
                 DrawLineChart(
                     currentIndex = uiState.pagerState.currentPage,
-                    detailData = "2023-3-12 17時\n1日目\n10cm",
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(16.dp)
@@ -117,7 +116,10 @@ fun ManageScreen(
                     .fillMaxWidth()
                     .padding(start = 72.dp, top = 12.dp, end = 72.dp, bottom = 8.dp)
             )
-            DetailData(modifier = Modifier.weight(0.7f))
+            DetailData(
+                memoData = uiState.vegeRepositoryList[uiState.pagerState.currentPage].memo,
+                modifier = Modifier.weight(0.7f)
+            )
         }
     }
 }
@@ -125,7 +127,6 @@ fun ManageScreen(
 @OptIn(ExperimentalTextApi::class)
 @Composable
 fun DrawLineChart(
-    detailData: String,
     currentIndex: Int,
     modifier: Modifier = Modifier
 ) {
@@ -137,6 +138,7 @@ fun DrawLineChart(
         val data = VegetableRepositoryList.getVegeRepositoryList()
         var pointX: Float? = null
         var pointY: Float? = null
+        var detailData = ""
 
         // 初期化
         val minX = data.minOf { formatter.stringToEpochTime(it.date) }
@@ -150,9 +152,10 @@ fun DrawLineChart(
         data.forEachIndexed { index, item ->
             val x = (formatter.stringToEpochTime(item.date) - minX) * scaleX
             val y = (size.height - (item.size - minY) * scaleY).toFloat()
-            if (currentIndex + 1 == index) {
+            if (currentIndex == index) {
                 pointX = x
                 pointY = y
+                detailData = "${item.date}\n${item.getDiffDatetime(data.first().date)}日目\n${item.size}cm"
             }
 
             // 最初ならパスの開始点, それ以外は直線を描画していく
@@ -249,7 +252,10 @@ fun ImageCarousel(
 }
 
 @Composable
-fun DetailData(modifier: Modifier = Modifier) {
+fun DetailData(
+    memoData: String,
+    modifier: Modifier = Modifier
+) {
     Row(
         modifier = modifier
             .padding(start = 24.dp, end = 24.dp, bottom = 12.dp),
@@ -257,6 +263,7 @@ fun DetailData(modifier: Modifier = Modifier) {
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         MemoData(
+            memoData = memoData,
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.onSurface.copy(0.05f))
                 .padding(start = 12.dp, end = 12.dp)
@@ -266,7 +273,10 @@ fun DetailData(modifier: Modifier = Modifier) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MemoData(modifier: Modifier = Modifier) {
+fun MemoData(
+    memoData: String,
+    modifier: Modifier = Modifier
+) {
     Scaffold(
         topBar = {
             MemoTopBar(
@@ -275,12 +285,13 @@ fun MemoData(modifier: Modifier = Modifier) {
             )
         }
     ) {
-        LazyColumn(modifier = modifier.padding(it)) {
+        LazyColumn(modifier = modifier.padding(it).fillMaxSize()) {
             items(1) {
                 Text(
-                    text = "こんにちは,".repeat(30),
+                    text = memoData,
                     modifier = Modifier
                         .fillMaxSize()
+                        .padding(top = 4.dp)
                 )
             }
         }

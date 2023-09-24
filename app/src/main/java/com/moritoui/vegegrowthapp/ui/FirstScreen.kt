@@ -5,11 +5,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -30,14 +33,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.moritoui.vegegrowthapp.R
 import com.moritoui.vegegrowthapp.model.VegeCategory
 import com.moritoui.vegegrowthapp.model.VegeItem
-import com.moritoui.vegegrowthapp.model.VegeItemList
 import com.moritoui.vegegrowthapp.navigation.AddItem
 import com.moritoui.vegegrowthapp.navigation.NavigationAppTopBar
 import com.moritoui.vegegrowthapp.navigation.Screen
+import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,7 +58,7 @@ fun FirstScreen(
                 title = "管理画面"
             ) {
                 AddItem(onAddClick = {
-                    viewModel.updateState(isOpenDialog = true, inputText = "")
+                    viewModel.openDialog()
                 })
             }
         }
@@ -67,8 +69,8 @@ fun FirstScreen(
                     .fillMaxWidth()
                     .padding(start = 24.dp, top = 48.dp, end = 24.dp)
             ) {
-                itemsIndexed(VegeItemList.getVegeList()) { index, item ->
-                    VegeItem(item = item, onClick = {
+                itemsIndexed(uiState.vegeItemList) { index, item ->
+                    VegeItemElement(item = item, onClick = {
                         navController.navigate("${Screen.TakePictureScreen.route}/$index") {
                             popUpTo(navController.graph.startDestinationId)
                         }
@@ -80,35 +82,45 @@ fun FirstScreen(
     AddAlertWindow(
         isOpenDialog = uiState.isOpenDialog,
         inputText = uiState.inputText,
-        onValueChange = { viewModel.updateState(inputText = it) },
-        onConfirmClick = { viewModel.updateState(isOpenDialog = false) },
-        onDismissClick = { viewModel.updateState(isOpenDialog = false) }
+        onValueChange = { viewModel.changeInputText(inputText = it) },
+        onConfirmClick = { viewModel.saveVegeItemListData() },
+        onDismissClick = { viewModel.closeDialog() }
     )
 }
 
 @Composable
-fun VegeItem(item: VegeItem, onClick: () -> Unit = { }, modifier: Modifier = Modifier) {
+fun VegeItemElement(item: VegeItem, onClick: () -> Unit = { }, modifier: Modifier = Modifier) {
     val categoryIcon = when (item.category) {
         VegeCategory.Leaf -> painterResource(id = R.drawable.leaf)
         VegeCategory.Flower -> painterResource(id = R.drawable.flower)
+        else -> null
     }
     val iconTint = when (item.category) {
         VegeCategory.Leaf -> Color.Green
         VegeCategory.Flower -> Color.Magenta
+        else -> null
     }
     Row(
         modifier = modifier
             .fillMaxWidth()
             .height(48.dp)
             .clickable(onClick = { onClick() }),
-        horizontalArrangement = Arrangement.Start,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
     ) {
-        Icon(
-            painter = categoryIcon,
-            tint = iconTint,
-            contentDescription = null
-        )
+        if (categoryIcon != null && iconTint != null) {
+            Icon(
+                painter = categoryIcon,
+                tint = iconTint,
+                contentDescription = null
+            )
+        } else {
+            Icon(
+                Icons.Filled.Info,
+                contentDescription = null,
+                modifier = Modifier.aspectRatio(1f / 1f)
+            )
+        }
         Text(
             text = item.name,
             modifier = Modifier
@@ -121,7 +133,7 @@ fun VegeItem(item: VegeItem, onClick: () -> Unit = { }, modifier: Modifier = Mod
             .fillMaxWidth()
             .background(Color.LightGray)
             .height(0.5.dp)
-    ) {}
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -168,5 +180,13 @@ fun AddAlertWindow(
 @Preview
 @Composable
 fun FirstScreenPreview() {
-    FirstScreen(navController = rememberNavController())
+//    FirstScreen(navController = rememberNavController())
+    VegeItemElement(
+        item = VegeItem(
+            name = "aiueo",
+            category = VegeCategory.None,
+            uuid = UUID.randomUUID().toString()
+        ),
+        modifier = Modifier.background(Color.White)
+    )
 }

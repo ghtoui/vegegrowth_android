@@ -22,7 +22,7 @@ class VegetableRepositoryFileManager(
     private val imageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
 
     init {
-        this.vegeItem = VegeItemList.getVegeList()[index]
+        this.vegeItem = getVegeItemList()[index]
         this.vegeRepositoryList = readVegeRepositoryList(readJsonData(vegeItem.uuid))
         readJsonData(fileName = "vegeItemList")
     }
@@ -62,7 +62,6 @@ class VegetableRepositoryFileManager(
     }
 
     fun readVegeRepositoryList(json: String?): MutableList<VegetableRepository> {
-        return VegetableRepositoryList.getVegeRepositoryList().toMutableList()
         return when (val vegeRepositoryList = parseFromJson<List<VegetableRepository>>(json)) {
             null -> mutableListOf()
             else -> vegeRepositoryList.toMutableList()

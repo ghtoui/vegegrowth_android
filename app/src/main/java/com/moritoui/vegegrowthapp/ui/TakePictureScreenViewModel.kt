@@ -21,7 +21,8 @@ data class TakePictureScreenUiState(
     val inputText: String = "",
     val isSuccessInputText: Boolean = false,
     val isBeforeInputText: Boolean = true,
-    val takePicImage: Bitmap? = null
+    val takePicImage: Bitmap? = null,
+    val isVisibleNavigateButton: Boolean = false
 )
 
 class TakePictureScreenViewModel constructor(
@@ -59,6 +60,7 @@ class TakePictureScreenViewModel constructor(
             currentState.copy(vegeName = this.vegeItem.name)
         }
         this.vegeRepositoryList = fileManager.getVegeRepositoryList()
+        updateState(isVisibleNavigateButton = vegeRepositoryList.isNotEmpty())
     }
 
     private fun updateState(
@@ -66,7 +68,8 @@ class TakePictureScreenViewModel constructor(
         inputText: String = _uiState.value.inputText,
         isSuccessInputText: Boolean = _uiState.value.isSuccessInputText,
         isBeforeInputText: Boolean = _uiState.value.isBeforeInputText,
-        takePicImage: Bitmap? = _uiState.value.takePicImage
+        takePicImage: Bitmap? = _uiState.value.takePicImage,
+        isVisibleNavigateButton: Boolean = _uiState.value.isVisibleNavigateButton
     ) {
         _uiState.update { currentState ->
             currentState.copy(
@@ -74,7 +77,8 @@ class TakePictureScreenViewModel constructor(
                 inputText = inputText,
                 isSuccessInputText = isSuccessInputText,
                 isBeforeInputText = isBeforeInputText,
-                takePicImage = takePicImage
+                takePicImage = takePicImage,
+                isVisibleNavigateButton = isVisibleNavigateButton
             )
         }
     }
@@ -99,6 +103,7 @@ class TakePictureScreenViewModel constructor(
             inputText = "",
             isBeforeInputText = true
         )
+        updateState(isVisibleNavigateButton = vegeRepositoryList.isNotEmpty())
     }
 
     fun registerVegeData() {

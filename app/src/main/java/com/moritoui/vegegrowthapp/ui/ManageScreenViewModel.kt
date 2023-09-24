@@ -19,7 +19,7 @@ data class ManageScreenUiState(
     val pagerCount: Int = 0,
     val vegeRepositoryList: List<VegetableRepository> = listOf(),
     val pagerState: PagerState = PagerState(),
-    val takePicList: List<Bitmap?> = mutableListOf()
+    val takePicList: List<Bitmap?> = mutableListOf(),
 )
 
 class ManageScreenViewModel constructor(
@@ -39,7 +39,7 @@ class ManageScreenViewModel constructor(
             applicationContext = applicationContext
         )
         this.vegeItem = fileManager.getVegeItem()
-        this.vegeRepositoryList = fileManager.parseFromJson(fileManager.readJsonData(vegeItem.uuid))
+        this.vegeRepositoryList = fileManager.readVegeRepositoryList(fileManager.readJsonData(vegeItem.uuid))
         updateState(
             pagerCount = vegeRepositoryList.size - 1,
             vegeRepositoryList = vegeRepositoryList,
@@ -51,13 +51,13 @@ class ManageScreenViewModel constructor(
     private fun updateState(
         pagerCount: Int = _uiState.value.pagerCount,
         vegeRepositoryList: List<VegetableRepository> = _uiState.value.vegeRepositoryList,
-        takePicList: List<Bitmap?> = _uiState.value.takePicList,
+        takePicList: List<Bitmap?> = _uiState.value.takePicList
     ) {
         _uiState.update { currentState ->
             currentState.copy(
                 pagerCount = pagerCount,
                 vegeRepositoryList = vegeRepositoryList,
-                takePicList = takePicList
+                takePicList = takePicList,
             )
         }
     }

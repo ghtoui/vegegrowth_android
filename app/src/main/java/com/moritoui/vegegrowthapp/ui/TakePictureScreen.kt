@@ -69,7 +69,8 @@ fun TakePicScreen(
         topBar = {
             NavigationAppTopBar(
                 navController = navController,
-                title = uiState.vegeName
+                title = uiState.vegeName,
+                isVisibleNavigationButton = uiState.isVisibleNavigateButton
             ) {
                 NavigateItem {
                     navController.navigate("${Screen.ManageVegeScreen.route}/${viewModel.getIndex()}") {
