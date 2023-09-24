@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,7 +42,9 @@ import com.moritoui.vegegrowthapp.navigation.Screen
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FirstScreen(
-    viewModel: FirstScreenViewModel = viewModel(),
+    viewModel: FirstScreenViewModel = viewModel(
+        factory = FirstScreenViewModel.FirstScreenFactory(applicationContext = LocalContext.current.applicationContext)
+    ),
     navController: NavHostController
 ) {
     val uiState by viewModel.uiState.collectAsState()

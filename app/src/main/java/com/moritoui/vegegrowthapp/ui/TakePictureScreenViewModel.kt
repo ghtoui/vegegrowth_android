@@ -5,9 +5,9 @@ import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.moritoui.vegegrowthapp.model.DateFormatter
-import com.moritoui.vegegrowthapp.model.FileManager
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegetableRepository
+import com.moritoui.vegegrowthapp.model.VegetableRepositoryFileManager
 import java.time.LocalDateTime
 import java.util.UUID
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,7 +29,7 @@ class TakePictureScreenViewModel constructor(
     applicationContext: Context
 ) : ViewModel() {
     private val dateFormatter = DateFormatter()
-    private val fileManager: FileManager
+    private val fileManager: VegetableRepositoryFileManager
 
     private var vegeRepositoryList: MutableList<VegetableRepository>
     private var vegeItem: VegeItem
@@ -50,7 +50,7 @@ class TakePictureScreenViewModel constructor(
     }
 
     init {
-        this.fileManager = FileManager(
+        this.fileManager = VegetableRepositoryFileManager(
             index = index,
             applicationContext = applicationContext
         )
@@ -114,7 +114,7 @@ class TakePictureScreenViewModel constructor(
                 date = datetime
             )
         )
-        fileManager.saveData(vegeRepositoryList = vegeRepositoryList, takePicImage = _uiState.value.takePicImage)
+        fileManager.saveVegeRepositoryData(vegeRepositoryList = vegeRepositoryList, takePicImage = _uiState.value.takePicImage)
         resetState()
     }
 

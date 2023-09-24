@@ -6,9 +6,9 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.pager.PagerState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.moritoui.vegegrowthapp.model.FileManager
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegetableRepository
+import com.moritoui.vegegrowthapp.model.VegetableRepositoryFileManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,7 +26,7 @@ class ManageScreenViewModel constructor(
     index: Int,
     applicationContext: Context
 ) : ViewModel() {
-    private val fileManager: FileManager
+    private val fileManager: VegetableRepositoryFileManager
     private var vegeItem: VegeItem
     private var vegeRepositoryList: MutableList<VegetableRepository>
 
@@ -34,12 +34,12 @@ class ManageScreenViewModel constructor(
     val uiState: StateFlow<ManageScreenUiState> = _uiState.asStateFlow()
 
     init {
-        this.fileManager = FileManager(
+        this.fileManager = VegetableRepositoryFileManager(
             index = index,
             applicationContext = applicationContext
         )
         this.vegeItem = fileManager.getVegeItem()
-        this.vegeRepositoryList = fileManager.parseFromJson(fileManager.readJsonData())
+        this.vegeRepositoryList = fileManager.parseFromJson(fileManager.readJsonData(vegeItem.uuid))
         updateState(
             pagerCount = vegeRepositoryList.size - 1,
             vegeRepositoryList = vegeRepositoryList,
