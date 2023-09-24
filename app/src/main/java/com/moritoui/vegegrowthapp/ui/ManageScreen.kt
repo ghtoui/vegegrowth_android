@@ -150,7 +150,7 @@ fun DrawLineChart(
         data.forEachIndexed { index, item ->
             val x = (formatter.stringToEpochTime(item.date) - minX) * scaleX
             val y = (size.height - (item.size - minY) * scaleY).toFloat()
-            if (currentIndex == index) {
+            if (currentIndex + 1 == index) {
                 pointX = x
                 pointY = y
             }

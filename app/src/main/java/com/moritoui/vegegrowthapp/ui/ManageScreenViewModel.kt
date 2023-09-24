@@ -1,6 +1,7 @@
 package com.moritoui.vegegrowthapp.ui
 
 import android.content.Context
+import android.graphics.Bitmap
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.pager.PagerState
 import androidx.lifecycle.ViewModel
@@ -17,7 +18,8 @@ import kotlinx.coroutines.flow.update
 data class ManageScreenUiState(
     val pagerCount: Int = 0,
     val vegeRepositoryList: List<VegetableRepository> = listOf(),
-    val pagerState: PagerState = PagerState()
+    val pagerState: PagerState = PagerState(),
+    val takePicList: List<Bitmap?> = mutableListOf()
 )
 
 class ManageScreenViewModel constructor(
@@ -40,19 +42,22 @@ class ManageScreenViewModel constructor(
         this.vegeRepositoryList = fileManager.parseFromJson(fileManager.readJsonData())
         updateState(
             pagerCount = vegeRepositoryList.size - 1,
-            vegeRepositoryList = vegeRepositoryList
+            vegeRepositoryList = vegeRepositoryList,
+            takePicList = fileManager.getImageList()
         )
     }
 
     @OptIn(ExperimentalFoundationApi::class)
     private fun updateState(
         pagerCount: Int = _uiState.value.pagerCount,
-        vegeRepositoryList: List<VegetableRepository> = _uiState.value.vegeRepositoryList
+        vegeRepositoryList: List<VegetableRepository> = _uiState.value.vegeRepositoryList,
+        takePicList: List<Bitmap?> = _uiState.value.takePicList,
     ) {
         _uiState.update { currentState ->
             currentState.copy(
                 pagerCount = pagerCount,
-                vegeRepositoryList = vegeRepositoryList
+                vegeRepositoryList = vegeRepositoryList,
+                takePicList = takePicList
             )
         }
     }
