@@ -1,6 +1,5 @@
 package com.moritoui.vegegrowthapp.navigation
 
-import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -13,12 +12,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.moritoui.vegegrowthapp.ui.FirstScreen
+import com.moritoui.vegegrowthapp.ui.ManageScreen
 import com.moritoui.vegegrowthapp.ui.TakePicScreen
 
 sealed class Screen(
@@ -49,7 +50,9 @@ fun Navigation(
             )
         }
         composable(Screen.ManageVegeScreen.route) {
-            Text("manageView", modifier = Modifier.safeDrawingPadding())
+            ManageScreen(
+                navController = navController
+            )
         }
     }
 }
@@ -74,7 +77,7 @@ fun NavigationAppTopBar(
             navigationIcon = {
                 if (navBackStackEntry?.destination?.route != Screen.FirstScreen.route) {
                     IconButton(onClick = {
-                        navController.popBackStack()
+                        navController.navigateUp()
                     }) {
                         Icon(
                             Icons.Filled.ArrowBack,
@@ -88,4 +91,13 @@ fun NavigationAppTopBar(
             }
         )
     }
+}
+
+@Preview
+@Composable
+fun NavigationAppTopBarPreview() {
+    NavigationAppTopBar(
+        navController = rememberNavController(),
+        title = "preview"
+    )
 }

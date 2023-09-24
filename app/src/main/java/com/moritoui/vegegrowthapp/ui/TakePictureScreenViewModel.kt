@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.moritoui.vegegrowthapp.model.DateFormatter
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegeItemList
 import com.moritoui.vegegrowthapp.model.VegetableRepository
@@ -17,6 +18,7 @@ import java.io.FileReader
 import java.io.FileWriter
 import java.io.IOException
 import java.io.OutputStream
+import java.time.LocalDateTime
 import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,6 +43,7 @@ class TakePictureScreenViewModel constructor(
     index: Int,
     private val applicationContext: Context
 ) : ViewModel() {
+    private val dateFormatter = DateFormatter()
     private var vegeList: MutableList<VegetableRepository> = mutableListOf()
     private var vegeItem: VegeItem
 
@@ -110,7 +113,8 @@ class TakePictureScreenViewModel constructor(
     }
 
     fun registerVegeData() {
-        // そもそもボタンが押せないようにしているから、inputTextとtakePicImageはnullにならないはず
+        val datetime = dateFormatter.dateToString(LocalDateTime.now())
+        // ボタンが押せないようにしているから、inputTextとtakePicImageはnullにならないはず
         vegeList.add(
             VegetableRepository(
                 itemUuid = vegeItem.uuid.toString(),
@@ -118,6 +122,7 @@ class TakePictureScreenViewModel constructor(
                 name = vegeItem.name,
                 size = _uiState.value.inputText.toDouble(),
                 memo = "",
+                date = datetime
             )
         )
         saveData()
