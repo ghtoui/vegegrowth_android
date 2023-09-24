@@ -11,4 +11,11 @@ data class VegetableRepository(
     val size: Double,
     var memo: String,
     val date: String
-)
+) {
+    fun getDiffDatetime(baseDatetime: String): String {
+        val dateFormatter = DateFormatter()
+        val targetEpochTime = dateFormatter.stringToEpochTime(this.date)
+        val baseEpochTime = dateFormatter.stringToEpochTime(baseDatetime)
+        return dateFormatter.diffEpochTime(baseEpochTime = baseEpochTime, targetEpochTime = targetEpochTime)
+    }
+}
