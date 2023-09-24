@@ -103,7 +103,6 @@ class TakePictureScreenViewModel constructor(
             inputText = "",
             isBeforeInputText = true
         )
-        updateState(isVisibleNavigateButton = vegeRepositoryList.isNotEmpty())
     }
 
     fun registerVegeData() {
@@ -121,6 +120,7 @@ class TakePictureScreenViewModel constructor(
         )
         fileManager.saveVegeRepositoryData(vegeRepositoryList = vegeRepositoryList, takePicImage = _uiState.value.takePicImage)
         resetState()
+        updateState(isVisibleNavigateButton = vegeRepositoryList.isNotEmpty())
     }
 
     fun setImage(takePicImage: Bitmap?) {

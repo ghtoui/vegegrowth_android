@@ -111,7 +111,6 @@ fun VegeItemElement(
     onClick: () -> Unit = { },
     modifier: Modifier = Modifier
 ) {
-    var isDelete by rememberSaveable { mutableStateOf(false) }
     val categoryIcon = when (item.category) {
         VegeCategory.Leaf -> painterResource(id = R.drawable.leaf)
         VegeCategory.Flower -> painterResource(id = R.drawable.flower)
@@ -122,6 +121,7 @@ fun VegeItemElement(
         VegeCategory.Flower -> Color.Magenta
         else -> null
     }
+    var isDelete by rememberSaveable { mutableStateOf(false) }
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -173,6 +173,8 @@ fun VegeItemElement(
                     )
                 }
             }
+        } else {
+            isDelete = false
         }
     }
     Box(
