@@ -1,6 +1,7 @@
 package com.moritoui.vegegrowthapp.ui
 
 import android.content.Context
+import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.moritoui.vegegrowthapp.model.FileManager
@@ -15,17 +16,21 @@ import kotlinx.coroutines.flow.update
 data class FirstScreenUiState(
     val isOpenDialog: Boolean = false,
     val inputText: String = "",
-    val vegeItemList: MutableList<VegeItem> = mutableListOf()
+    val isDeleteMode: Boolean = false
 )
 
 class FirstScreenViewModel(
     applicationContext: Context
 ) : ViewModel() {
     private val fileManger: FileManager
-    private var vegeItemList: MutableList<VegeItem>
+    private var deleteList: MutableList<VegeItem> = mutableListOf()
 
     private val _uiState = MutableStateFlow(FirstScreenUiState())
     val uiState: StateFlow<FirstScreenUiState> = _uiState.asStateFlow()
+
+    private var _vegeItemList: MutableList<VegeItem>
+    val vegeItemList: MutableList<VegeItem>
+        get() = _vegeItemList
 
     class FirstScreenFactory(
         private val applicationContext: Context
@@ -38,20 +43,19 @@ class FirstScreenViewModel(
     }
     init {
         fileManger = FileManager(applicationContext = applicationContext)
-        this.vegeItemList = fileManger.getVegeItemList()
-        updateState(vegeItemList = vegeItemList)
+        this._vegeItemList = fileManger.getVegeItemList().toMutableStateList()
     }
 
     private fun updateState(
         isOpenDialog: Boolean = _uiState.value.isOpenDialog,
         inputText: String = _uiState.value.inputText,
-        vegeItemList: MutableList<VegeItem> = _uiState.value.vegeItemList
+        isDeleteMode: Boolean = _uiState.value.isDeleteMode
     ) {
         _uiState.update { currentState ->
             currentState.copy(
                 isOpenDialog = isOpenDialog,
                 inputText = inputText,
-                vegeItemList = vegeItemList
+                isDeleteMode = isDeleteMode
             )
         }
     }
@@ -69,14 +73,43 @@ class FirstScreenViewModel(
     }
 
     fun saveVegeItemListData() {
-        vegeItemList.add(
+        _vegeItemList.add(
             VegeItem(
                 name = _uiState.value.inputText,
                 category = VegeCategory.None,
                 uuid = UUID.randomUUID().toString()
             )
         )
-        fileManger.saveVegeItemListData(vegeItemList = vegeItemList)
+        fileManger.saveVegeItemListData(vegeItemList = _vegeItemList)
         closeDialog()
+    }
+    
+    fun changeDeleteMode() {
+        if (_uiState.value.isDeleteMode) {
+            updateState(isDeleteMode = false)
+            deleteItemList()
+        } else {
+            updateState(isDeleteMode = true)
+        }
+    }
+
+    private fun deleteItemList() {
+        deleteList.forEach { item ->
+            _vegeItemList.remove(item)
+        }
+        deleteList = mutableListOf()
+        fileManger.saveVegeItemListData(vegeItemList = vegeItemList)
+    }
+
+    fun deleteItem(item: VegeItem, isDelete: Boolean) {
+        if (!isDelete) {
+            deleteList.add(item)
+        } else {
+            deleteList.remove(item)
+        }
+    }
+
+    fun resetDeleteItem() {
+        deleteList = mutableListOf()
     }
 }

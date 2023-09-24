@@ -1,7 +1,11 @@
 package com.moritoui.vegegrowthapp.navigation
 
+import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -9,15 +13,14 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.moritoui.vegegrowthapp.ui.FirstScreen
@@ -74,8 +77,6 @@ fun NavigationAppTopBar(
     title: String,
     actions: @Composable () -> Unit = { }
 ) {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-
     NavigationBar {
         CenterAlignedTopAppBar(
             title = {
@@ -85,15 +86,11 @@ fun NavigationAppTopBar(
                 )
             },
             navigationIcon = {
-                if (navBackStackEntry?.destination?.route != Screen.FirstScreen.route) {
-                    IconButton(onClick = {
-                        navController.navigateUp()
-                    }) {
-                        Icon(
-                            Icons.Filled.ArrowBack,
-                            contentDescription = "戻る"
-                        )
-                    }
+                IconButton(onClick = { navController.navigateUp() }) {
+                    Icon(
+                        Icons.Filled.ArrowBack,
+                        contentDescription = "戻る"
+                    )
                 }
             },
             actions = {
@@ -105,6 +102,68 @@ fun NavigationAppTopBar(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun FirstNavigationAppTopBar(
+    isVisibleNavigationButton: Boolean = true,
+    title: String,
+    onNavigationIconClick: () -> Unit,
+    onCanselIconClick: () -> Unit,
+    isDeleteMode: Boolean,
+    actions: @Composable () -> Unit = { }
+) {
+    NavigationBar {
+        CenterAlignedTopAppBar(
+            title = {
+                Text(
+                    text = title,
+                    textAlign = TextAlign.Center
+                )
+            },
+            navigationIcon = {
+                Row() {
+                    if (!isDeleteMode) {
+                        Icon(
+                            Icons.Filled.Info,
+                            contentDescription = null,
+                            tint = Color.Transparent
+                        )
+                        IconButton(onClick = { onNavigationIconClick() }) {
+                            Icon(
+                                Icons.Filled.Delete,
+                                contentDescription = "削除"
+                            )
+                        }
+                    } else {
+                        Row() {
+                            IconButton(onClick = {
+                                onCanselIconClick()
+                                onNavigationIconClick()
+                            }) {
+                                Icon(
+                                    Icons.Filled.Close,
+                                    contentDescription = "キャンセル"
+                                )
+                            }
+                            IconButton(onClick = { onNavigationIconClick() }) {
+                                Icon(
+                                    Icons.Filled.Delete,
+                                    contentDescription = "削除",
+                                    tint = Color.Red
+                                )
+                            }
+                        }
+                    }
+                }
+            },
+            actions = {
+                if (isVisibleNavigationButton) {
+                    actions()
+                }
+            }
+        )
+    }
+}
 @Preview
 @Composable
 fun NavigationAppTopBarPreview() {
