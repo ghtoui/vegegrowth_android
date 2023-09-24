@@ -14,10 +14,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.moritoui.vegegrowthapp.ui.FirstScreen
 import com.moritoui.vegegrowthapp.ui.ManageScreen
 import com.moritoui.vegegrowthapp.ui.TakePicScreen
@@ -43,13 +45,19 @@ fun Navigation(
         composable(Screen.FirstScreen.route) {
             FirstScreen(navController = navController)
         }
-        composable("${Screen.TakePictureScreen.route}/{index}") { backStackEntry ->
+        composable(
+            "${Screen.TakePictureScreen.route}/{index}",
+            arguments = listOf(navArgument("index") { type = NavType.IntType })
+        ) { backStackEntry ->
             TakePicScreen(
                 index = backStackEntry.arguments?.getInt("index") ?: 0,
                 navController = navController
             )
         }
-        composable("${Screen.ManageVegeScreen.route}/{index}") { backStackEntry ->
+        composable(
+            "${Screen.ManageVegeScreen.route}/{index}",
+            arguments = listOf(navArgument("index") { type = NavType.IntType })
+        ) { backStackEntry ->
             ManageScreen(
                 index = backStackEntry.arguments?.getInt("index") ?: 0,
                 navController = navController
@@ -61,6 +69,7 @@ fun Navigation(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavigationAppTopBar(
+    isVisibleNavigationButton: Boolean = true,
     navController: NavHostController,
     title: String,
     actions: @Composable () -> Unit = { }
@@ -88,7 +97,9 @@ fun NavigationAppTopBar(
                 }
             },
             actions = {
-                actions()
+                if (isVisibleNavigationButton) {
+                    actions()
+                }
             }
         )
     }
@@ -99,6 +110,7 @@ fun NavigationAppTopBar(
 fun NavigationAppTopBarPreview() {
     NavigationAppTopBar(
         navController = rememberNavController(),
-        title = "preview"
+        title = "preview",
+        isVisibleNavigationButton = true
     )
 }
