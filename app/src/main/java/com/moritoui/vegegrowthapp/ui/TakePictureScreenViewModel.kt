@@ -31,7 +31,7 @@ class TakePictureScreenViewModel constructor(
     private val dateFormatter = DateFormatter()
     private val fileManager: FileManager
 
-    private var vegeList: MutableList<VegetableRepository> = mutableListOf()
+    private var vegeRepositoryList: MutableList<VegetableRepository>
     private var vegeItem: VegeItem
 
     private val _uiState = MutableStateFlow(TakePictureScreenUiState())
@@ -58,7 +58,7 @@ class TakePictureScreenViewModel constructor(
         _uiState.update { currentState ->
             currentState.copy(vegeName = this.vegeItem.name)
         }
-        vegeList = fileManager.parseFromJson(fileManager.readJsonData())
+        this.vegeRepositoryList = fileManager.getVegeRepositoryList()
     }
 
     private fun updateState(
@@ -104,7 +104,7 @@ class TakePictureScreenViewModel constructor(
     fun registerVegeData() {
         val datetime = dateFormatter.dateToString(LocalDateTime.now())
         // ボタンが押せないようにしているから、inputTextとtakePicImageはnullにならないはず
-        vegeList.add(
+        vegeRepositoryList.add(
             VegetableRepository(
                 itemUuid = vegeItem.uuid.toString(),
                 uuid = UUID.randomUUID().toString(),
@@ -114,7 +114,7 @@ class TakePictureScreenViewModel constructor(
                 date = datetime
             )
         )
-        fileManager.saveData(vegeList = vegeList, takePicImage = _uiState.value.takePicImage)
+        fileManager.saveData(vegeRepositoryList = vegeRepositoryList, takePicImage = _uiState.value.takePicImage)
         resetState()
     }
 
