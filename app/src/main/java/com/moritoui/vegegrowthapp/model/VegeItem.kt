@@ -1,11 +1,9 @@
 package com.moritoui.vegegrowthapp.model
 
-import java.util.UUID
-
 data class VegeItem(
     val name: String,
     val category: VegeCategory,
-    val uuid: UUID
+    val uuid: String
 )
 
 enum class VegeCategory {
