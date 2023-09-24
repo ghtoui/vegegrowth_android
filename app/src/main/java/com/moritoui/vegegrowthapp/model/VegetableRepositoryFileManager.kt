@@ -12,8 +12,6 @@ import java.io.FileWriter
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 
 class VegetableRepositoryFileManager(
     index: Int,
@@ -25,7 +23,7 @@ class VegetableRepositoryFileManager(
 
     init {
         this.vegeItem = VegeItemList.getVegeList()[index]
-        this.vegeRepositoryList = parseFromJson(readJsonData(vegeItem.uuid))
+        this.vegeRepositoryList = readVegeRepositoryList(readJsonData(vegeItem.uuid))
         readJsonData(fileName = "vegeItemList")
     }
 
@@ -41,12 +39,8 @@ class VegetableRepositoryFileManager(
         val jsonFileName = "${vegeItem.uuid}.json"
         val jsonFilePath = File(applicationContext.filesDir, jsonFileName)
         FileWriter(jsonFilePath).use { stream ->
-            stream.write(parseToJson(vegeRepositoryList = vegeRepositoryList))
+            stream.write(parseToJson(targetData = vegeRepositoryList))
         }
-    }
-
-    private fun parseToJson(vegeRepositoryList: List<VegetableRepository>): String {
-        return Json.encodeToString(vegeRepositoryList)
     }
 
     fun getImageList(): List<Bitmap?> {
@@ -67,9 +61,12 @@ class VegetableRepositoryFileManager(
         return takePicImageList
     }
 
-    override fun parseFromJson(json: String?): MutableList<VegetableRepository> {
+    fun readVegeRepositoryList(json: String?): MutableList<VegetableRepository> {
         return VegetableRepositoryList.getVegeRepositoryList().toMutableList()
-        return super.parseFromJson(json)
+        return when (val vegeRepositoryList = parseFromJson<List<VegetableRepository>>(json)) {
+            null -> mutableListOf()
+            else -> vegeRepositoryList.toMutableList()
+        }
     }
     fun getVegeItem(): VegeItem {
         return vegeItem
