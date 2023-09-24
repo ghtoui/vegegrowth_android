@@ -83,7 +83,7 @@ class FirstScreenViewModel(
         fileManger.saveVegeItemListData(vegeItemList = _vegeItemList)
         closeDialog()
     }
-    
+
     fun changeDeleteMode() {
         if (_uiState.value.isDeleteMode) {
             updateState(isDeleteMode = false)
