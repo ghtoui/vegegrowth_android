@@ -11,7 +11,9 @@ data class ManageUiState(
     val pagerCount: Int = 0,
     val vegeRepositoryList: List<VegetableRepository> = listOf(),
     val pagerState: PagerState = PagerState(),
-    val isOpenImageBottomSheet: Boolean = false
+    val isOpenImageBottomSheet: Boolean = false,
+    val inputMemoText: String = "",
+    val isOpenMemoEditorBottomSheet: Boolean = false
 )
 interface ManageViewModel {
     val uiState: StateFlow<ManageUiState>
@@ -21,4 +23,11 @@ interface ManageViewModel {
     suspend fun moveImage(index: Int) { }
 
     fun changeOpenImageBottomSheet() { }
+    fun changeOpenMemoEditorBottomSheet() { }
+
+    fun changeMemoText(inputText: String) { }
+
+    fun cancelEditMemo() { }
+
+    fun saveEditMemo() { }
 }

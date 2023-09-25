@@ -27,7 +27,7 @@ class VegetableRepositoryFileManager(
         readJsonData(fileName = "vegeItemList")
     }
 
-    fun saveVegeRepositoryData(
+    fun saveVegeRepositoryAndImage(
         vegeRepositoryList: List<VegetableRepository>,
         takePicImage: Bitmap?
     ) {
@@ -36,6 +36,10 @@ class VegetableRepositoryFileManager(
         val outputStream: OutputStream = FileOutputStream(imageFilePath)
         takePicImage?.compress(Bitmap.CompressFormat.JPEG, 50, outputStream)
 
+        saveVegeRepository(vegeRepositoryList = vegeRepositoryList)
+    }
+
+    fun saveVegeRepository(vegeRepositoryList: List<VegetableRepository>) {
         val jsonFileName = "${vegeItem.uuid}.json"
         val jsonFilePath = File(applicationContext.filesDir, jsonFileName)
         FileWriter(jsonFilePath).use { stream ->

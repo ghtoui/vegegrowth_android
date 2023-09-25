@@ -46,14 +46,18 @@ class ManageScreenViewModel(
         pagerCount: Int = _uiState.value.pagerCount,
         vegeRepositoryList: List<VegetableRepository> = _uiState.value.vegeRepositoryList,
         isOpenImageBottomSheet: Boolean = _uiState.value.isOpenImageBottomSheet,
-        pagerState: PagerState = _uiState.value.pagerState
+        pagerState: PagerState = _uiState.value.pagerState,
+        inputMemoText: String = _uiState.value.inputMemoText,
+        isOpenMemoEditorBottomSheet: Boolean = _uiState.value.isOpenMemoEditorBottomSheet
     ) {
         _uiState.update { currentState ->
             currentState.copy(
                 pagerCount = pagerCount,
                 vegeRepositoryList = vegeRepositoryList,
                 isOpenImageBottomSheet = isOpenImageBottomSheet,
-                pagerState = pagerState
+                pagerState = pagerState,
+                inputMemoText = inputMemoText,
+                isOpenMemoEditorBottomSheet = isOpenMemoEditorBottomSheet
             )
         }
     }
@@ -70,5 +74,34 @@ class ManageScreenViewModel(
             pagerState = _uiState.value.pagerState
         )
         this.takePicList = fileManager.getImageList().toMutableStateList()
+    }
+
+    override fun cancelEditMemo() {
+        updateState(
+            inputMemoText = "",
+            isOpenMemoEditorBottomSheet = false
+        )
+    }
+
+    override fun changeMemoText(inputText: String) {
+        updateState(inputMemoText = inputText)
+    }
+
+    override fun saveEditMemo() {
+        vegeRepositoryList[_uiState.value.pagerState.currentPage].memo = _uiState.value.inputMemoText
+        fileManager.saveVegeRepository(vegeRepositoryList = vegeRepositoryList)
+        updateState(
+            inputMemoText = "",
+            isOpenMemoEditorBottomSheet = false
+        )
+    }
+
+    override fun changeOpenMemoEditorBottomSheet() {
+        if (!_uiState.value.isOpenMemoEditorBottomSheet) {
+            updateState(inputMemoText = vegeRepositoryList[_uiState.value.pagerState.currentPage].memo)
+        }
+        updateState(
+            isOpenMemoEditorBottomSheet = !_uiState.value.isOpenMemoEditorBottomSheet
+        )
     }
 }
