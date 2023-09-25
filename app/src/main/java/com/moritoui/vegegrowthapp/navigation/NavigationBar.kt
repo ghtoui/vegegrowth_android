@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
@@ -25,6 +26,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.moritoui.vegegrowthapp.ui.FirstScreen
 import com.moritoui.vegegrowthapp.ui.ManageScreen
+import com.moritoui.vegegrowthapp.ui.ManageScreenViewModel
 import com.moritoui.vegegrowthapp.ui.TakePicScreen
 
 sealed class Screen(
@@ -62,8 +64,11 @@ fun Navigation(
             arguments = listOf(navArgument("index") { type = NavType.IntType })
         ) { backStackEntry ->
             ManageScreen(
-                index = backStackEntry.arguments?.getInt("index") ?: 0,
-                navController = navController
+                navController = navController,
+                viewModel = ManageScreenViewModel(
+                    index = backStackEntry.arguments?.getInt("index") ?: 0,
+                    applicationContext = LocalContext.current.applicationContext
+                )
             )
         }
     }

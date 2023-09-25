@@ -3,9 +3,6 @@ package com.moritoui.vegegrowthapp.ui
 import android.content.Context
 import android.graphics.Bitmap
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.pager.PagerState
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegetableRepository
 import com.moritoui.vegegrowthapp.model.VegetableRepositoryFileManager
@@ -14,24 +11,17 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-@OptIn(ExperimentalFoundationApi::class)
-data class ManageScreenUiState(
-    val pagerCount: Int = 0,
-    val vegeRepositoryList: List<VegetableRepository> = listOf(),
-    val pagerState: PagerState = PagerState(),
-    val takePicList: List<Bitmap?> = mutableListOf(),
-)
 
-class ManageScreenViewModel constructor(
+class ManageScreenViewModel(
     index: Int,
     applicationContext: Context
-) : ViewModel() {
+) : ManageViewModel {
     private val fileManager: VegetableRepositoryFileManager
     private var vegeItem: VegeItem
     private var vegeRepositoryList: MutableList<VegetableRepository>
 
-    private val _uiState = MutableStateFlow(ManageScreenUiState())
-    val uiState: StateFlow<ManageScreenUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(ManageUiState())
+    override val uiState: StateFlow<ManageUiState> = _uiState.asStateFlow()
 
     init {
         this.fileManager = VegetableRepositoryFileManager(
@@ -41,7 +31,7 @@ class ManageScreenViewModel constructor(
         this.vegeItem = fileManager.getVegeItem()
         this.vegeRepositoryList = fileManager.readVegeRepositoryList(fileManager.readJsonData(vegeItem.uuid))
         updateState(
-            pagerCount = vegeRepositoryList.size - 1,
+            pagerCount = vegeRepositoryList.size,
             vegeRepositoryList = vegeRepositoryList,
             takePicList = fileManager.getImageList()
         )
@@ -62,20 +52,8 @@ class ManageScreenViewModel constructor(
         }
     }
 
-    class ManageScreenFactory(
-        private val index: Int,
-        private val applicationContext: Context
-    ) : ViewModelProvider.Factory {
-        @Suppress("unchecked_cast")
-        override fun <T : ViewModel> create(modelClass: Class<T>) =
-            ManageScreenViewModel(
-                index,
-                applicationContext
-            ) as T
-    }
-
     @OptIn(ExperimentalFoundationApi::class)
-    suspend fun moveImage(index: Int) {
+    override suspend fun moveImage(index: Int) {
         _uiState.value.pagerState.animateScrollToPage(index)
     }
 }
