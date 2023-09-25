@@ -109,7 +109,8 @@ fun ManageScreen(
                 pagerState = uiState.pagerState,
                 modifier = Modifier.weight(1f),
                 currentImageBarHeight = 5,
-                imageList = uiState.takePicList,
+                imageList = viewModel.takePicList,
+                onImageClick = { viewModel.changeOpenImageBottomSheet() },
                 // ボトムバークリックでも画像遷移できるように -> Coroutineが必要
                 onImageBottomBarClick = { scope.launch { viewModel.moveImage(it) } },
                 currentImageBarModifier = Modifier
@@ -121,6 +122,24 @@ fun ManageScreen(
                 modifier = Modifier.weight(0.7f)
             )
         }
+    }
+
+    if (uiState.isOpenImageBottomSheet) {
+        ImageBottomSheet(
+            pagerCount = uiState.pagerCount,
+//            pagerState = uiState.pagerState,
+            currentImageBarHeight = 5,
+            modifier = Modifier.padding(top = 16.dp, bottom = 48.dp),
+            imageList = viewModel.takePicList,
+            onDismissRequest = { viewModel.changeOpenImageBottomSheet() },
+            // ボトムバークリックでも画像遷移できるように -> Coroutineが必要
+            onImageBottomBarClick = { scope.launch { viewModel.moveImage(it) } },
+            currentImageBarModifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 72.dp, top = 12.dp, end = 72.dp, bottom = 12.dp)
+        )
+    } else {
+
     }
 }
 
@@ -195,6 +214,7 @@ fun ImageCarousel(
     pagerState: PagerState,
     modifier: Modifier = Modifier,
     currentImageBarHeight: Int,
+    onImageClick: () -> Unit,
     onImageBottomBarClick: (Int) -> Unit,
     currentImageBarModifier: Modifier = Modifier,
     imageList: List<Bitmap?>
@@ -227,6 +247,7 @@ fun ImageCarousel(
                         contentDescription = null,
                         modifier = Modifier
                             .aspectRatio(1f / 1f)
+                            .clickable{ onImageClick() }
                     )
                 }
             }
