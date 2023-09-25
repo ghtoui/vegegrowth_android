@@ -138,8 +138,6 @@ fun ManageScreen(
                 .fillMaxWidth()
                 .padding(start = 72.dp, top = 12.dp, end = 72.dp, bottom = 12.dp)
         )
-    } else {
-
     }
 }
 
@@ -247,7 +245,7 @@ fun ImageCarousel(
                         contentDescription = null,
                         modifier = Modifier
                             .aspectRatio(1f / 1f)
-                            .clickable{ onImageClick() }
+                            .clickable { onImageClick() }
                     )
                 }
             }
