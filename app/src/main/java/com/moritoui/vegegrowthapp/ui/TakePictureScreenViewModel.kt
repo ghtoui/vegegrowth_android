@@ -118,7 +118,7 @@ class TakePictureScreenViewModel constructor(
                 date = datetime
             )
         )
-        fileManager.saveVegeRepositoryAndImage(vegeRepositoryList = vegeRepositoryList, takePicImage = _uiState.value.takePicImage)
+        fileManager.saveVegeRepositoryData(vegeRepositoryList = vegeRepositoryList, takePicImage = _uiState.value.takePicImage)
         resetState()
         updateState(isVisibleNavigateButton = vegeRepositoryList.isNotEmpty())
     }

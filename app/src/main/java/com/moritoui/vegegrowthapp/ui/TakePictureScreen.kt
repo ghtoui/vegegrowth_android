@@ -51,6 +51,7 @@ import com.moritoui.vegegrowthapp.navigation.NavigateItem
 import com.moritoui.vegegrowthapp.navigation.NavigationAppTopBar
 import com.moritoui.vegegrowthapp.navigation.Screen
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TakePicScreen(
     index: Int,
