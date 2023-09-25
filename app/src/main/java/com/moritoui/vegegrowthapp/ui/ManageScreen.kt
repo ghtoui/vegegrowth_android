@@ -1,6 +1,5 @@
 package com.moritoui.vegegrowthapp.ui
 
-import android.graphics.Bitmap
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -41,10 +40,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.drawText
@@ -52,6 +49,7 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.moritoui.vegegrowthapp.R
@@ -64,8 +62,11 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun ManageScreen(
+    index: Int,
     navController: NavHostController,
-    viewModel: ManageViewModel
+    viewModel: ManageScreenViewModel = viewModel(
+        factory = ManageScreenViewModel.ManageScreenFactory(index, LocalContext.current.applicationContext)
+    )
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -109,7 +110,6 @@ fun ManageScreen(
                 pagerState = uiState.pagerState,
                 modifier = Modifier.weight(1f),
                 currentImageBarHeight = 5,
-                imageList = uiState.takePicList,
                 // ボトムバークリックでも画像遷移できるように -> Coroutineが必要
                 onImageBottomBarClick = { scope.launch { viewModel.moveImage(it) } },
                 currentImageBarModifier = Modifier
@@ -196,8 +196,7 @@ fun ImageCarousel(
     modifier: Modifier = Modifier,
     currentImageBarHeight: Int,
     onImageBottomBarClick: (Int) -> Unit,
-    currentImageBarModifier: Modifier = Modifier,
-    imageList: List<Bitmap?>
+    currentImageBarModifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier,
@@ -221,14 +220,12 @@ fun ImageCarousel(
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                if (imageList[pagerState.currentPage] != null) {
-                    Image(
-                        BitmapPainter(imageList[pagerState.currentPage]!!.asImageBitmap()),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .aspectRatio(1f / 1f)
-                    )
-                }
+                Image(
+                    painter = painterResource(id = R.drawable.leaf),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .aspectRatio(1f / 1f)
+                )
             }
         }
         Row(
@@ -288,11 +285,7 @@ fun MemoData(
             )
         }
     ) {
-        LazyColumn(
-            modifier = modifier
-                .padding(it)
-                .fillMaxSize()
-        ) {
+        LazyColumn(modifier = modifier.padding(it).fillMaxSize()) {
             items(1) {
                 Text(
                     text = memoData,
@@ -346,23 +339,9 @@ fun MemoTopBar(
 fun ManageScreenPreview() {
     VegegrowthAppTheme {
         val navController = rememberNavController()
-        val imageList: List<Painter> = listOf(
-            painterResource(id = R.drawable.leaf),
-            painterResource(id = R.drawable.flower),
-            painterResource(id = R.drawable.ic_launcher_background),
-            painterResource(id = R.drawable.ic_launcher_foreground),
-            painterResource(id = R.drawable.leaf),
-            painterResource(id = R.drawable.flower),
-            painterResource(id = R.drawable.ic_launcher_background),
-            painterResource(id = R.drawable.ic_launcher_foreground),
-            painterResource(id = R.drawable.ic_launcher_background),
-            painterResource(id = R.drawable.ic_launcher_foreground),
-        )
         ManageScreen(
-            navController = navController,
-            viewModel = TestManageViewModel(
-                index = 1
-            )
+            index = 1,
+            navController = navController
         )
     }
 }
