@@ -288,9 +288,11 @@ fun MemoData(
             )
         }
     ) {
-        LazyColumn(modifier = modifier
-            .padding(it)
-            .fillMaxSize()) {
+        LazyColumn(
+            modifier = modifier
+                .padding(it)
+                .fillMaxSize()
+        ) {
             items(1) {
                 Text(
                     text = memoData,

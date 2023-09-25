@@ -16,7 +16,5 @@ data class ManageUiState(
 interface ManageViewModel {
     val uiState: StateFlow<ManageUiState>
 
-    suspend fun moveImage(index: Int) {
-
-    }
+    suspend fun moveImage(index: Int) { }
 }
