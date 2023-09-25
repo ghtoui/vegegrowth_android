@@ -1,14 +1,16 @@
 package com.moritoui.vegegrowthapp.model
 
-import java.util.UUID
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class VegeItem(
     val name: String,
     val category: VegeCategory,
-    val uuid: UUID
+    val uuid: String
 )
 
 enum class VegeCategory {
     Leaf,
-    Flower
+    Flower,
+    None
 }
