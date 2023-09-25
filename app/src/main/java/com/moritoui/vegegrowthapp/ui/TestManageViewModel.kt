@@ -1,21 +1,20 @@
 package com.moritoui.vegegrowthapp.ui
 
-import android.content.Context
 import android.graphics.Bitmap
 import androidx.compose.foundation.ExperimentalFoundationApi
 import com.moritoui.vegegrowthapp.model.VegeItem
+import com.moritoui.vegegrowthapp.model.VegeItemList
 import com.moritoui.vegegrowthapp.model.VegetableRepository
-import com.moritoui.vegegrowthapp.model.VegetableRepositoryFileManager
+import com.moritoui.vegegrowthapp.model.VegetableRepositoryList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class ManageScreenViewModel(
+class TestManageViewModel(
     index: Int,
-    applicationContext: Context
 ) : ManageViewModel {
-    private val fileManager: VegetableRepositoryFileManager
+
     private var vegeItem: VegeItem
     private var vegeRepositoryList: MutableList<VegetableRepository>
 
@@ -23,16 +22,11 @@ class ManageScreenViewModel(
     override val uiState: StateFlow<ManageUiState> = _uiState.asStateFlow()
 
     init {
-        this.fileManager = VegetableRepositoryFileManager(
-            index = index,
-            applicationContext = applicationContext
-        )
-        this.vegeItem = fileManager.getVegeItem()
-        this.vegeRepositoryList = fileManager.readVegeRepositoryList(fileManager.readJsonData(vegeItem.uuid))
+        this.vegeItem = VegeItemList.getVegeList()[index]
+        this.vegeRepositoryList = VegetableRepositoryList.getVegeRepositoryList().toMutableList()
         updateState(
-            pagerCount = vegeRepositoryList.size,
+            pagerCount = vegeRepositoryList.size - 1,
             vegeRepositoryList = vegeRepositoryList,
-            takePicList = fileManager.getImageList()
         )
     }
 

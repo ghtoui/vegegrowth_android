@@ -31,7 +31,7 @@ class VegetableRepositoryFileManager(
         vegeRepositoryList: List<VegetableRepository>,
         takePicImage: Bitmap?
     ) {
-        val imageFileName = "${vegeItem.uuid}.jpg"
+        val imageFileName = "${vegeRepositoryList.last().uuid}.jpg"
         val imageFilePath = File(imageDirectory, imageFileName)
         val outputStream: OutputStream = FileOutputStream(imageFilePath)
         takePicImage?.compress(Bitmap.CompressFormat.JPEG, 50, outputStream)
