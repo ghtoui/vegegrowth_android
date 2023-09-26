@@ -132,9 +132,11 @@ fun ManageScreen(
             currentImageBarHeight = 5,
             modifier = Modifier.padding(top = 16.dp, bottom = 48.dp),
             imageList = viewModel.takePicList,
-            onDismissRequest = { viewModel.changeOpenImageBottomSheet() },
-            // ボトムバークリックでも画像遷移できるように -> Coroutineが必要
-            onImageBottomBarClick = { scope.launch { viewModel.moveImage(it) } },
+            onDismissRequest = {
+                scope.launch { viewModel.moveImage(it) }
+                viewModel.changeOpenImageBottomSheet()
+            },
+            index = uiState.pagerState.currentPage,
             currentImageBarModifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 72.dp, top = 12.dp, end = 72.dp, bottom = 12.dp)
