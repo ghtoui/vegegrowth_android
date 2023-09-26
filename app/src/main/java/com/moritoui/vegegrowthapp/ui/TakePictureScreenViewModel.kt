@@ -128,9 +128,13 @@ class TakePictureScreenViewModel constructor(
     fun setImage(takePicImage: Bitmap?) {
         val fileName = "tempImage"
         fileManager.saveImage(takePicImage = takePicImage, fileName = fileName)
-        val filePath = fileManager.getImagePath(fileName = fileName)
+        val filePath = getFilePath(fileName)
         val rotateTakePicture = rotateBitmapIfNeeded(filePath = filePath, bitmap = takePicImage!!)
         updateState(takePicImage = rotateTakePicture)
+    }
+
+    fun getFilePath(fileName: String): String {
+        return fileManager.getImagePath(fileName = fileName)
     }
 
     private fun rotateBitmapIfNeeded(filePath: String, bitmap: Bitmap): Bitmap {

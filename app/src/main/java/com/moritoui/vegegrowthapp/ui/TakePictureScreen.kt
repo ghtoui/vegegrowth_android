@@ -2,7 +2,6 @@ package com.moritoui.vegegrowthapp.ui
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.launch
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -63,6 +62,7 @@ fun TakePicScreen(
     val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
         viewModel.setImage(bitmap)
     }
+    var isCameraOpen by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -88,11 +88,18 @@ fun TakePicScreen(
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
             PictureView(image = uiState.takePicImage?.asImageBitmap())
-            TakeButton(onClick = { cameraLauncher.launch() })
+//            TakeButton(onClick = { cameraLauncher.launch() })
+            TakeButton(onClick = { isCameraOpen = true })
             if (uiState.takePicImage != null) {
                 RecordButton(onClick = { viewModel.openRegisterDialog() })
             }
         }
+    }
+
+    if (isCameraOpen) {
+        CameraScreen(
+            onCancelClick = { isCameraOpen = false }
+        )
     }
 
     RegisterAlertWindow(
