@@ -181,7 +181,7 @@ class TakePictureScreenViewModel constructor(
     fun getIndex(): Int {
         return index
     }
-    
+
     fun changeCameraOpenState() {
         updateState(isCameraOpen = !_uiState.value.isCameraOpen)
     }
