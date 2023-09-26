@@ -24,7 +24,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -132,9 +131,11 @@ fun ManageScreen(
             currentImageBarHeight = 5,
             modifier = Modifier.padding(top = 16.dp, bottom = 48.dp),
             imageList = viewModel.takePicList,
-            onDismissRequest = { viewModel.changeOpenImageBottomSheet() },
-            // ボトムバークリックでも画像遷移できるように -> Coroutineが必要
-            onImageBottomBarClick = { scope.launch { viewModel.moveImage(it) } },
+            onDismissRequest = {
+                scope.launch { viewModel.moveImage(it) }
+                viewModel.changeOpenImageBottomSheet()
+            },
+            index = uiState.pagerState.currentPage,
             currentImageBarModifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 72.dp, top = 12.dp, end = 72.dp, bottom = 12.dp)
@@ -143,7 +144,6 @@ fun ManageScreen(
 
     if (uiState.isOpenMemoEditorBottomSheet) {
         MemoEditorBottomSheet(
-            onDismissRequest = { viewModel.cancelEditMemo() },
             inputText = uiState.inputMemoText,
             onValueChange = { viewModel.changeMemoText(it) },
             onCancelButtonClick = { viewModel.cancelEditMemo() },
@@ -300,8 +300,6 @@ fun DetailData(
     Row(
         modifier = modifier
             .padding(start = 24.dp, end = 24.dp, bottom = 12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         MemoData(
             memoData = memoData,
@@ -313,7 +311,6 @@ fun DetailData(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MemoData(
     memoData: String,
@@ -330,8 +327,8 @@ fun MemoData(
     ) {
         LazyColumn(
             modifier = modifier
-                .padding(it)
                 .fillMaxSize()
+                .padding(top = it.calculateTopPadding())
         ) {
             items(1) {
                 Text(
