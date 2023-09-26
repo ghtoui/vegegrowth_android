@@ -26,6 +26,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -107,6 +108,7 @@ fun FirstScreen(
         selectCategory = uiState.selectCategory,
         isOpenDialog = uiState.isOpenDialog,
         inputText = uiState.inputText,
+        isAddAble = uiState.isAddAble,
         onValueChange = { viewModel.changeInputText(inputText = it) },
         onConfirmClick = { viewModel.saveVegeItemListData() },
         onDismissClick = { viewModel.closeDialog() },
@@ -122,16 +124,9 @@ fun VegeItemElement(
     onClick: () -> Unit = { },
     modifier: Modifier = Modifier
 ) {
-    val categoryIcon = when (item.category) {
-        VegeCategory.Leaf -> painterResource(id = R.drawable.potted_plant)
-        VegeCategory.Flower -> painterResource(id = R.drawable.flower)
-        else -> null
-    }
-    val iconTint = when (item.category) {
-        VegeCategory.Leaf -> Color.Green
-        VegeCategory.Flower -> Color.Magenta
-        else -> null
-    }
+    val categoryIcon = VegeCategoryMethod.getIcon(selectCategory = item.category)
+    val iconTint = VegeCategoryMethod.getTint(selectCategory = item.category)
+
     var isDelete by rememberSaveable { mutableStateOf(false) }
     Row(
         modifier = modifier
@@ -141,9 +136,9 @@ fun VegeItemElement(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
-        if (categoryIcon != null && iconTint != null) {
+        if (categoryIcon != null) {
             Icon(
-                painter = categoryIcon,
+                painter = painterResource(id = categoryIcon),
                 tint = iconTint,
                 contentDescription = null
             )
@@ -151,7 +146,7 @@ fun VegeItemElement(
             Icon(
                 Icons.Filled.Info,
                 contentDescription = null,
-                tint = Color.White,
+                tint = MaterialTheme.colorScheme.background,
                 modifier = Modifier.aspectRatio(1f / 1f)
             )
         }
@@ -202,6 +197,7 @@ fun AddAlertWindow(
     selectCategory: VegeCategory,
     isOpenDialog: Boolean,
     inputText: String,
+    isAddAble: Boolean,
     onValueChange: (String) -> Unit,
     onConfirmClick: () -> Unit,
     onDismissClick: () -> Unit,
@@ -230,10 +226,19 @@ fun AddAlertWindow(
                 }
             },
             confirmButton = {
-                TextButton(
-                    onClick = { onConfirmClick() }
-                ) {
-                    Text("追加")
+                if (isAddAble) {
+                    TextButton(
+                        onClick = { onConfirmClick() }
+                    ) {
+                        Text("追加")
+                    }
+                } else {
+                    TextButton(
+                        onClick = { }
+                    ) {
+                        Text("追加", color = Color.LightGray)
+                    }
+
                 }
             },
             dismissButton = {
@@ -322,6 +327,7 @@ fun FirstScreenPreview() {
         onConfirmClick = { },
         onDismissClick = { },
         selectCategory = VegeCategory.Leaf,
-        onDropDownMenuClick = {}
+        onDropDownMenuClick = {},
+        isAddAble = true
     )
 }
