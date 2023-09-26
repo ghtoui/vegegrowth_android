@@ -46,7 +46,8 @@ import java.util.concurrent.Executor
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun CameraScreen(
-    onCancelClick: () -> Unit
+    onCancelClick: () -> Unit,
+    onTakePicClick: (ImageProxy) -> Unit
 ) {
     val cameraPermissionState: PermissionState = rememberPermissionState(android.Manifest.permission.CAMERA)
 
@@ -61,7 +62,7 @@ fun CameraScreen(
 
         CameraPreview(
             onCancelClick = onCancelClick,
-            onTakePicClick = {}
+            onTakePicClick = onTakePicClick
         )
     } else {
         // In this screen you should notify the user that the permission
@@ -76,7 +77,7 @@ fun CameraScreen(
 @Composable
 fun CameraPreview(
     onCancelClick: () -> Unit,
-    onTakePicClick: () -> Unit,
+    onTakePicClick: (ImageProxy) -> Unit,
 ) {
     val context = LocalContext.current
     val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
@@ -91,12 +92,12 @@ fun CameraPreview(
                     .background(Color.Black)
                     .safeDrawingPadding(),
                 onTakePicClick = {
-                    onTakePicClick()
                     val mainExecutor: Executor = ContextCompat.getMainExecutor(context)
                     cameraController.takePicture(
                         mainExecutor,
                         object : ImageCapture.OnImageCapturedCallback() {
                             override fun onCaptureSuccess(image: ImageProxy) {
+                                onTakePicClick(image)
                             }
                         }
                     )

@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.media.ExifInterface
+import androidx.camera.core.ImageProxy
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.moritoui.vegegrowthapp.model.DateFormatter
@@ -24,7 +25,8 @@ data class TakePictureScreenUiState(
     val isSuccessInputText: Boolean = false,
     val isBeforeInputText: Boolean = true,
     val takePicImage: Bitmap? = null,
-    val isVisibleNavigateButton: Boolean = false
+    val isVisibleNavigateButton: Boolean = false,
+    val isCameraOpen: Boolean = false
 )
 
 class TakePictureScreenViewModel constructor(
@@ -71,7 +73,8 @@ class TakePictureScreenViewModel constructor(
         isSuccessInputText: Boolean = _uiState.value.isSuccessInputText,
         isBeforeInputText: Boolean = _uiState.value.isBeforeInputText,
         takePicImage: Bitmap? = _uiState.value.takePicImage,
-        isVisibleNavigateButton: Boolean = _uiState.value.isVisibleNavigateButton
+        isVisibleNavigateButton: Boolean = _uiState.value.isVisibleNavigateButton,
+        isCameraOpen: Boolean = _uiState.value.isCameraOpen
     ) {
         _uiState.update { currentState ->
             currentState.copy(
@@ -80,7 +83,8 @@ class TakePictureScreenViewModel constructor(
                 isSuccessInputText = isSuccessInputText,
                 isBeforeInputText = isBeforeInputText,
                 takePicImage = takePicImage,
-                isVisibleNavigateButton = isVisibleNavigateButton
+                isVisibleNavigateButton = isVisibleNavigateButton,
+                isCameraOpen = isCameraOpen
             )
         }
     }
@@ -125,15 +129,20 @@ class TakePictureScreenViewModel constructor(
         updateState(isVisibleNavigateButton = vegeRepositoryList.isNotEmpty())
     }
 
-    fun setImage(takePicImage: Bitmap?) {
+    fun setImage(takePic: ImageProxy) {
         val fileName = "tempImage"
+        val takePicImage =transImage(takePic = takePic)
         fileManager.saveImage(takePicImage = takePicImage, fileName = fileName)
         val filePath = getFilePath(fileName)
         val rotateTakePicture = rotateBitmapIfNeeded(filePath = filePath, bitmap = takePicImage!!)
         updateState(takePicImage = rotateTakePicture)
     }
 
-    fun getFilePath(fileName: String): String {
+    private fun transImage(takePic: ImageProxy): Bitmap {
+        return takePic.toBitmap()
+    }
+
+    private fun getFilePath(fileName: String): String {
         return fileManager.getImagePath(fileName = fileName)
     }
 
@@ -171,5 +180,9 @@ class TakePictureScreenViewModel constructor(
 
     fun getIndex(): Int {
         return index
+    }
+    
+    fun changeCameraOpenState() {
+        updateState(isCameraOpen = !_uiState.value.isCameraOpen)
     }
 }
