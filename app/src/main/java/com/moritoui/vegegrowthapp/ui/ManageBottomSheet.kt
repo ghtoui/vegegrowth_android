@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -115,52 +116,45 @@ fun ImageBottomSheet(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MemoEditorBottomSheet(
-    onDismissRequest: () -> Unit,
     inputText: String,
     onValueChange: (String) -> Unit,
     onCancelButtonClick: () -> Unit,
     onSaveButtonClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val skipPartiallyExpanded by remember { mutableStateOf(true) }
-    val bottomSheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = skipPartiallyExpanded
-    )
-
-    ModalBottomSheet(
-        onDismissRequest = { onDismissRequest() },
-        sheetState = bottomSheetState
-    ) {
-        Column(
-            modifier = modifier
-                .padding(top = 16.dp, start = 24.dp, end = 24.dp, bottom = 48.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+    AlertDialog(
+        modifier = modifier,
+        onDismissRequest = { },
+        title = {
+            Text(text = "メモを入力してください")
+        },
+        text = {
             TextField(
                 value = inputText,
                 onValueChange = { onValueChange(it) },
+                singleLine = false,
+                modifier = Modifier.height(96.dp)
             )
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Button(
-                    onClick = { onCancelButtonClick() },
-                    modifier = Modifier.padding(top = 8.dp)
-                ) {
-                    Text("キャンセル")
-                }
-
-                Button(
-                    onClick = { onSaveButtonClick() },
-                    modifier = Modifier.padding(top = 8.dp)
-                ) {
-                    Text("保存")
-                }
+        },
+        confirmButton = {
+            Button(
+                onClick = { onSaveButtonClick() },
+                modifier = Modifier.padding(top = 8.dp)
+            ) {
+                Text("保存")
+            }
+        },
+        dismissButton = {
+            Button(
+                onClick = { onCancelButtonClick() },
+                modifier = Modifier.padding(top = 8.dp)
+            ) {
+                Text("キャンセル")
             }
         }
-    }
+    )
 }
 
 @OptIn(ExperimentalFoundationApi::class)
