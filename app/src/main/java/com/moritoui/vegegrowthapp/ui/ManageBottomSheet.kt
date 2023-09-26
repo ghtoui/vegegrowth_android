@@ -88,6 +88,7 @@ fun ImageBottomSheet(
                             contentDescription = null,
                             modifier = Modifier
                                 .aspectRatio(1f / 1f)
+                                .padding(8.dp)
                         )
                     }
                 }
