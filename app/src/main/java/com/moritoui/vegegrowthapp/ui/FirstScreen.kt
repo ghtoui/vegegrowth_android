@@ -238,7 +238,6 @@ fun AddAlertWindow(
                     ) {
                         Text("追加", color = Color.LightGray)
                     }
-
                 }
             },
             dismissButton = {
@@ -323,7 +322,7 @@ fun FirstScreenPreview() {
     AddAlertWindow(
         isOpenDialog = true,
         inputText = inputText,
-        onValueChange = { inputText = it  },
+        onValueChange = { inputText = it },
         onConfirmClick = { },
         onDismissClick = { },
         selectCategory = VegeCategory.Leaf,
