@@ -131,7 +131,7 @@ class TakePictureScreenViewModel constructor(
 
     fun setImage(takePic: ImageProxy) {
         val fileName = "tempImage"
-        val takePicImage =transImage(takePic = takePic)
+        val takePicImage = transImage(takePic = takePic)
         fileManager.saveImage(takePicImage = takePicImage, fileName = fileName)
         val filePath = getFilePath(fileName)
         val rotateTakePicture = rotateBitmapIfNeeded(filePath = filePath, bitmap = takePicImage!!)
