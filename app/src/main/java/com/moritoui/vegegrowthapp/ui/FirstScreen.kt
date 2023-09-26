@@ -4,21 +4,29 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -27,10 +35,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -41,11 +51,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.moritoui.vegegrowthapp.R
 import com.moritoui.vegegrowthapp.model.VegeCategory
+import com.moritoui.vegegrowthapp.model.VegeCategoryMethod
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.navigation.AddItem
 import com.moritoui.vegegrowthapp.navigation.FirstNavigationAppTopBar
 import com.moritoui.vegegrowthapp.navigation.Screen
-import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -95,11 +105,14 @@ fun FirstScreen(
         }
     }
     AddAlertWindow(
+        selectCategory = uiState.selectCategory,
         isOpenDialog = uiState.isOpenDialog,
         inputText = uiState.inputText,
+        isAddAble = uiState.isAddAble,
         onValueChange = { viewModel.changeInputText(inputText = it) },
         onConfirmClick = { viewModel.saveVegeItemListData() },
-        onDismissClick = { viewModel.closeDialog() }
+        onDismissClick = { viewModel.closeDialog() },
+        onDropDownMenuClick = { viewModel.selectCategory(it) }
     )
 }
 
@@ -111,16 +124,9 @@ fun VegeItemElement(
     onClick: () -> Unit = { },
     modifier: Modifier = Modifier
 ) {
-    val categoryIcon = when (item.category) {
-        VegeCategory.Leaf -> painterResource(id = R.drawable.leaf)
-        VegeCategory.Flower -> painterResource(id = R.drawable.flower)
-        else -> null
-    }
-    val iconTint = when (item.category) {
-        VegeCategory.Leaf -> Color.Green
-        VegeCategory.Flower -> Color.Magenta
-        else -> null
-    }
+    val categoryIcon = VegeCategoryMethod.getIcon(selectCategory = item.category)
+    val iconTint = VegeCategoryMethod.getTint(selectCategory = item.category)
+
     var isDelete by rememberSaveable { mutableStateOf(false) }
     Row(
         modifier = modifier
@@ -130,9 +136,9 @@ fun VegeItemElement(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
-        if (categoryIcon != null && iconTint != null) {
+        if (categoryIcon != null) {
             Icon(
-                painter = categoryIcon,
+                painter = painterResource(id = categoryIcon),
                 tint = iconTint,
                 contentDescription = null
             )
@@ -140,7 +146,7 @@ fun VegeItemElement(
             Icon(
                 Icons.Filled.Info,
                 contentDescription = null,
-                tint = Color.LightGray,
+                tint = MaterialTheme.colorScheme.background,
                 modifier = Modifier.aspectRatio(1f / 1f)
             )
         }
@@ -188,11 +194,14 @@ fun VegeItemElement(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddAlertWindow(
+    selectCategory: VegeCategory,
     isOpenDialog: Boolean,
     inputText: String,
+    isAddAble: Boolean,
     onValueChange: (String) -> Unit,
     onConfirmClick: () -> Unit,
-    onDismissClick: () -> Unit
+    onDismissClick: () -> Unit,
+    onDropDownMenuClick: (VegeCategory) -> Unit
 ) {
     if (isOpenDialog) {
         AlertDialog(
@@ -202,17 +211,33 @@ fun AddAlertWindow(
                 Text(text = stringResource(R.string.addtextfield_describe))
             },
             text = {
-                TextField(
-                    value = inputText,
-                    onValueChange = { onValueChange(it) },
-                    singleLine = true
-                )
+                Column {
+                    TextField(
+                        value = inputText,
+                        onValueChange = { onValueChange(it) },
+                        singleLine = true
+                    )
+                    CategoryDropMenu(
+                        selectCategory = selectCategory,
+                        onDropDownMenuClick = onDropDownMenuClick,
+                        modifier = Modifier
+                            .padding(top = 4.dp)
+                    )
+                }
             },
             confirmButton = {
-                TextButton(
-                    onClick = { onConfirmClick() }
-                ) {
-                    Text("追加")
+                if (isAddAble) {
+                    TextButton(
+                        onClick = { onConfirmClick() }
+                    ) {
+                        Text("追加")
+                    }
+                } else {
+                    TextButton(
+                        onClick = { }
+                    ) {
+                        Text("追加", color = Color.LightGray)
+                    }
                 }
             },
             dismissButton = {
@@ -226,18 +251,82 @@ fun AddAlertWindow(
     }
 }
 
+@Composable
+fun CategoryDropMenu(
+    selectCategory: VegeCategory,
+    onDropDownMenuClick: (VegeCategory) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var expanded by rememberSaveable { mutableStateOf(false) }
+
+    val categoryText = VegeCategoryMethod.getText(selectCategory = selectCategory)
+    val categoryIcon = VegeCategoryMethod.getIcon(selectCategory = selectCategory)
+
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        IconButton(onClick = { expanded = true }) {
+            Icon(
+                Icons.Filled.MoreVert,
+                contentDescription = "メニュー選択"
+            )
+        }
+        if (categoryIcon != null) {
+            Icon(
+                painter = painterResource(id = categoryIcon),
+                contentDescription = null
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+        }
+        Text(categoryText)
+        DropdownMenu(
+            modifier = Modifier
+                // タップされた時の背景を円にする
+                .clip(RoundedCornerShape(16.dp)),
+            expanded = expanded,
+            // メニューの外がタップされた時に閉じる
+            onDismissRequest = { expanded = false }
+        ) {
+            VegeCategory.values().forEach { category ->
+                if (category != VegeCategory.None) {
+                    DropdownMenuItem(
+                        onClick = {
+                            onDropDownMenuClick(category)
+                            expanded = false
+                        },
+                        text = { Text(text = VegeCategoryMethod.getText(category)) }
+                    )
+                }
+            }
+        }
+    }
+}
+
 @Preview
 @Composable
 fun FirstScreenPreview() {
 //    FirstScreen(navController = rememberNavController())
-    VegeItemElement(
-        onDeleteClick = { item, isDelete -> },
-        isDeleteMode = true,
-        item = VegeItem(
-            name = "aiueo",
-            category = VegeCategory.None,
-            uuid = UUID.randomUUID().toString()
-        ),
-        modifier = Modifier.background(Color.White)
+
+//    VegeItemElement(
+//        onDeleteClick = { item, isDelete -> },
+//        isDeleteMode = true,
+//        item = VegeItem(
+//            name = "aiueo",
+//            category = VegeCategory.None,
+//            uuid = UUID.randomUUID().toString()
+//        ),
+//        modifier = Modifier.background(Color.White)
+//    )
+    var inputText by remember { mutableStateOf("") }
+    AddAlertWindow(
+        isOpenDialog = true,
+        inputText = inputText,
+        onValueChange = { inputText = it },
+        onConfirmClick = { },
+        onDismissClick = { },
+        selectCategory = VegeCategory.Leaf,
+        onDropDownMenuClick = {},
+        isAddAble = true
     )
 }
