@@ -16,7 +16,8 @@ import kotlinx.coroutines.flow.update
 data class FirstScreenUiState(
     val isOpenDialog: Boolean = false,
     val inputText: String = "",
-    val isDeleteMode: Boolean = false
+    val isDeleteMode: Boolean = false,
+    val selectCategory: VegeCategory = VegeCategory.None
 )
 
 class FirstScreenViewModel(
@@ -49,13 +50,15 @@ class FirstScreenViewModel(
     private fun updateState(
         isOpenDialog: Boolean = _uiState.value.isOpenDialog,
         inputText: String = _uiState.value.inputText,
-        isDeleteMode: Boolean = _uiState.value.isDeleteMode
+        isDeleteMode: Boolean = _uiState.value.isDeleteMode,
+        selectCategory: VegeCategory = _uiState.value.selectCategory
     ) {
         _uiState.update { currentState ->
             currentState.copy(
                 isOpenDialog = isOpenDialog,
                 inputText = inputText,
-                isDeleteMode = isDeleteMode
+                isDeleteMode = isDeleteMode,
+                selectCategory = selectCategory
             )
         }
     }
@@ -111,5 +114,9 @@ class FirstScreenViewModel(
 
     fun resetDeleteItem() {
         deleteList = mutableListOf()
+    }
+
+    fun selectCategory(selectCategory: VegeCategory) {
+        updateState(selectCategory = selectCategory)
     }
 }

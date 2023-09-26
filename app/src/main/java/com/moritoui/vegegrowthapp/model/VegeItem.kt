@@ -8,9 +8,3 @@ data class VegeItem(
     val category: VegeCategory,
     val uuid: String
 )
-
-enum class VegeCategory {
-    Leaf,
-    Flower,
-    None
-}
