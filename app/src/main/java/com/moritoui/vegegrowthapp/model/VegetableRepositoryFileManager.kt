@@ -31,7 +31,18 @@ class VegetableRepositoryFileManager(
         vegeRepositoryList: List<VegetableRepository>,
         takePicImage: Bitmap?
     ) {
-        val imageFileName = "${vegeRepositoryList.last().uuid}.jpg"
+        saveImage(
+            takePicImage = takePicImage,
+            fileName = vegeRepositoryList.last().uuid
+        )
+        saveVegeRepository(vegeRepositoryList = vegeRepositoryList)
+    }
+
+    fun saveImage(
+        takePicImage: Bitmap?,
+        fileName: String
+    ) {
+        val imageFileName = "$fileName.jpg"
         val imageFilePath = File(imageDirectory, imageFileName)
         val outputStream: OutputStream = FileOutputStream(imageFilePath)
         takePicImage?.compress(Bitmap.CompressFormat.JPEG, 50, outputStream)
@@ -47,20 +58,29 @@ class VegetableRepositoryFileManager(
         }
     }
 
+    fun getImagePath(fileName: String): String {
+        val imageFileName = "$fileName.jpg"
+        return File(imageDirectory, imageFileName).toString()
+    }
+
+    private fun readImage(fileName: String): Bitmap? {
+        var takePicImage: Bitmap?
+        val imageFileName = "$fileName.jpg"
+        val imageFilePath = File(imageDirectory, imageFileName)
+        try {
+            val inputStream: InputStream = FileInputStream(imageFilePath)
+            takePicImage = BitmapFactory.decodeStream(inputStream)
+        } catch (e: IOException) {
+            takePicImage = null
+            Log.d("Error", "File Read Error$imageFileName")
+        }
+        return takePicImage
+    }
+
     fun getImageList(): List<Bitmap?> {
         var takePicImageList: MutableList<Bitmap?> = mutableListOf()
-        var takePicImage: Bitmap?
         vegeRepositoryList.forEach { item ->
-            val imageFileName = "${item.uuid}.jpg"
-            val imageFilePath = File(imageDirectory, imageFileName)
-            try {
-                val inputStream: InputStream = FileInputStream(imageFilePath)
-                takePicImage = BitmapFactory.decodeStream(inputStream)
-            } catch (e: IOException) {
-                takePicImage = null
-                Log.d("Error", "File Read Error$imageFileName")
-            }
-            takePicImageList.add(takePicImage)
+            takePicImageList.add(readImage(fileName = item.uuid))
         }
         return takePicImageList
     }
@@ -71,9 +91,11 @@ class VegetableRepositoryFileManager(
             else -> vegeRepositoryList.toMutableList()
         }
     }
+
     fun getVegeItem(): VegeItem {
         return vegeItem
     }
+
     fun getVegeRepositoryList(): MutableList<VegetableRepository> {
         return vegeRepositoryList.toMutableList()
     }

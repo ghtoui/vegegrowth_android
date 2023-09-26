@@ -81,4 +81,11 @@ dependencies {
     implementation("androidx.camera:camera-view:$camerax_version")
     implementation("androidx.camera:camera-extensions:$camerax_version")
     implementation("com.google.accompanist:accompanist-permissions:0.31.2-alpha")
+
+    // Camera2
+    val cameraVersion="1.2.1"
+    implementation("androidx.camera:camera-camera2:$cameraVersion")
+    implementation("androidx.camera:camera-lifecycle:$cameraVersion")
+    implementation("androidx.camera:camera-view:$cameraVersion")
+
 }

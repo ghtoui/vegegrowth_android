@@ -2,6 +2,8 @@ package com.moritoui.vegegrowthapp.ui
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Matrix
+import android.media.ExifInterface
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.moritoui.vegegrowthapp.model.DateFormatter
@@ -124,7 +126,31 @@ class TakePictureScreenViewModel constructor(
     }
 
     fun setImage(takePicImage: Bitmap?) {
-        updateState(takePicImage = takePicImage)
+        val fileName = "tempImage"
+        fileManager.saveImage(takePicImage = takePicImage, fileName = fileName)
+        val filePath = fileManager.getImagePath(fileName = fileName)
+        val rotateTakePicture = rotateBitmapIfNeeded(filePath = filePath, bitmap = takePicImage!!)
+        updateState(takePicImage = rotateTakePicture)
+    }
+
+    private fun rotateBitmapIfNeeded(filePath: String, bitmap: Bitmap): Bitmap {
+        val exif = ExifInterface(filePath)
+        val rotation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+
+        // TODO: ここ毎回0になって横向きになってしまうから、無理やり90度回転させている
+        val degrees = when (rotation) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> 90
+            ExifInterface.ORIENTATION_ROTATE_180 -> 180
+            ExifInterface.ORIENTATION_ROTATE_270 -> 270
+            else -> 90
+        }
+        return if (degrees != 0) {
+            val matrix = Matrix()
+            matrix.postRotate(degrees.toFloat())
+            Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+        } else {
+            bitmap
+        }
     }
 
     fun checkInputText(inputText: String) {

@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -55,6 +56,7 @@ fun ImageBottomSheet(
         skipPartiallyExpanded = skipPartiallyExpanded
     )
     val pagerState = rememberPagerState(initialPage = 0)
+    val scope = rememberCoroutineScope()
 
     ModalBottomSheet(
         onDismissRequest = { onDismissRequest() },
@@ -85,6 +87,7 @@ fun ImageBottomSheet(
                             contentDescription = null,
                             modifier = Modifier
                                 .aspectRatio(1f / 1f)
+                                .padding(8.dp)
                         )
                     }
                 }
@@ -105,7 +108,7 @@ fun ImageBottomSheet(
                             .weight(1f)
                             .height(currentImageBarHeight.dp)
                             .background(backGroundColor)
-                            .clickable(onClick = { onImageBottomBarClick(it) })
+                            .clickable(onClick = { scope.launch { pagerState.animateScrollToPage(it) } })
                     )
                 }
             }

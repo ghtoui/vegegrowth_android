@@ -263,6 +263,7 @@ fun ImageCarousel(
                         modifier = Modifier
                             .aspectRatio(1f / 1f)
                             .clickable { onImageClick() }
+                            .padding(8.dp)
                     )
                 }
             }
