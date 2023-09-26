@@ -72,19 +72,14 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+
     // CameraX
-    val camerax_version = "1.2.3"
-    implementation("androidx.camera:camera-core:$camerax_version")
+    val camerax_version = "1.3.0-beta01"
     implementation("androidx.camera:camera-camera2:$camerax_version")
     implementation("androidx.camera:camera-lifecycle:$camerax_version")
-    implementation("androidx.camera:camera-video:$camerax_version")
     implementation("androidx.camera:camera-view:$camerax_version")
     implementation("androidx.camera:camera-extensions:$camerax_version")
-    implementation("com.google.accompanist:accompanist-permissions:0.31.2-alpha")
 
-    // Camera2
-    val cameraVersion = "1.2.1"
-    implementation("androidx.camera:camera-camera2:$cameraVersion")
-    implementation("androidx.camera:camera-lifecycle:$cameraVersion")
-    implementation("androidx.camera:camera-view:$cameraVersion")
+    val accompanist_version = "0.31.2-alpha"
+    implementation("com.google.accompanist:accompanist-permissions:$accompanist_version")
 }
