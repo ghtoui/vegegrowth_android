@@ -3,7 +3,6 @@ package com.moritoui.vegegrowthapp.ui
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Matrix
-import android.media.ExifInterface
 import androidx.camera.core.ImageProxy
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -130,40 +129,17 @@ class TakePictureScreenViewModel constructor(
     }
 
     fun setImage(takePic: ImageProxy) {
-        val fileName = "tempImage"
-        val takePicImage = transImage(takePic = takePic)
-        fileManager.saveImage(takePicImage = takePicImage, fileName = fileName)
-        val filePath = getFilePath(fileName)
-        val rotateTakePicture = rotateBitmapIfNeeded(filePath = filePath, bitmap = takePicImage!!)
+        val rotateTakePicture = fixRotateImage(takePic = takePic)
         updateState(takePicImage = rotateTakePicture)
     }
 
-    private fun transImage(takePic: ImageProxy): Bitmap {
-        return takePic.toBitmap()
-    }
+    private fun fixRotateImage(takePic: ImageProxy): Bitmap {
+        val rotation = takePic.imageInfo.rotationDegrees
+        val takePicBitMap = takePic.toBitmap()
 
-    private fun getFilePath(fileName: String): String {
-        return fileManager.getImagePath(fileName = fileName)
-    }
-
-    private fun rotateBitmapIfNeeded(filePath: String, bitmap: Bitmap): Bitmap {
-        val exif = ExifInterface(filePath)
-        val rotation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
-
-        // TODO: ここ毎回0になって横向きになってしまうから、無理やり90度回転させている
-        val degrees = when (rotation) {
-            ExifInterface.ORIENTATION_ROTATE_90 -> 90
-            ExifInterface.ORIENTATION_ROTATE_180 -> 180
-            ExifInterface.ORIENTATION_ROTATE_270 -> 270
-            else -> 90
-        }
-        return if (degrees != 0) {
-            val matrix = Matrix()
-            matrix.postRotate(degrees.toFloat())
-            Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
-        } else {
-            bitmap
-        }
+        val matrix = Matrix()
+        matrix.postRotate(rotation.toFloat())
+        return Bitmap.createBitmap(takePicBitMap, 0, 0, takePic.width, takePic.height, matrix, true)
     }
 
     fun checkInputText(inputText: String) {
