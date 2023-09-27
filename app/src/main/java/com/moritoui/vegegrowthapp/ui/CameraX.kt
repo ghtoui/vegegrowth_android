@@ -51,6 +51,7 @@ fun CameraScreen(
 ) {
     val cameraPermissionState: PermissionState = rememberPermissionState(android.Manifest.permission.CAMERA)
 
+    // カメラ使用許可を得る
     LaunchedEffect(key1 = Unit) {
         if (!cameraPermissionState.status.isGranted && !cameraPermissionState.status.shouldShowRationale) {
             cameraPermissionState.launchPermissionRequest()
@@ -58,19 +59,15 @@ fun CameraScreen(
     }
 
     if (cameraPermissionState.status.isGranted) {
-        // Permission is granted, we can show the camera preview
-
         CameraPreview(
             onCancelClick = onCancelClick,
             onTakePicClick = onTakePicClick
         )
     } else {
-        // In this screen you should notify the user that the permission
-        // is required and maybe offer a button to start another
-        // camera perission request
-//        NoCameraPermissionScreen(
-//            cameraPermissionState = cameraPermissionState
-//        )
+        // 使用許可がない場合は、もう一度聞く
+        LaunchedEffect(key1 = Unit) {
+            cameraPermissionState.launchPermissionRequest()
+        }
     }
 }
 
