@@ -167,6 +167,8 @@ fun DrawLineChart(
     ) {
         var pointX: Float? = null
         var pointY: Float? = null
+        var pointTextX: Float? = null
+        var pointTextY: Float? = null
         var detailData = ""
 
         // 初期化
@@ -207,6 +209,21 @@ fun DrawLineChart(
                 pointX = 0.toFloat()
                 pointY = size.height
             }
+
+            if (pointX!! < size.width / 2 && pointY!! < size.height / 2) { // 左上
+                pointTextX = pointX!! + 20
+                pointTextY = pointY!! + 30
+            } else if (pointX!! > size.width / 2 && pointY!! < size.height / 2) { // 右上
+                pointTextX = pointX!! - 400
+                pointTextY = pointY!! + 30
+            } else if (pointX!! < size.width / 2 && pointY!! > size.height / 2) { // 左下
+                pointTextX = pointX!! + 20
+                pointTextY = pointY!! - 150
+            } else { // 右下
+                pointTextX = pointX!! - 400
+                pointTextY = pointY!! - 150
+            }
+
             // 点の描画
             drawCircle(
                 color = Color.Red,
@@ -216,7 +233,7 @@ fun DrawLineChart(
             drawText(
                 textMeasurer = textMeasurer,
                 text = detailData,
-                topLeft = Offset(x = pointX!!, y = pointY!!)
+                topLeft = Offset(x = pointTextX, y = pointTextY)
             )
         }
     }
