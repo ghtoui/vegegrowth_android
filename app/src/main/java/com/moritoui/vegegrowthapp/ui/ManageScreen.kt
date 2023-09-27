@@ -210,20 +210,16 @@ fun DrawLineChart(
                 pointY = size.height
             }
 
-            // 左上
-            if (pointX!! < size.width / 2 && pointY!! < size.height / 2) {
+            if (pointX!! < size.width / 2 && pointY!! < size.height / 2) { // 左上
                 pointTextX = pointX!! + 20
                 pointTextY = pointY!! + 30
-            // 右上
-            } else if (pointX!! > size.width / 2 && pointY!! < size.height / 2) {
+            } else if (pointX!! > size.width / 2 && pointY!! < size.height / 2) { // 右上
                 pointTextX = pointX!! - 400
                 pointTextY = pointY!! + 30
-            // 左下
-            } else if (pointX!! < size.width / 2 && pointY!! > size.height / 2) {
+            } else if (pointX!! < size.width / 2 && pointY!! > size.height / 2) { // 左下
                 pointTextX = pointX!! + 20
                 pointTextY = pointY!! - 150
-            // 右下
-            } else {
+            } else { // 右下
                 pointTextX = pointX!! - 400
                 pointTextY = pointY!! - 150
             }
