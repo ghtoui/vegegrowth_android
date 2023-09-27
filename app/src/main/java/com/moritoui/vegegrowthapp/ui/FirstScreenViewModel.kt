@@ -75,7 +75,7 @@ class FirstScreenViewModel(
             isOpenDialog = true,
             inputText = "",
             selectCategory = VegeCategory.None
-            )
+        )
     }
 
     fun changeInputText(inputText: String) {
