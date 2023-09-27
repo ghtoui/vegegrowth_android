@@ -39,7 +39,6 @@ open class FileManager(
     fun saveVegeItemListData(vegeItemList: List<VegeItem>) {
         val jsonFileName = "vegeItemList.json"
         val jsonFilePath = File(applicationContext.filesDir, jsonFileName)
-        println(jsonFilePath)
         FileWriter(jsonFilePath).use { stream ->
             stream.write(parseToJson(targetData = vegeItemList))
         }
