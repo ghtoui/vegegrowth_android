@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.moritoui.vegegrowthapp.model.FileManager
 import com.moritoui.vegegrowthapp.model.VegeCategory
 import com.moritoui.vegegrowthapp.model.VegeItem
+import com.moritoui.vegegrowthapp.model.VegeStatus
 import java.util.UUID
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -94,7 +95,8 @@ class FirstScreenViewModel(
             VegeItem(
                 name = _uiState.value.inputText,
                 category = _uiState.value.selectCategory,
-                uuid = UUID.randomUUID().toString()
+                uuid = UUID.randomUUID().toString(),
+                status = VegeStatus.Default
             )
         )
         fileManger.saveVegeItemListData(vegeItemList = _vegeItemList)
