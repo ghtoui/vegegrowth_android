@@ -1,5 +1,6 @@
 package com.moritoui.vegegrowthapp.ui
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,12 +13,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialog
@@ -35,13 +39,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -50,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.moritoui.vegegrowthapp.R
+import com.moritoui.vegegrowthapp.model.SelectMenu
 import com.moritoui.vegegrowthapp.model.VegeCategory
 import com.moritoui.vegegrowthapp.model.VegeCategoryMethod
 import com.moritoui.vegegrowthapp.model.VegeItem
@@ -82,24 +87,34 @@ fun FirstScreen(
         }
     ) { it ->
         Box(modifier = Modifier.padding(it)) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 24.dp, top = 48.dp, end = 24.dp)
-            ) {
-                itemsIndexed(viewModel.vegeItemList) { index, item ->
-                    VegeItemElement(
-                        item = item,
-                        isDeleteMode = uiState.isDeleteMode,
-                        onDeleteClick = { item, isDelete ->
-                            viewModel.deleteItem(item = item, isDelete = isDelete)
-                        },
-                        onClick = {
-                            navController.navigate("${Screen.TakePictureScreen.route}/$index") {
-                                popUpTo(navController.graph.startDestinationId)
-                            }
-                        }
+            Scaffold(
+                topBar = {
+                    ItemListTopBar(
+                        modifier = Modifier
+                            .padding(start = 24.dp, top = 16.dp, end = 8.dp)
                     )
+                }
+            ) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(it)
+                        .padding(start = 32.dp, end = 24.dp)
+                ) {
+                    itemsIndexed(viewModel.vegeItemList) { index, item ->
+                        VegeItemElement(
+                            item = item,
+                            isDeleteMode = uiState.isDeleteMode,
+                            onDeleteClick = { item, isDelete ->
+                                viewModel.deleteItem(item = item, isDelete = isDelete)
+                            },
+                            onClick = {
+                                navController.navigate("${Screen.TakePictureScreen.route}/$index") {
+                                    popUpTo(navController.graph.startDestinationId)
+                                }
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -116,6 +131,7 @@ fun FirstScreen(
     )
 }
 
+@SuppressLint("ResourceType")
 @Composable
 fun VegeItemElement(
     item: VegeItem,
@@ -164,13 +180,13 @@ fun VegeItemElement(
                 }) {
                     Icon(
                         Icons.Filled.Delete,
-                        contentDescription = "削除",
+                        contentDescription = stringResource(id = R.string.delete_text),
                         tint = Color.Red,
                         modifier = Modifier.aspectRatio(1f / 1f)
                     )
                     Icon(
                         Icons.Filled.Check,
-                        contentDescription = "済み",
+                        contentDescription = stringResource(R.string.done_text),
                         tint = when (isDelete) {
                             false -> Color.Transparent
                             true -> Color.Black
@@ -230,13 +246,13 @@ fun AddAlertWindow(
                     TextButton(
                         onClick = { onConfirmClick() }
                     ) {
-                        Text("追加")
+                        Text(stringResource(R.string.add_text))
                     }
                 } else {
                     TextButton(
                         onClick = { }
                     ) {
-                        Text("追加", color = Color.LightGray)
+                        Text(stringResource(id = R.string.add_text), color = Color.LightGray)
                     }
                 }
             },
@@ -244,7 +260,7 @@ fun AddAlertWindow(
                 TextButton(
                     onClick = { onDismissClick() }
                 ) {
-                    Text("キャンセル")
+                    Text(stringResource(R.string.cancel_text))
                 }
             }
         )
@@ -269,7 +285,7 @@ fun CategoryDropMenu(
         IconButton(onClick = { expanded = true }) {
             Icon(
                 Icons.Filled.MoreVert,
-                contentDescription = "メニュー選択"
+                contentDescription = stringResource(R.string.menu_select)
             )
         }
         if (categoryIcon != null) {
@@ -303,9 +319,86 @@ fun CategoryDropMenu(
     }
 }
 
+@Composable
+fun ItemListTopBar(modifier: Modifier = Modifier) {
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    var selectIcon by rememberSaveable { mutableStateOf(SelectMenu.None) }
+
+    val menuIcon = when (selectIcon) {
+        SelectMenu.None -> Icons.Filled.MoreVert
+        SelectMenu.Delete -> Icons.Filled.Delete
+        SelectMenu.Edit -> Icons.Filled.Edit
+        SelectMenu.Favorite -> Icons.Filled.Favorite
+    }
+
+    Row(
+        modifier = modifier,
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentSize(Alignment.TopEnd)
+        ) {
+            IconButton(
+                onClick = { expanded = true }
+            ) {
+                Icon(
+                    menuIcon,
+                    contentDescription = stringResource(R.string.drop_down_menu_button)
+                )
+            }
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = {
+                    expanded = false
+                    selectIcon = SelectMenu.None
+                },
+                modifier = Modifier.align(Alignment.BottomEnd)
+            ) {
+                ItemListDropDownMenuItem(
+                    icon = Icons.Filled.Delete,
+                    text = stringResource(R.string.delete_text),
+                    onClick = { selectIcon = SelectMenu.Delete }
+                )
+                ItemListDropDownMenuItem(
+                    icon = Icons.Filled.Edit,
+                    text = stringResource(R.string.edit_button),
+                    onClick = { selectIcon = SelectMenu.Edit }
+                )
+                ItemListDropDownMenuItem(
+                    icon = Icons.Filled.Favorite,
+                    text = stringResource(R.string.favorite_button),
+                    onClick = { selectIcon = SelectMenu.Favorite }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun ItemListDropDownMenuItem(
+    icon: ImageVector,
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    DropdownMenuItem(
+        text = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(icon, contentDescription = null)
+                Text(text)
+            }
+        },
+        onClick = { onClick() },
+        modifier = modifier
+    )
+}
+
 @Preview
 @Composable
 fun FirstScreenPreview() {
+    MaterialTheme {
+        ItemListTopBar(modifier = Modifier.background(Color.White))
 //    FirstScreen(navController = rememberNavController())
 
 //    VegeItemElement(
@@ -318,15 +411,5 @@ fun FirstScreenPreview() {
 //        ),
 //        modifier = Modifier.background(Color.White)
 //    )
-    var inputText by remember { mutableStateOf("") }
-    AddAlertWindow(
-        isOpenDialog = true,
-        inputText = inputText,
-        onValueChange = { inputText = it },
-        onConfirmClick = { },
-        onDismissClick = { },
-        selectCategory = VegeCategory.Leaf,
-        onDropDownMenuClick = {},
-        isAddAble = true
-    )
+    }
 }
