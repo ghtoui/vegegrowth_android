@@ -5,6 +5,7 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.moritoui.vegegrowthapp.model.FileManager
+import com.moritoui.vegegrowthapp.model.SelectMenu
 import com.moritoui.vegegrowthapp.model.VegeCategory
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegeStatus
@@ -17,9 +18,9 @@ import kotlinx.coroutines.flow.update
 data class FirstScreenUiState(
     val isOpenDialog: Boolean = false,
     val inputText: String = "",
-    val isDeleteMode: Boolean = false,
     val selectCategory: VegeCategory = VegeCategory.None,
-    val isAddAble: Boolean = false
+    val isAddAble: Boolean = false,
+    val selectMenu: SelectMenu = SelectMenu.None
 )
 
 class FirstScreenViewModel(
@@ -52,17 +53,17 @@ class FirstScreenViewModel(
     private fun updateState(
         isOpenDialog: Boolean = _uiState.value.isOpenDialog,
         inputText: String = _uiState.value.inputText,
-        isDeleteMode: Boolean = _uiState.value.isDeleteMode,
         selectCategory: VegeCategory = _uiState.value.selectCategory,
-        isAddAble: Boolean = _uiState.value.isAddAble
+        isAddAble: Boolean = _uiState.value.isAddAble,
+        selectMenu: SelectMenu = _uiState.value.selectMenu
     ) {
         _uiState.update { currentState ->
             currentState.copy(
                 isOpenDialog = isOpenDialog,
                 inputText = inputText,
-                isDeleteMode = isDeleteMode,
                 selectCategory = selectCategory,
-                isAddAble = isAddAble
+                isAddAble = isAddAble,
+                selectMenu = selectMenu
             )
         }
     }
@@ -104,11 +105,19 @@ class FirstScreenViewModel(
     }
 
     fun changeDeleteMode() {
-        if (_uiState.value.isDeleteMode) {
-            updateState(isDeleteMode = false)
+        if (_uiState.value.selectMenu == SelectMenu.Delete) {
+            updateState(selectMenu = SelectMenu.None)
             deleteItemList()
         } else {
-            updateState(isDeleteMode = true)
+            updateState(selectMenu = SelectMenu.Delete)
+        }
+    }
+
+    fun changeEditMode() {
+        if (_uiState.value.selectMenu == SelectMenu.Edit) {
+            updateState(selectMenu = SelectMenu.None)
+        } else {
+            updateState(selectMenu = SelectMenu.Edit)
         }
     }
 
@@ -128,8 +137,9 @@ class FirstScreenViewModel(
         }
     }
 
-    fun resetDeleteItem() {
+    fun cancelMenu() {
         deleteList = mutableListOf()
+        updateState(selectMenu = SelectMenu.None)
     }
 
     fun selectCategory(selectCategory: VegeCategory) {
