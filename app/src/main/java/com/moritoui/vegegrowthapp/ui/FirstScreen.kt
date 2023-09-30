@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -52,15 +53,17 @@ import androidx.navigation.NavHostController
 import com.moritoui.vegegrowthapp.R
 import com.moritoui.vegegrowthapp.model.SelectMenu
 import com.moritoui.vegegrowthapp.model.SelectMenuMethod
+import com.moritoui.vegegrowthapp.model.SortStatus
 import com.moritoui.vegegrowthapp.model.VegeCategory
-import com.moritoui.vegegrowthapp.model.VegeCategoryMethod
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegeStatus
 import com.moritoui.vegegrowthapp.model.VegeStatusMethod
+import com.moritoui.vegegrowthapp.model.getIcon
+import com.moritoui.vegegrowthapp.model.getText
+import com.moritoui.vegegrowthapp.model.getTint
 import com.moritoui.vegegrowthapp.navigation.AddItem
 import com.moritoui.vegegrowthapp.navigation.FirstNavigationAppTopBar
 import com.moritoui.vegegrowthapp.navigation.Screen
-import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,7 +78,7 @@ fun FirstScreen(
     Scaffold(
         topBar = {
             FirstNavigationAppTopBar(
-                title = "一覧画面"
+                title = stringResource(R.string.first_screen_title)
             ) {
                 AddItem(onAddClick = {
                     viewModel.openAddDialog()
@@ -91,6 +94,7 @@ fun FirstScreen(
                         onDeleteIconClick = { viewModel.changeDeleteMode() },
                         onEditIconClick = { viewModel.changeEditMode() },
                         selectMenu = uiState.selectMenu,
+                        onSortItemClick = { viewModel.setSortItemList(it) },
                         modifier = Modifier
                             .padding(start = 24.dp, top = 16.dp, end = 8.dp)
                     )
@@ -145,12 +149,13 @@ fun VegeItemElement(
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
 
-    val statusIcon = VegeStatusMethod.getIcon(vegeStatus = item.status)
+    val statusIcon = VegeStatusMethod.getIcon(item.status)
     val statusIconTint = VegeStatusMethod.getIconTint(vegeStatus = item.status)
-    val categoryIcon = VegeCategoryMethod.getIcon(selectCategory = item.category)
-    val iconTint = VegeCategoryMethod.getTint(selectCategory = item.category)
+    val categoryIcon = item.category.getIcon()
+    val iconTint = item.category.getTint()
 
     var isCheck by rememberSaveable { mutableStateOf(false) }
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -278,8 +283,6 @@ fun CategoryDropMenu(
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
 
-    val categoryText = VegeCategoryMethod.getText(selectCategory = selectCategory)
-    val categoryIcon = VegeCategoryMethod.getIcon(selectCategory = selectCategory)
 
     Row(
         modifier = modifier,
@@ -291,14 +294,14 @@ fun CategoryDropMenu(
                 contentDescription = stringResource(R.string.menu_select)
             )
         }
-        if (categoryIcon != null) {
+        if (selectCategory.getIcon() != null) {
             Icon(
-                painter = painterResource(id = categoryIcon),
+                painter = painterResource(id = selectCategory.getIcon()!!),
                 contentDescription = null
             )
             Spacer(modifier = Modifier.width(4.dp))
         }
-        Text(categoryText)
+        Text(text = stringResource(id = selectCategory.getText()))
         DropdownMenu(
             modifier = Modifier
                 // タップされた時の背景を円にする
@@ -314,7 +317,7 @@ fun CategoryDropMenu(
                             onDropDownMenuClick(category)
                             expanded = false
                         },
-                        text = { Text(text = VegeCategoryMethod.getText(category)) }
+                        text = { Text(text = stringResource(id = category.getText())) }
                     )
                 }
             }
@@ -328,16 +331,53 @@ fun ItemListTopBar(
     onCancelClick: () -> Unit,
     onDeleteIconClick: () -> Unit,
     onEditIconClick: () -> Unit,
+    onSortItemClick: (SortStatus) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var expanded by rememberSaveable { mutableStateOf(false) }
+    var selectMenuExpanded by rememberSaveable { mutableStateOf(false) }
+    var sortMenuExpanded by rememberSaveable { mutableStateOf(false) }
 
     val menuIcon = SelectMenuMethod.getIcon(selectMenu)
     val menuIconTint = SelectMenuMethod.getIconTint(selectMenu)
 
     Row(
-        modifier = modifier,
+        modifier = modifier
+            .wrapContentSize(Alignment.TopStart),
+        verticalAlignment = Alignment.CenterVertically
     ) {
+        Row(
+            modifier = Modifier
+                .clickable{
+                    sortMenuExpanded = true
+                }
+        ) {
+            Icon(
+                Icons.Filled.List,
+                contentDescription = null
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                text = stringResource(R.string.sort_text)
+            )
+            DropdownMenu(
+                expanded = sortMenuExpanded,
+                onDismissRequest = { sortMenuExpanded = false }
+            ) {
+                SortStatus.values().forEach { sortStatus ->
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = stringResource(id = sortStatus.getText())
+                            )
+                        },
+                        onClick = {
+                            onSortItemClick(sortStatus)
+                            sortMenuExpanded = false
+                        }
+                    )
+                }
+            }
+        }
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -359,7 +399,7 @@ fun ItemListTopBar(
                         when (selectMenu) {
                             SelectMenu.Delete -> onDeleteIconClick()
                             SelectMenu.Edit -> onEditIconClick()
-                            SelectMenu.None -> expanded = true
+                            SelectMenu.None -> selectMenuExpanded = true
                         }
                     }
                 ) {
@@ -371,9 +411,9 @@ fun ItemListTopBar(
                 }
             }
             DropdownMenu(
-                expanded = expanded,
+                expanded = selectMenuExpanded,
                 onDismissRequest = {
-                    expanded = false
+                    selectMenuExpanded = false
                 },
                 modifier = Modifier.align(Alignment.BottomEnd)
             ) {
@@ -383,7 +423,7 @@ fun ItemListTopBar(
                     iconTint = Color.Red,
                     onClick = {
                         onDeleteIconClick()
-                        expanded = false
+                        selectMenuExpanded = false
                     }
                 )
                 ItemListDropDownMenuItem(
@@ -391,7 +431,7 @@ fun ItemListTopBar(
                     text = stringResource(R.string.edit_button),
                     onClick = {
                         onEditIconClick()
-                        expanded = false
+                        selectMenuExpanded = false
                     }
                 )
             }
@@ -428,17 +468,25 @@ fun FirstScreenPreview() {
     MaterialTheme {
 //    FirstScreen(navController = rememberNavController())
 
-        VegeItemElement(
-            onDeleteClick = { item, isDelete -> },
-            onMenuItemIconClick = {},
+//        VegeItemElement(
+//            onDeleteClick = { item, isDelete -> },
+//            onMenuItemIconClick = {},
+//            selectMenu = SelectMenu.Edit,
+//            item = VegeItem(
+//                name = "aiueo",
+//                category = VegeCategory.None,
+//                uuid = UUID.randomUUID().toString(),
+//                status = VegeStatus.Favorite
+//            ),
+//            onClick = {},
+//            modifier = Modifier.background(Color.White)
+//        )
+        ItemListTopBar(
             selectMenu = SelectMenu.Edit,
-            item = VegeItem(
-                name = "aiueo",
-                category = VegeCategory.None,
-                uuid = UUID.randomUUID().toString(),
-                status = VegeStatus.Favorite
-            ),
-            onClick = {},
+            onCancelClick = { /*TODO*/ },
+            onDeleteIconClick = { /*TODO*/ },
+            onEditIconClick = { /*TODO*/ },
+            onSortItemClick = { },
             modifier = Modifier.background(Color.White)
         )
     }

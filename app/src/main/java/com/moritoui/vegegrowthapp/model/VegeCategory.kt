@@ -10,31 +10,29 @@ enum class VegeCategory {
     Other
 }
 
-object VegeCategoryMethod {
-    fun getIcon(selectCategory: VegeCategory): Int? {
-        return when (selectCategory) {
-            VegeCategory.None -> null
-            VegeCategory.Flower -> R.drawable.flower
-            VegeCategory.Leaf -> R.drawable.potted_plant
-            VegeCategory.Other -> R.drawable.pending
-        }
+fun VegeCategory.getIcon(): Int? {
+    return when (this) {
+        VegeCategory.None -> null
+        VegeCategory.Flower -> R.drawable.flower
+        VegeCategory.Leaf -> R.drawable.potted_plant
+        VegeCategory.Other -> R.drawable.pending
     }
+}
 
-    fun getText(selectCategory: VegeCategory): String {
-        return when (selectCategory) {
-            VegeCategory.None -> "カテゴリーを選択してください"
-            VegeCategory.Flower -> "花"
-            VegeCategory.Leaf -> "葉"
-            VegeCategory.Other -> "分類無し"
-        }
+fun VegeCategory.getText(): Int {
+    return when (this) {
+        VegeCategory.None -> R.string.vege_category_none_text
+        VegeCategory.Flower -> R.string.flower_text
+        VegeCategory.Leaf -> R.string.leaf_text
+        VegeCategory.Other -> R.string.other_category_text
     }
+}
 
-    fun getTint(selectCategory: VegeCategory): Color {
-        return when (selectCategory) {
-            VegeCategory.None -> Color.White
-            VegeCategory.Flower -> Color.Magenta
-            VegeCategory.Leaf -> Color.Green
-            VegeCategory.Other -> Color.DarkGray
-        }
+fun VegeCategory.getTint(): Color {
+    return when (this) {
+        VegeCategory.None -> Color.White
+        VegeCategory.Flower -> Color.Magenta
+        VegeCategory.Leaf -> Color.Green
+        VegeCategory.Other -> Color.DarkGray
     }
 }
