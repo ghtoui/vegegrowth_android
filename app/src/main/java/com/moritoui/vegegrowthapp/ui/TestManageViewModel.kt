@@ -21,6 +21,10 @@ class TestManageViewModel(
     private val _uiState = MutableStateFlow(ManageUiState())
     override val uiState: StateFlow<ManageUiState> = _uiState.asStateFlow()
 
+    override var takePicList: List<Bitmap?>
+        get() = TODO("Not yet implemented")
+        set(value) {}
+
     init {
         this.vegeItem = VegeItemList.getVegeList()[index]
         this.vegeRepositoryList = VegetableRepositoryList.getVegeRepositoryList().toMutableList()
@@ -34,13 +38,11 @@ class TestManageViewModel(
     private fun updateState(
         pagerCount: Int = _uiState.value.pagerCount,
         vegeRepositoryList: List<VegetableRepository> = _uiState.value.vegeRepositoryList,
-        takePicList: List<Bitmap?> = _uiState.value.takePicList
     ) {
         _uiState.update { currentState ->
             currentState.copy(
                 pagerCount = pagerCount,
                 vegeRepositoryList = vegeRepositoryList,
-                takePicList = takePicList,
             )
         }
     }

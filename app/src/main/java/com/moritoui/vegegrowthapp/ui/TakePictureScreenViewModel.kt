@@ -2,6 +2,8 @@ package com.moritoui.vegegrowthapp.ui
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Matrix
+import androidx.camera.core.ImageProxy
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.moritoui.vegegrowthapp.model.DateFormatter
@@ -22,7 +24,8 @@ data class TakePictureScreenUiState(
     val isSuccessInputText: Boolean = false,
     val isBeforeInputText: Boolean = true,
     val takePicImage: Bitmap? = null,
-    val isVisibleNavigateButton: Boolean = false
+    val isVisibleNavigateButton: Boolean = false,
+    val isCameraOpen: Boolean = false
 )
 
 class TakePictureScreenViewModel constructor(
@@ -73,7 +76,8 @@ class TakePictureScreenViewModel constructor(
         isSuccessInputText: Boolean = _uiState.value.isSuccessInputText,
         isBeforeInputText: Boolean = _uiState.value.isBeforeInputText,
         takePicImage: Bitmap? = _uiState.value.takePicImage,
-        isVisibleNavigateButton: Boolean = _uiState.value.isVisibleNavigateButton
+        isVisibleNavigateButton: Boolean = _uiState.value.isVisibleNavigateButton,
+        isCameraOpen: Boolean = _uiState.value.isCameraOpen
     ) {
         _uiState.update { currentState ->
             currentState.copy(
@@ -82,7 +86,8 @@ class TakePictureScreenViewModel constructor(
                 isSuccessInputText = isSuccessInputText,
                 isBeforeInputText = isBeforeInputText,
                 takePicImage = takePicImage,
-                isVisibleNavigateButton = isVisibleNavigateButton
+                isVisibleNavigateButton = isVisibleNavigateButton,
+                isCameraOpen = isCameraOpen
             )
         }
     }
@@ -122,13 +127,23 @@ class TakePictureScreenViewModel constructor(
                 date = datetime
             )
         )
-        fileManager.saveVegeRepositoryData(vegeRepositoryList = vegeRepositoryList, takePicImage = _uiState.value.takePicImage)
+        fileManager.saveVegeRepositoryAndImage(vegeRepositoryList = vegeRepositoryList, takePicImage = _uiState.value.takePicImage)
         resetState()
         updateState(isVisibleNavigateButton = vegeRepositoryList.isNotEmpty())
     }
 
-    fun setImage(takePicImage: Bitmap?) {
-        updateState(takePicImage = takePicImage)
+    fun setImage(takePic: ImageProxy) {
+        val rotateTakePicture = fixRotateImage(takePic = takePic)
+        updateState(takePicImage = rotateTakePicture)
+    }
+
+    private fun fixRotateImage(takePic: ImageProxy): Bitmap {
+        val rotation = takePic.imageInfo.rotationDegrees
+        val takePicBitMap = takePic.toBitmap()
+
+        val matrix = Matrix()
+        matrix.postRotate(rotation.toFloat())
+        return Bitmap.createBitmap(takePicBitMap, 0, 0, takePic.width, takePic.height, matrix, true)
     }
 
     fun checkInputText(inputText: String) {
@@ -145,5 +160,9 @@ class TakePictureScreenViewModel constructor(
 
     fun getIndex(): Int {
         return index
+    }
+
+    fun changeCameraOpenState() {
+        updateState(isCameraOpen = !_uiState.value.isCameraOpen)
     }
 }

@@ -1,8 +1,5 @@
 package com.moritoui.vegegrowthapp.ui
 
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.launch
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -51,7 +48,6 @@ import com.moritoui.vegegrowthapp.navigation.NavigateItem
 import com.moritoui.vegegrowthapp.navigation.NavigationAppTopBar
 import com.moritoui.vegegrowthapp.navigation.Screen
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TakePicScreen(
     index: Int,
@@ -62,9 +58,6 @@ fun TakePicScreen(
     )
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
-        viewModel.setImage(bitmap)
-    }
 
     Scaffold(
         topBar = {
@@ -90,11 +83,21 @@ fun TakePicScreen(
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
             PictureView(image = uiState.takePicImage?.asImageBitmap())
-            TakeButton(onClick = { cameraLauncher.launch() })
+            TakeButton(onClick = { viewModel.changeCameraOpenState() })
             if (uiState.takePicImage != null) {
                 RecordButton(onClick = { viewModel.openRegisterDialog() })
             }
         }
+    }
+
+    if (uiState.isCameraOpen) {
+        CameraScreen(
+            onCancelClick = { viewModel.changeCameraOpenState() },
+            onTakePicClick = {
+                viewModel.setImage(it)
+                viewModel.changeCameraOpenState()
+            }
+        )
     }
 
     RegisterAlertWindow(
