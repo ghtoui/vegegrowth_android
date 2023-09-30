@@ -115,7 +115,8 @@ fun FirstScreen(
                             },
                             onMenuItemIconClick = { viewModel.selectStatus() },
                             onClick = {
-                                navController.navigate("${Screen.TakePictureScreen.route}/$index") {
+                                val sortIndex = uiState.sortStatus.toString()
+                                navController.navigate("${Screen.TakePictureScreen.route}/$index/$sortIndex") {
                                     popUpTo(navController.graph.startDestinationId)
                                 }
                             }

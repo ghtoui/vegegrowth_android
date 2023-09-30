@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.update
 
 class ManageScreenViewModel(
     index: Int,
+    sortText: String,
     applicationContext: Context
 ) : ManageViewModel {
     private val fileManager: VegetableRepositoryFileManager
@@ -25,6 +26,7 @@ class ManageScreenViewModel(
     init {
         this.fileManager = VegetableRepositoryFileManager(
             index = index,
+            sortText = sortText,
             applicationContext = applicationContext
         )
         this.vegeItem = fileManager.getVegeItem()

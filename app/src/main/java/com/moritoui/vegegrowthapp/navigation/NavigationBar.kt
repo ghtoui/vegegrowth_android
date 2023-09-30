@@ -46,22 +46,30 @@ fun Navigation(
             FirstScreen(navController = navController)
         }
         composable(
-            "${Screen.TakePictureScreen.route}/{index}",
-            arguments = listOf(navArgument("index") { type = NavType.IntType })
+            "${Screen.TakePictureScreen.route}/{index}/{sortText}",
+            arguments = listOf(
+                navArgument("index") { type = NavType.IntType },
+                navArgument("sortText") { type = NavType.StringType }
+            )
         ) { backStackEntry ->
             TakePicScreen(
                 index = backStackEntry.arguments?.getInt("index") ?: 0,
+                sortText = backStackEntry.arguments?.getString("sortText") ?: "All",
                 navController = navController
             )
         }
         composable(
-            "${Screen.ManageVegeScreen.route}/{index}",
-            arguments = listOf(navArgument("index") { type = NavType.IntType })
+            "${Screen.ManageVegeScreen.route}/{index}/{sortText}",
+            arguments = listOf(
+                navArgument("index") { type = NavType.IntType },
+                navArgument("sortText") { type = NavType.StringType }
+            )
         ) { backStackEntry ->
             ManageScreen(
                 navController = navController,
                 viewModel = ManageScreenViewModel(
                     index = backStackEntry.arguments?.getInt("index") ?: 0,
+                    sortText = backStackEntry.arguments?.getString("sortText") ?: "All",
                     applicationContext = LocalContext.current.applicationContext
                 )
             )

@@ -27,6 +27,7 @@ data class TakePictureScreenUiState(
 
 class TakePictureScreenViewModel constructor(
     private val index: Int,
+    private val sortText: String,
     applicationContext: Context
 ) : ViewModel() {
     private val dateFormatter = DateFormatter()
@@ -40,12 +41,14 @@ class TakePictureScreenViewModel constructor(
 
     class TakePictureFactory(
         private val index: Int,
+        private val sortText: String,
         private val applicationContext: Context
     ) : ViewModelProvider.Factory {
         @Suppress("unchecked_cast")
         override fun <T : ViewModel> create(modelClass: Class<T>) =
             TakePictureScreenViewModel(
                 index,
+                sortText,
                 applicationContext
             ) as T
     }
@@ -53,6 +56,7 @@ class TakePictureScreenViewModel constructor(
     init {
         this.fileManager = VegetableRepositoryFileManager(
             index = index,
+            sortText = sortText,
             applicationContext = applicationContext
         )
         this.vegeItem = fileManager.getVegeItem()
