@@ -16,12 +16,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 data class FirstScreenUiState(
-    val isOpenDialog: Boolean = false,
+    val isOpenAddDialog: Boolean = false,
     val inputText: String = "",
     val selectCategory: VegeCategory = VegeCategory.None,
     val isAddAble: Boolean = false,
-    val selectMenu: SelectMenu = SelectMenu.None
-)
+    val selectMenu: SelectMenu = SelectMenu.None,
+    val selectStatus: VegeStatus = VegeStatus.Default
+    )
 
 class FirstScreenViewModel(
     applicationContext: Context
@@ -51,7 +52,7 @@ class FirstScreenViewModel(
     }
 
     private fun updateState(
-        isOpenDialog: Boolean = _uiState.value.isOpenDialog,
+        isOpenAddDialog: Boolean = _uiState.value.isOpenAddDialog,
         inputText: String = _uiState.value.inputText,
         selectCategory: VegeCategory = _uiState.value.selectCategory,
         isAddAble: Boolean = _uiState.value.isAddAble,
@@ -59,7 +60,7 @@ class FirstScreenViewModel(
     ) {
         _uiState.update { currentState ->
             currentState.copy(
-                isOpenDialog = isOpenDialog,
+                isOpenAddDialog = isOpenAddDialog,
                 inputText = inputText,
                 selectCategory = selectCategory,
                 isAddAble = isAddAble,
@@ -69,15 +70,21 @@ class FirstScreenViewModel(
     }
 
     fun closeDialog() {
-        updateState(isOpenDialog = false)
+        updateState(
+            isOpenAddDialog = false
+        )
     }
 
-    fun openDialog() {
+    fun openAddDialog() {
         updateState(
-            isOpenDialog = true,
+            isOpenAddDialog = true,
             inputText = "",
             selectCategory = VegeCategory.None
         )
+    }
+
+    fun selectStatus() {
+        fileManger.saveVegeItemListData(vegeItemList = _vegeItemList)
     }
 
     fun changeInputText(inputText: String) {

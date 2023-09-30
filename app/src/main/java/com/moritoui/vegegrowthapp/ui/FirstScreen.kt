@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -24,7 +23,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,8 +31,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -59,9 +55,12 @@ import com.moritoui.vegegrowthapp.model.SelectMenuMethod
 import com.moritoui.vegegrowthapp.model.VegeCategory
 import com.moritoui.vegegrowthapp.model.VegeCategoryMethod
 import com.moritoui.vegegrowthapp.model.VegeItem
+import com.moritoui.vegegrowthapp.model.VegeStatus
+import com.moritoui.vegegrowthapp.model.VegeStatusMethod
 import com.moritoui.vegegrowthapp.navigation.AddItem
 import com.moritoui.vegegrowthapp.navigation.FirstNavigationAppTopBar
 import com.moritoui.vegegrowthapp.navigation.Screen
+import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,7 +78,7 @@ fun FirstScreen(
                 title = "一覧画面"
             ) {
                 AddItem(onAddClick = {
-                    viewModel.openDialog()
+                    viewModel.openAddDialog()
                 })
             }
         }
@@ -110,6 +109,7 @@ fun FirstScreen(
                             onDeleteClick = { item, isDelete ->
                                 viewModel.deleteItem(item = item, isDelete = isDelete)
                             },
+                            onMenuItemIconClick = { viewModel.selectStatus() },
                             onClick = {
                                 navController.navigate("${Screen.TakePictureScreen.route}/$index") {
                                     popUpTo(navController.graph.startDestinationId)
@@ -123,7 +123,7 @@ fun FirstScreen(
     }
     AddAlertWindow(
         selectCategory = uiState.selectCategory,
-        isOpenDialog = uiState.isOpenDialog,
+        isOpenDialog = uiState.isOpenAddDialog,
         inputText = uiState.inputText,
         isAddAble = uiState.isAddAble,
         onValueChange = { viewModel.changeInputText(inputText = it) },
@@ -140,8 +140,13 @@ fun VegeItemElement(
     onDeleteClick: (VegeItem, Boolean) -> Unit,
     selectMenu: SelectMenu,
     onClick: () -> Unit = { },
+    onMenuItemIconClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var expanded by rememberSaveable { mutableStateOf(false) }
+
+    val statusIcon = VegeStatusMethod.getIcon(vegeStatus = item.status)
+    val statusIconTint = VegeStatusMethod.getIconTint(vegeStatus = item.status)
     val categoryIcon = VegeCategoryMethod.getIcon(selectCategory = item.category)
     val iconTint = VegeCategoryMethod.getTint(selectCategory = item.category)
 
@@ -151,8 +156,7 @@ fun VegeItemElement(
             .fillMaxWidth()
             .height(48.dp)
             .clickable(onClick = { onClick() }),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
+        verticalAlignment = Alignment.CenterVertically
     ) {
         if (categoryIcon != null) {
             Icon(
@@ -171,11 +175,19 @@ fun VegeItemElement(
         Text(
             text = item.name,
             modifier = Modifier
-                .weight(1f)
                 .padding(start = 16.dp, end = 24.dp)
         )
+        Icon(
+            statusIcon,
+            contentDescription = null,
+            tint = statusIconTint
+        )
         if (selectMenu != SelectMenu.None ) {
-            Box() {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.BottomEnd
+            ) {
                 IconButton(onClick = {
                     onDeleteClick(item, isCheck)
                     isCheck = !isCheck
@@ -191,25 +203,59 @@ fun VegeItemElement(
                             modifier = Modifier.aspectRatio(1f / 1f)
                         )
                     } else {
+                        IconButton(onClick = { expanded = true }) {
+                            Icon(
+                                Icons.Filled.Edit,
+                                contentDescription = stringResource(id = R.string.delete_text),
+                                tint = when (isCheck) {
+                                    false -> Color.Black
+                                    true -> Color.Transparent
+                                },
+                                modifier = Modifier.aspectRatio(1f / 1f)
+                            )
+                        }
+                    }
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = {
+                            expanded = false
+                        }
+                    ) {
+                        VegeStatus.values().forEach { status ->
+                            ItemListDropDownMenuItem(
+                                icon = VegeStatusMethod.getIcon(status),
+                                text = stringResource(VegeStatusMethod.getText(status)),
+                                iconTint = VegeStatusMethod.getIconTint(status),
+                                onClick = {
+                                    isCheck = true
+                                    item.status = status
+                                    onMenuItemIconClick()
+                                    expanded = false
+                                }
+                            )
+                        }
+                    }
+                    if (selectMenu == SelectMenu.Edit && item.status != VegeStatus.Default) {
                         Icon(
-                            Icons.Filled.Edit,
-                            contentDescription = stringResource(id = R.string.delete_text),
+                            VegeStatusMethod.getIcon(item.status),
+                            contentDescription = stringResource(R.string.done_text),
                             tint = when (isCheck) {
-                                false -> Color.Red
-                                true -> Color.Transparent
+                                false -> Color.Transparent
+                                true -> VegeStatusMethod.getIconTint(item.status)
+                            },
+                            modifier = Modifier.aspectRatio(1f / 1f)
+                        )
+                    } else {
+                        Icon(
+                            Icons.Filled.Check,
+                            contentDescription = stringResource(R.string.done_text),
+                            tint = when (isCheck) {
+                                false -> Color.Transparent
+                                true -> Color.Black
                             },
                             modifier = Modifier.aspectRatio(1f / 1f)
                         )
                     }
-                    Icon(
-                        Icons.Filled.Check,
-                        contentDescription = stringResource(R.string.done_text),
-                        tint = when (isCheck) {
-                            false -> Color.Transparent
-                            true -> Color.Black
-                        },
-                        modifier = Modifier.aspectRatio(1f / 1f)
-                    )
                 }
             }
         } else {
@@ -222,66 +268,6 @@ fun VegeItemElement(
             .background(Color.LightGray)
             .height(0.5.dp)
     )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun AddAlertWindow(
-    selectCategory: VegeCategory,
-    isOpenDialog: Boolean,
-    inputText: String,
-    isAddAble: Boolean,
-    onValueChange: (String) -> Unit,
-    onConfirmClick: () -> Unit,
-    onDismissClick: () -> Unit,
-    onDropDownMenuClick: (VegeCategory) -> Unit
-) {
-    if (isOpenDialog) {
-        AlertDialog(
-            // ここが空だとウィンドウ外をタップしても何も起こらない
-            onDismissRequest = { },
-            title = {
-                Text(text = stringResource(R.string.addtextfield_describe))
-            },
-            text = {
-                Column {
-                    TextField(
-                        value = inputText,
-                        onValueChange = { onValueChange(it) },
-                        singleLine = true
-                    )
-                    CategoryDropMenu(
-                        selectCategory = selectCategory,
-                        onDropDownMenuClick = onDropDownMenuClick,
-                        modifier = Modifier
-                            .padding(top = 4.dp)
-                    )
-                }
-            },
-            confirmButton = {
-                if (isAddAble) {
-                    TextButton(
-                        onClick = { onConfirmClick() }
-                    ) {
-                        Text(stringResource(R.string.add_text))
-                    }
-                } else {
-                    TextButton(
-                        onClick = { }
-                    ) {
-                        Text(stringResource(id = R.string.add_text), color = Color.LightGray)
-                    }
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { onDismissClick() }
-                ) {
-                    Text(stringResource(R.string.cancel_text))
-                }
-            }
-        )
-    }
 }
 
 @Composable
@@ -442,15 +428,18 @@ fun FirstScreenPreview() {
     MaterialTheme {
 //    FirstScreen(navController = rememberNavController())
 
-//    VegeItemElement(
-//        onDeleteClick = { item, isDelete -> },
-//        isDeleteMode = true,
-//        item = VegeItem(
-//            name = "aiueo",
-//            category = VegeCategory.None,
-//            uuid = UUID.randomUUID().toString()
-//        ),
-//        modifier = Modifier.background(Color.White)
-//    )
+        VegeItemElement(
+            onDeleteClick = { item, isDelete -> },
+            onMenuItemIconClick = {},
+            selectMenu = SelectMenu.Edit,
+            item = VegeItem(
+                name = "aiueo",
+                category = VegeCategory.None,
+                uuid = UUID.randomUUID().toString(),
+                status = VegeStatus.Favorite
+            ),
+            onClick = {},
+            modifier = Modifier.background(Color.White)
+        )
     }
 }
