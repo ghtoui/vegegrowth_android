@@ -5,13 +5,18 @@
     <string name="picture_none_message">撮影した写真がここに表示されます</string>
     <string name="picture_description">撮影した画像</string>
     <string name="addtextfield_describe">追加したい野菜の名前を入力してください</string>
+    <string name="edit_text_field_title">メニューから選択してください</string>
     <string name="register_text_field_describe">撮影した野菜の大きさを入力してください</string>
     <string name="drop_down_menu_button">メニューバー</string>
     <string name="delete_text">削除</string>
     <string name="edit_button">編集</string>
     <string name="favorite_button">お気に入り</string>
+    <string name="favorite_text">お気に入り</string>
     <string name="cancel_text">キャンセル</string>
     <string name="add_text">追加</string>
     <string name="menu_select">メニュー選択</string>
     <string name="done_text">済み</string>
+    <string name="save_text">保存</string>
+    <string name="growth_end_text">生育終了</string>
+    <string name="select_none">選択なし</string>
 </resources>
