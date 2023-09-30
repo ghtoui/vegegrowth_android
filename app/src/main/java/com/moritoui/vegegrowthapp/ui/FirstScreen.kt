@@ -182,7 +182,7 @@ fun VegeItemElement(
             contentDescription = null,
             tint = statusIconTint
         )
-        if (selectMenu != SelectMenu.None ) {
+        if (selectMenu != SelectMenu.None) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth(),

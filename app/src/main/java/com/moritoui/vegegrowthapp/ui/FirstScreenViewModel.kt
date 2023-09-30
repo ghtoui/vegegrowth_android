@@ -22,7 +22,7 @@ data class FirstScreenUiState(
     val isAddAble: Boolean = false,
     val selectMenu: SelectMenu = SelectMenu.None,
     val selectStatus: VegeStatus = VegeStatus.Default
-    )
+)
 
 class FirstScreenViewModel(
     applicationContext: Context
