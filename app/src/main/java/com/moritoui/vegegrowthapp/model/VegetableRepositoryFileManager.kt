@@ -33,8 +33,7 @@ class VegetableRepositoryFileManager(
             SortStatus.All -> vegeItemList
             else -> {
                 vegeItemList.filter { item ->
-                    item.status == sortStatusMap[sortStatus] ||
-                            item.category == sortStatusMap[sortStatus]
+                    item.status == sortStatusMap[sortStatus] || item.category == sortStatusMap[sortStatus]
                 }.toMutableList()
             }
         }

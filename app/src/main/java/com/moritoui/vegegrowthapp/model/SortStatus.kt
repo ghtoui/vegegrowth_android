@@ -32,4 +32,3 @@ fun SortStatus.getText(): Int {
         SortStatus.Other -> R.string.other_category_text
     }
 }
-

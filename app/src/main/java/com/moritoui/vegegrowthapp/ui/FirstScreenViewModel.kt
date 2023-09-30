@@ -171,8 +171,7 @@ class FirstScreenViewModel(
             SortStatus.All -> _vegeItemList
             else -> {
                 _vegeItemList.filter { item ->
-                    item.status == sortStatusMap[sortStatus] ||
-                            item.category == sortStatusMap[sortStatus]
+                    item.status == sortStatusMap[sortStatus] || item.category == sortStatusMap[sortStatus]
                 }.toMutableList()
             }
         }

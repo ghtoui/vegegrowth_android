@@ -284,7 +284,6 @@ fun CategoryDropMenu(
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
 
-
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
@@ -348,7 +347,7 @@ fun ItemListTopBar(
     ) {
         Row(
             modifier = Modifier
-                .clickable{
+                .clickable {
                     sortMenuExpanded = true
                 }
         ) {
