@@ -70,7 +70,7 @@ fun FirstScreen(
     Scaffold(
         topBar = {
             FirstNavigationAppTopBar(
-                title = "管理画面",
+                title = "一覧画面",
                 onNavigationIconClick = { viewModel.changeDeleteMode() },
                 isDeleteMode = uiState.isDeleteMode,
                 onCanselIconClick = { viewModel.resetDeleteItem() }
