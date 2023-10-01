@@ -16,7 +16,7 @@
    3. 写真の拡大表示(モーダル表示)
    4. メモの編集
 
-
+https://github.com/ghtoui/vegegrowth_android/assets/92294389/acc934ba-36a8-403f-aaee-b5eaca9aca41
 
 ## UI実装
 
