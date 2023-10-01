@@ -15,6 +15,7 @@ import java.io.OutputStream
 
 class VegetableRepositoryFileManager(
     index: Int,
+    private val sortText: String,
     private val applicationContext: Context
 ) : FileManager(applicationContext = applicationContext) {
     private val vegeItem: VegeItem
@@ -22,9 +23,20 @@ class VegetableRepositoryFileManager(
     private val imageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
 
     init {
-        this.vegeItem = getVegeItemList()[index]
+        this.vegeItem = sortItemList(getVegeItemList())[index]
         this.vegeRepositoryList = readVegeRepositoryList(readJsonData(vegeItem.uuid))
         readJsonData(fileName = "vegeItemList")
+    }
+
+    private fun sortItemList(vegeItemList: MutableList<VegeItem>): MutableList<VegeItem> {
+        return when (val sortStatus = SortStatus.valueOf(sortText)) {
+            SortStatus.All -> vegeItemList
+            else -> {
+                vegeItemList.filter { item ->
+                    item.status == sortStatusMap[sortStatus] || item.category == sortStatusMap[sortStatus]
+                }.toMutableList()
+            }
+        }
     }
 
     fun saveVegeRepositoryAndImage(

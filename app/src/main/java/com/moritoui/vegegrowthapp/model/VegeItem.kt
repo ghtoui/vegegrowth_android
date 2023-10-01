@@ -6,5 +6,6 @@ import kotlinx.serialization.Serializable
 data class VegeItem(
     val name: String,
     val category: VegeCategory,
-    val uuid: String
+    val uuid: String,
+    var status: VegeStatus
 )
