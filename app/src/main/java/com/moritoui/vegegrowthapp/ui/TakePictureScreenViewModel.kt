@@ -4,8 +4,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import androidx.camera.core.ImageProxy
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import com.moritoui.vegegrowthapp.model.DateFormatter
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegetableRepository
@@ -17,22 +15,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-data class TakePictureScreenUiState(
-    val vegeName: String = "",
-    val isOpenDialog: Boolean = false,
-    val inputText: String = "",
-    val isSuccessInputText: Boolean = false,
-    val isBeforeInputText: Boolean = true,
-    val takePicImage: Bitmap? = null,
-    val isVisibleNavigateButton: Boolean = false,
-    val isCameraOpen: Boolean = false
-)
-
 class TakePictureScreenViewModel constructor(
     private val index: Int,
-    private val sortText: String,
+    sortText: String,
     applicationContext: Context
-) : ViewModel() {
+) : TakePictureViewModel {
     private val dateFormatter = DateFormatter()
     private val fileManager: VegetableRepositoryFileManager
 
@@ -40,21 +27,7 @@ class TakePictureScreenViewModel constructor(
     private var vegeItem: VegeItem
 
     private val _uiState = MutableStateFlow(TakePictureScreenUiState())
-    val uiState: StateFlow<TakePictureScreenUiState> = _uiState.asStateFlow()
-
-    class TakePictureFactory(
-        private val index: Int,
-        private val sortText: String,
-        private val applicationContext: Context
-    ) : ViewModelProvider.Factory {
-        @Suppress("unchecked_cast")
-        override fun <T : ViewModel> create(modelClass: Class<T>) =
-            TakePictureScreenViewModel(
-                index,
-                sortText,
-                applicationContext
-            ) as T
-    }
+    override val uiState: StateFlow<TakePictureScreenUiState> = _uiState.asStateFlow()
 
     init {
         this.fileManager = VegetableRepositoryFileManager(
@@ -102,11 +75,11 @@ class TakePictureScreenViewModel constructor(
         )
     }
 
-    fun openRegisterDialog() {
+    override fun openRegisterDialog() {
         updateState(isOpenDialog = true)
     }
 
-    fun closeRegisterDialog() {
+    override fun closeRegisterDialog() {
         updateState(
             isOpenDialog = false,
             inputText = "",
@@ -114,7 +87,7 @@ class TakePictureScreenViewModel constructor(
         )
     }
 
-    fun registerVegeData() {
+    override fun registerVegeData() {
         val datetime = dateFormatter.dateToString(LocalDateTime.now())
         // ボタンが押せないようにしているから、inputTextとtakePicImageはnullにならないはず
         vegeRepositoryList.add(
@@ -132,7 +105,7 @@ class TakePictureScreenViewModel constructor(
         updateState(isVisibleNavigateButton = vegeRepositoryList.isNotEmpty())
     }
 
-    fun setImage(takePic: ImageProxy) {
+    override fun setImage(takePic: ImageProxy) {
         val rotateTakePicture = fixRotateImage(takePic = takePic)
         updateState(takePicImage = rotateTakePicture)
     }
@@ -146,11 +119,8 @@ class TakePictureScreenViewModel constructor(
         return Bitmap.createBitmap(takePicBitMap, 0, 0, takePic.width, takePic.height, matrix, true)
     }
 
-    fun checkInputText(inputText: String) {
-        val isSuccessInputText = when (inputText.toDoubleOrNull()) {
-            null -> false
-            else -> true
-        }
+    override fun changeInputText(inputText: String) {
+        val isSuccessInputText = checkInputText(inputText = inputText)
         updateState(
             inputText = inputText,
             isSuccessInputText = isSuccessInputText,
@@ -158,11 +128,11 @@ class TakePictureScreenViewModel constructor(
         )
     }
 
-    fun getIndex(): Int {
+    override fun getIndex(): Int {
         return index
     }
 
-    fun changeCameraOpenState() {
+    override fun changeCameraOpenState() {
         updateState(isCameraOpen = !_uiState.value.isCameraOpen)
     }
 }
