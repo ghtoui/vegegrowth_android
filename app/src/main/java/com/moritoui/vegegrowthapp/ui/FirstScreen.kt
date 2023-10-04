@@ -157,7 +157,6 @@ fun VegeItemElement(
     val categoryIcon = item.category.getIcon()
     val iconTint = item.category.getTint()
 
-
     Row(
         modifier = modifier
             .fillMaxWidth()
