@@ -3,7 +3,7 @@ package com.moritoui.vegegrowthapp.ui
 import androidx.camera.core.ImageProxy
 import kotlinx.coroutines.flow.StateFlow
 
-class TestTakePictureViewModel: TakePictureViewModel {
+class TestTakePictureViewModel : TakePictureViewModel {
     override val uiState: StateFlow<TakePictureScreenUiState>
         get() = uiState
 
@@ -18,12 +18,10 @@ class TestTakePictureViewModel: TakePictureViewModel {
     }
     override fun setImage(takePic: ImageProxy) { }
 
-    override fun changeInputText(inputText: String) {
-
-    }
+    override fun changeInputText(inputText: String) { }
 
     override fun getIndex(): Int {
-       return 0
+        return 0
     }
 
     override fun changeCameraOpenState() { }
