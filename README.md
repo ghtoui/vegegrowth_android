@@ -10,7 +10,8 @@
 ## こだわりポイント
 
 長続きするポイントは、**登録するのがめんどくさいと感じない**ことだと考え、生育する植物の追加から、撮影・大きさ登録まで少ない動作で行うことができることを目指してデザイン・開発を行った。  
-CI/CDツールであるCircleCIを取り入れることで、コードチェックを自動化した点。導入したことによって、最初は改行や空白がバラバラだったコードが、修正を繰り返す中でコードを綺麗に書けていると実感した。
+カテゴリ編集では、即時にカテゴリアイコンが変わるようにしているが、削除ではボタンを押してすぐ消すのではなく、もう一度押すことで消えるようにしている点。  
+CI/CDツールであるCircleCIを取り入れることで、コードチェックを自動化した点。導入したことによって、最初は改行や空白がバラバラだったコードが、修正を繰り返す中でコードを綺麗に書けていると実感した。  
 
 ## デモ
 
@@ -26,7 +27,7 @@ CI/CDツールであるCircleCIを取り入れることで、コードチェッ�
    3. 写真の拡大表示(モーダル表示)
    4. メモの編集
 
-https://github.com/ghtoui/vegegrowth_android/assets/92294389/acc934ba-36a8-403f-aaee-b5eaca9aca41
+https://github.com/ghtoui/vegegrowth_android/assets/92294389/1546a1f2-d84f-4ddc-8b3a-05de72ffc704
 
 ## UI実装
 
@@ -35,7 +36,7 @@ https://github.com/ghtoui/vegegrowth_android/assets/92294389/acc934ba-36a8-403f-
 |植物追加ダイアログ        |植物一覧画面に追加するダイアログ                            |テキストの下にカテゴリ選択メニューをつけることで、 植物の名前入力 -> カテゴリ選択 -> 登録までを一連の動作でできるように                                                                                                                                    |<details> <summary>Preview</summary> <img width="300dp" src="./others/firstScreenDialog.png"/> </details>                                                                                                                     |
 |メニューボタン            |メニュー表示機能                                            |ボタンを押すと削除・編集ドロップメニューバーを表示する。どちらかを選択することで、アイコンが：からそれぞれに対応したアイコンに変化して、選択されているメニューの状態がわかる。                                                                             |<details> <summary>Preview</summary> <img width="300dp" src="./others/firstScreenMenu.png" /> </br> 選択状態でアイコンの変化は、下の削除ボタン・編集ボタンを参照 </details>                                                   |
 |削除ボタン                |削除機能                                                    |削除ボタンを押すと各セルの右端に削除ボタンを表示。タップすることで、チェックマークをつけて、選択していることがわかるように。  もう一度削除ボタンを押すことで削除できる                                                                                     |<details> <summary>Preview</summary> <img width="300dp" src="./others/firstScreenDelete.png" /> </details>                                                                                                                    |
-|編集ボタン                |編集機能                                                    |削除ボタンの編集版。タップすることでステータスのドロップメニューバーをメニューバーを表示して、ユーザに選択してもらう。選択すると、その選択したものに合わせてアイコンが変わる。もう一度編集ボタンを押すことで、反映することができる。                       |<details> <summary>Preview</summary> <img width="300dp" src="./others/firstScreenEdit.png" /> </details>                                                                                                                      |
+|編集ボタン                |編集機能                                                    |削除ボタンの編集版。タップすることでステータスのドロップメニューバーをメニューバーを表示して、ユーザに選択してもらう。選択すると、その選択したものに合わせてアイコンが変わる。                       |<details> <summary>Preview</summary> <img width="300dp" src="./others/firstScreenEdit.png" /> </details>                                                                                                                      |
 |並び替えボタン            |植物カテゴリ、状態で表示を切り替えることができる。          |タップすることで、カテゴリと状態を選択できるドロップメニューバーを表示して、ユーザに選択してもらう。選択することで、リストの表示が切り替わる。                                                                                                             |このプレビューでは、葉を選択した状態になっている。</br>  <details> <summary>Preview</summary> <img width="300dp" src="./others/firstScreenSort.png" /> <img width="300dp" src="./others/firstScreenSortLeaf.png" /> </details>|
 |カメラ                    |写真撮影                                                    |CameraXを使って実装した。カメラのプレビュー画面は、AndroidViewを使用しないと実装できなかった。カメラの撮影ボタンとキャンセルボタンは、ボトムバーを使って実装。<br> [苦労した点](#camerax)                                                                  |<details> <summary>Preview</summary> <img width="300dp" src="./others/takePicScreenCameraX.png" /> <img width="300dp" src="./others/takePicScreenPreview.png"/> </details>                                                    |
 |植物の大きさ登録ダイアログ|撮影した植物の大きさを入力するダイアログ                    |少数以外が入力された場合は、テキストフィールドの下に警告表示と登録ボタンがタップできないようにしている。                                                                                                                                                   |<details> <summary>Preview</summary> <img width="300dp" src="./others/takePicScreenError.png" /> </details>                                                                                                                   |
