@@ -19,6 +19,9 @@ jobs:
       - run:
           name: ktlint Check
           command: ./gradlew --continue ktlintCheck
+      - run:
+          name: test
+          command: ./gradlew testDebug --stacktrace
 
 workflows:
   test:
