@@ -34,15 +34,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.moritoui.vegegrowthapp.R
 import com.moritoui.vegegrowthapp.navigation.NavigateItem
 import com.moritoui.vegegrowthapp.navigation.NavigationAppTopBar
@@ -53,9 +50,7 @@ fun TakePicScreen(
     index: Int,
     sortText: String,
     navController: NavHostController,
-    viewModel: TakePictureScreenViewModel = viewModel(
-        factory = TakePictureScreenViewModel.TakePictureFactory(index, sortText, LocalContext.current.applicationContext)
-    )
+    viewModel: TakePictureViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -105,7 +100,7 @@ fun TakePicScreen(
         inputText = uiState.inputText,
         isSuccessInputText = uiState.isSuccessInputText,
         isBeforeInputText = uiState.isBeforeInputText,
-        onValueChange = { viewModel.checkInputText(it) },
+        onValueChange = { viewModel.changeInputText(it) },
         onConfirmClick = { viewModel.registerVegeData() },
         onDismissClick = { viewModel.closeRegisterDialog() }
     )
@@ -256,11 +251,12 @@ fun TakePicPreview() {
     var isSuccessInputText by rememberSaveable { mutableStateOf(false) }
     var isBeforeInputText by rememberSaveable { mutableStateOf(true) }
 
-    TakePicScreen(
-        index = 1,
-        sortText = "All",
-        navController = rememberNavController()
-    )
+//    TakePicScreen(
+//        index = 1,
+//        sortText = "All",
+//        navController = rememberNavController(),
+//        viewModel = Take
+//    )
 
 //    RegisterAlertWindow(
 //        isOpenDialog = isOpenDialog,
