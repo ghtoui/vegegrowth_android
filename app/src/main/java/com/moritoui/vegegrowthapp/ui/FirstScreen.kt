@@ -149,13 +149,14 @@ fun VegeItemElement(
     modifier: Modifier = Modifier
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
+    var isCheck by rememberSaveable { mutableStateOf(false) }
+    var showStatus by rememberSaveable { mutableStateOf(item.status) }
+    showStatus = item.status
 
-    val statusIcon = VegeStatusMethod.getIcon(item.status)
-    val statusIconTint = VegeStatusMethod.getIconTint(vegeStatus = item.status)
+    val statusIcon = VegeStatusMethod.getIcon(showStatus)
+    val statusIconTint = VegeStatusMethod.getIconTint(vegeStatus = showStatus)
     val categoryIcon = item.category.getIcon()
     val iconTint = item.category.getTint()
-
-    var isCheck by rememberSaveable { mutableStateOf(false) }
 
     Row(
         modifier = modifier
@@ -233,7 +234,7 @@ fun VegeItemElement(
                                 text = stringResource(VegeStatusMethod.getText(status)),
                                 iconTint = VegeStatusMethod.getIconTint(status),
                                 onClick = {
-                                    isCheck = true
+                                    showStatus = status
                                     item.status = status
                                     onMenuItemIconClick()
                                     expanded = false
@@ -241,27 +242,15 @@ fun VegeItemElement(
                             )
                         }
                     }
-                    if (selectMenu == SelectMenu.Edit && item.status != VegeStatus.Default) {
-                        Icon(
-                            VegeStatusMethod.getIcon(item.status),
-                            contentDescription = stringResource(R.string.done_text),
-                            tint = when (isCheck) {
-                                false -> Color.Transparent
-                                true -> VegeStatusMethod.getIconTint(item.status)
-                            },
-                            modifier = Modifier.aspectRatio(1f / 1f)
-                        )
-                    } else {
-                        Icon(
-                            Icons.Filled.Check,
-                            contentDescription = stringResource(R.string.done_text),
-                            tint = when (isCheck) {
-                                false -> Color.Transparent
-                                true -> Color.Black
-                            },
-                            modifier = Modifier.aspectRatio(1f / 1f)
-                        )
-                    }
+                    Icon(
+                        Icons.Filled.Check,
+                        contentDescription = stringResource(R.string.done_text),
+                        tint = when (isCheck) {
+                            false -> Color.Transparent
+                            true -> Color.Black
+                        },
+                        modifier = Modifier.aspectRatio(1f / 1f)
+                    )
                 }
             }
         } else {
