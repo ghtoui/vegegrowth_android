@@ -151,9 +151,10 @@ fun VegeItemElement(
     var expanded by rememberSaveable { mutableStateOf(false) }
     var isCheck by rememberSaveable { mutableStateOf(false) }
     var showStatus by rememberSaveable { mutableStateOf(item.status) }
+    showStatus = item.status
 
     val statusIcon = VegeStatusMethod.getIcon(showStatus)
-    val statusIconTint = VegeStatusMethod.getIconTint(vegeStatus = item.status)
+    val statusIconTint = VegeStatusMethod.getIconTint(vegeStatus = showStatus)
     val categoryIcon = item.category.getIcon()
     val iconTint = item.category.getTint()
 
