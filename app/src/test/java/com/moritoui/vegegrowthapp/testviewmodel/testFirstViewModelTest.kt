@@ -1,0 +1,3 @@
+package com.moritoui.vegegrowthapp.testviewmodel
+
+class testFirstViewModelTest
