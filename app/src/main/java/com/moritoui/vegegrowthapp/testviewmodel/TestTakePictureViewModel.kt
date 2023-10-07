@@ -1,6 +1,8 @@
-package com.moritoui.vegegrowthapp.ui
+package com.moritoui.vegegrowthapp.testviewmodel
 
 import androidx.camera.core.ImageProxy
+import com.moritoui.vegegrowthapp.di.TakePictureScreenUiState
+import com.moritoui.vegegrowthapp.di.TakePictureViewModel
 import kotlinx.coroutines.flow.StateFlow
 
 class TestTakePictureViewModel : TakePictureViewModel {

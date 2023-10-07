@@ -1,7 +1,8 @@
-package com.moritoui.vegegrowthapp.ui
+package com.moritoui.vegegrowthapp.testviewmodel
 
 import android.graphics.Bitmap
-import androidx.compose.foundation.ExperimentalFoundationApi
+import com.moritoui.vegegrowthapp.di.ManageUiState
+import com.moritoui.vegegrowthapp.di.ManageViewModel
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegeItemList
 import com.moritoui.vegegrowthapp.model.VegetableRepository
@@ -25,6 +26,10 @@ class TestManageViewModel(
         get() = TODO("Not yet implemented")
         set(value) {}
 
+    override fun changeOpenMemoEditorBottomSheet(index: Int) { }
+
+    override fun saveEditMemo(index: Int) { }
+
     init {
         this.vegeItem = VegeItemList.getVegeList()[index]
         this.vegeRepositoryList = VegetableRepositoryList.getVegeRepositoryList().toMutableList()
@@ -34,7 +39,6 @@ class TestManageViewModel(
         )
     }
 
-    @OptIn(ExperimentalFoundationApi::class)
     private fun updateState(
         pagerCount: Int = _uiState.value.pagerCount,
         vegeRepositoryList: List<VegetableRepository> = _uiState.value.vegeRepositoryList,
@@ -45,10 +49,5 @@ class TestManageViewModel(
                 vegeRepositoryList = vegeRepositoryList,
             )
         }
-    }
-
-    @OptIn(ExperimentalFoundationApi::class)
-    override suspend fun moveImage(index: Int) {
-        _uiState.value.pagerState.animateScrollToPage(index)
     }
 }

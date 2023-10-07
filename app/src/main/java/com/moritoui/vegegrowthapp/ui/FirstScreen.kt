@@ -26,7 +26,6 @@ import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -43,14 +42,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.moritoui.vegegrowthapp.R
+import com.moritoui.vegegrowthapp.di.FirstViewModel
 import com.moritoui.vegegrowthapp.model.SelectMenu
 import com.moritoui.vegegrowthapp.model.SelectMenuMethod
 import com.moritoui.vegegrowthapp.model.SortStatus
@@ -65,12 +63,9 @@ import com.moritoui.vegegrowthapp.navigation.AddItem
 import com.moritoui.vegegrowthapp.navigation.FirstNavigationAppTopBar
 import com.moritoui.vegegrowthapp.navigation.Screen
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FirstScreen(
-    viewModel: FirstScreenViewModel = viewModel(
-        factory = FirstScreenViewModel.FirstScreenFactory(applicationContext = LocalContext.current.applicationContext)
-    ),
+    viewModel: FirstViewModel,
     navController: NavHostController
 ) {
     val uiState by viewModel.uiState.collectAsState()

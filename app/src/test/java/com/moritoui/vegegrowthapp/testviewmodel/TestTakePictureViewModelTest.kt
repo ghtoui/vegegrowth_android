@@ -1,4 +1,4 @@
-package com.moritoui.vegegrowthapp.ui
+package com.moritoui.vegegrowthapp.testviewmodel
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test

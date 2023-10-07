@@ -1,4 +1,4 @@
-package com.moritoui.vegegrowthapp.ui
+package com.moritoui.vegegrowthapp.di
 
 import android.graphics.Bitmap
 import androidx.camera.core.ImageProxy
