@@ -1,6 +1,7 @@
 package com.moritoui.vegegrowthapp.ui
 
 import com.google.common.truth.Truth.assertThat
+import com.moritoui.vegegrowthapp.testviewmodel.TestTakePictureViewModel
 import org.junit.Test
 
 class TestTakePictureViewModelTest {

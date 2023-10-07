@@ -10,7 +10,6 @@ import com.moritoui.vegegrowthapp.model.SortStatus
 import com.moritoui.vegegrowthapp.model.VegeCategory
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegeStatus
-import com.moritoui.vegegrowthapp.model.sortStatusMap
 import java.util.UUID
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -77,10 +76,7 @@ class FirstScreenViewModel(
     }
 
     override fun changeInputText(inputText: String) {
-        var isAddAble = false
-        if (inputText != "") {
-            isAddAble = true
-        }
+        val isAddAble = checkInputText(inputText = inputText)
         updateState(
             inputText = inputText,
             isAddAble = isAddAble
@@ -147,14 +143,9 @@ class FirstScreenViewModel(
     }
 
     private fun sortVegeItemList() {
-        val sortStatus = _uiState.value.sortStatus
-        sortItemList = when (sortStatus) {
-            SortStatus.All -> _vegeItemList
-            else -> {
-                _vegeItemList.filter { item ->
-                    item.status == sortStatusMap[sortStatus] || item.category == sortStatusMap[sortStatus]
-                }.toMutableList()
-            }
-        }
+        sortItemList = sortList(
+            sortStatus = _uiState.value.sortStatus,
+            itemList = _vegeItemList
+        )
     }
 }
