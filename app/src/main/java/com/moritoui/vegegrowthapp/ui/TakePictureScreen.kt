@@ -41,13 +41,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.moritoui.vegegrowthapp.R
+import com.moritoui.vegegrowthapp.di.TakePictureViewModel
 import com.moritoui.vegegrowthapp.navigation.NavigateItem
 import com.moritoui.vegegrowthapp.navigation.NavigationAppTopBar
 import com.moritoui.vegegrowthapp.navigation.Screen
 
 @Composable
 fun TakePicScreen(
-    index: Int,
     sortText: String,
     navController: NavHostController,
     viewModel: TakePictureViewModel

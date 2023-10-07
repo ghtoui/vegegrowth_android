@@ -2,6 +2,8 @@ package com.moritoui.vegegrowthapp.ui
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.ExperimentalFoundationApi
+import com.moritoui.vegegrowthapp.di.ManageUiState
+import com.moritoui.vegegrowthapp.di.ManageViewModel
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegeItemList
 import com.moritoui.vegegrowthapp.model.VegetableRepository
