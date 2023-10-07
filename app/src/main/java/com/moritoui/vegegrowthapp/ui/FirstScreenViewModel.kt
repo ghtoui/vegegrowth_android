@@ -54,7 +54,10 @@ class FirstScreenViewModel(
                 sortStatus = sortStatus
             )
         }
-        sortVegeItemList()
+        sortItemList = sortList(
+            sortStatus = _uiState.value.sortStatus,
+            itemList = _vegeItemList
+        )
     }
 
     override fun closeDialog() {
@@ -140,12 +143,5 @@ class FirstScreenViewModel(
 
     override fun setSortItemList(sortStatus: SortStatus) {
         updateState(sortStatus = sortStatus)
-    }
-
-    private fun sortVegeItemList() {
-        sortItemList = sortList(
-            sortStatus = _uiState.value.sortStatus,
-            itemList = _vegeItemList
-        )
     }
 }
