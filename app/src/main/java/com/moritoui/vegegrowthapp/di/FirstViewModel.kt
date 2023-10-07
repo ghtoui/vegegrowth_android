@@ -23,14 +23,14 @@ interface FirstViewModel {
     val vegeItemList: MutableList<VegeItem>
 
     // 完全なprotectedではないが、これでprotectedの実装ができる
-    fun FirstViewModel.checkInputText(inputText: String): Boolean {
+    fun checkInputText(inputText: String): Boolean {
         return when (inputText) {
             "" -> false
             else -> true
         }
     }
 
-    fun FirstViewModel.sortList(sortStatus: SortStatus, itemList: List<VegeItem>): MutableList<VegeItem> {
+    fun sortList(sortStatus: SortStatus, itemList: List<VegeItem>): MutableList<VegeItem> {
         return when (sortStatus) {
             SortStatus.All -> itemList.toMutableList()
             else -> {
