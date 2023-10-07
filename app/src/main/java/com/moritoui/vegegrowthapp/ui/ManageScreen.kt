@@ -1,5 +1,6 @@
 package com.moritoui.vegegrowthapp.ui
 
+import android.graphics.Bitmap
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -23,7 +24,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -40,8 +40,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.drawText
@@ -49,24 +51,20 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.moritoui.vegegrowthapp.R
 import com.moritoui.vegegrowthapp.model.DateFormatter
-import com.moritoui.vegegrowthapp.model.VegetableRepositoryList
+import com.moritoui.vegegrowthapp.model.VegetableRepository
 import com.moritoui.vegegrowthapp.navigation.NavigationAppTopBar
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ManageScreen(
-    index: Int,
     navController: NavHostController,
-    viewModel: ManageScreenViewModel = viewModel(
-        factory = ManageScreenViewModel.ManageScreenFactory(index, LocalContext.current.applicationContext)
-    )
+    viewModel: ManageViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -100,7 +98,7 @@ fun ManageScreen(
             ) {
                 DrawLineChart(
                     currentIndex = uiState.pagerState.currentPage,
-                    detailData = "2023-3-12 17時\n1日目\n10cm",
+                    data = uiState.vegeRepositoryList,
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(16.dp)
@@ -111,21 +109,54 @@ fun ManageScreen(
                 pagerState = uiState.pagerState,
                 modifier = Modifier.weight(1f),
                 currentImageBarHeight = 5,
+                imageList = viewModel.takePicList,
+                onImageClick = { viewModel.changeOpenImageBottomSheet() },
                 // ボトムバークリックでも画像遷移できるように -> Coroutineが必要
                 onImageBottomBarClick = { scope.launch { viewModel.moveImage(it) } },
                 currentImageBarModifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 72.dp, top = 12.dp, end = 72.dp, bottom = 8.dp)
             )
-            DetailData(modifier = Modifier.weight(0.7f))
+            DetailData(
+                memoData = uiState.vegeRepositoryList[uiState.pagerState.currentPage].memo,
+                onEditClick = { viewModel.changeOpenMemoEditorBottomSheet() },
+                modifier = Modifier.weight(0.7f)
+            )
         }
+    }
+
+    if (uiState.isOpenImageBottomSheet) {
+        ImageBottomSheet(
+            pagerCount = uiState.pagerCount,
+            currentImageBarHeight = 5,
+            modifier = Modifier.padding(top = 16.dp, bottom = 48.dp),
+            imageList = viewModel.takePicList,
+            onDismissRequest = {
+                scope.launch { viewModel.moveImage(it) }
+                viewModel.changeOpenImageBottomSheet()
+            },
+            index = uiState.pagerState.currentPage,
+            currentImageBarModifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 72.dp, top = 12.dp, end = 72.dp, bottom = 12.dp)
+        )
+    }
+
+    if (uiState.isOpenMemoEditorBottomSheet) {
+        MemoEditorBottomSheet(
+            inputText = uiState.inputMemoText,
+            onValueChange = { viewModel.changeMemoText(it) },
+            onCancelButtonClick = { viewModel.cancelEditMemo() },
+            onSaveButtonClick = { viewModel.saveEditMemo() },
+            modifier = Modifier.fillMaxWidth()
+        )
     }
 }
 
 @OptIn(ExperimentalTextApi::class)
 @Composable
 fun DrawLineChart(
-    detailData: String,
+    data: List<VegetableRepository>,
     currentIndex: Int,
     modifier: Modifier = Modifier
 ) {
@@ -134,9 +165,11 @@ fun DrawLineChart(
     Canvas(
         modifier = modifier
     ) {
-        val data = VegetableRepositoryList.getVegeRepositoryList()
         var pointX: Float? = null
         var pointY: Float? = null
+        var pointTextX: Float? = null
+        var pointTextY: Float? = null
+        var detailData = ""
 
         // 初期化
         val minX = data.minOf { formatter.stringToEpochTime(it.date) }
@@ -150,9 +183,10 @@ fun DrawLineChart(
         data.forEachIndexed { index, item ->
             val x = (formatter.stringToEpochTime(item.date) - minX) * scaleX
             val y = (size.height - (item.size - minY) * scaleY).toFloat()
-            if (currentIndex + 1 == index) {
+            if (currentIndex == index) {
                 pointX = x
                 pointY = y
+                detailData = "${item.date}\n${item.getDiffDatetime(data.first().date)}日目\n${item.size}cm"
             }
 
             // 最初ならパスの開始点, それ以外は直線を描画していく
@@ -170,6 +204,26 @@ fun DrawLineChart(
         )
 
         if (pointX != null) {
+            // データが1つだけの時の処理
+            if (pointX!!.isNaN()) {
+                pointX = 0.toFloat()
+                pointY = size.height
+            }
+
+            if (pointX!! < size.width / 2 && pointY!! < size.height / 2) { // 左上
+                pointTextX = pointX!! + 20
+                pointTextY = pointY!! + 30
+            } else if (pointX!! > size.width / 2 && pointY!! < size.height / 2) { // 右上
+                pointTextX = pointX!! - 400
+                pointTextY = pointY!! + 30
+            } else if (pointX!! < size.width / 2 && pointY!! > size.height / 2) { // 左下
+                pointTextX = pointX!! + 20
+                pointTextY = pointY!! - 150
+            } else { // 右下
+                pointTextX = pointX!! - 400
+                pointTextY = pointY!! - 150
+            }
+
             // 点の描画
             drawCircle(
                 color = Color.Red,
@@ -179,7 +233,7 @@ fun DrawLineChart(
             drawText(
                 textMeasurer = textMeasurer,
                 text = detailData,
-                topLeft = Offset(x = pointX!!, y = pointY!!)
+                topLeft = Offset(x = pointTextX, y = pointTextY)
             )
         }
     }
@@ -192,8 +246,10 @@ fun ImageCarousel(
     pagerState: PagerState,
     modifier: Modifier = Modifier,
     currentImageBarHeight: Int,
+    onImageClick: () -> Unit,
     onImageBottomBarClick: (Int) -> Unit,
-    currentImageBarModifier: Modifier = Modifier
+    currentImageBarModifier: Modifier = Modifier,
+    imageList: List<Bitmap?>
 ) {
     Column(
         modifier = modifier,
@@ -217,12 +273,16 @@ fun ImageCarousel(
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.leaf),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .aspectRatio(1f / 1f)
-                )
+                if (imageList[pagerState.currentPage] != null) {
+                    Image(
+                        BitmapPainter(imageList[pagerState.currentPage]!!.asImageBitmap()),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .aspectRatio(1f / 1f)
+                            .clickable { onImageClick() }
+                            .padding(8.dp)
+                    )
+                }
             }
         }
         Row(
@@ -249,14 +309,18 @@ fun ImageCarousel(
 }
 
 @Composable
-fun DetailData(modifier: Modifier = Modifier) {
+fun DetailData(
+    memoData: String,
+    onEditClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Row(
         modifier = modifier
             .padding(start = 24.dp, end = 24.dp, bottom = 12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         MemoData(
+            memoData = memoData,
+            onEditClick = onEditClick,
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.onSurface.copy(0.05f))
                 .padding(start = 12.dp, end = 12.dp)
@@ -264,23 +328,31 @@ fun DetailData(modifier: Modifier = Modifier) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MemoData(modifier: Modifier = Modifier) {
+fun MemoData(
+    memoData: String,
+    onEditClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Scaffold(
         topBar = {
             MemoTopBar(
                 modifier = modifier,
-                onEditClick = { }
+                onEditClick = { onEditClick() }
             )
         }
     ) {
-        LazyColumn(modifier = modifier.padding(it)) {
+        LazyColumn(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(top = it.calculateTopPadding())
+        ) {
             items(1) {
                 Text(
-                    text = "こんにちは,".repeat(30),
+                    text = memoData,
                     modifier = Modifier
                         .fillMaxSize()
+                        .padding(top = 4.dp)
                 )
             }
         }
@@ -328,9 +400,23 @@ fun MemoTopBar(
 fun ManageScreenPreview() {
     VegegrowthAppTheme {
         val navController = rememberNavController()
+        val imageList: List<Painter> = listOf(
+            painterResource(id = R.drawable.leaf),
+            painterResource(id = R.drawable.flower),
+            painterResource(id = R.drawable.ic_launcher_background),
+            painterResource(id = R.drawable.ic_launcher_foreground),
+            painterResource(id = R.drawable.leaf),
+            painterResource(id = R.drawable.flower),
+            painterResource(id = R.drawable.ic_launcher_background),
+            painterResource(id = R.drawable.ic_launcher_foreground),
+            painterResource(id = R.drawable.ic_launcher_background),
+            painterResource(id = R.drawable.ic_launcher_foreground),
+        )
         ManageScreen(
-            index = 1,
-            navController = navController
+            navController = navController,
+            viewModel = TestManageViewModel(
+                index = 1
+            )
         )
     }
 }
