@@ -3,7 +3,6 @@ package com.moritoui.vegegrowthapp.ui
 import android.content.Context
 import android.graphics.Bitmap
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.toMutableStateList
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegetableRepository
@@ -48,7 +47,6 @@ class ManageScreenViewModel(
         pagerCount: Int = _uiState.value.pagerCount,
         vegeRepositoryList: List<VegetableRepository> = _uiState.value.vegeRepositoryList,
         isOpenImageBottomSheet: Boolean = _uiState.value.isOpenImageBottomSheet,
-        pagerState: PagerState = _uiState.value.pagerState,
         inputMemoText: String = _uiState.value.inputMemoText,
         isOpenMemoEditorBottomSheet: Boolean = _uiState.value.isOpenMemoEditorBottomSheet
     ) {
@@ -57,23 +55,15 @@ class ManageScreenViewModel(
                 pagerCount = pagerCount,
                 vegeRepositoryList = vegeRepositoryList,
                 isOpenImageBottomSheet = isOpenImageBottomSheet,
-                pagerState = pagerState,
                 inputMemoText = inputMemoText,
                 isOpenMemoEditorBottomSheet = isOpenMemoEditorBottomSheet
             )
         }
     }
 
-    @OptIn(ExperimentalFoundationApi::class)
-    override suspend fun moveImage(index: Int) {
-        _uiState.value.pagerState.animateScrollToPage(index)
-    }
-
-    @OptIn(ExperimentalFoundationApi::class)
     override fun changeOpenImageBottomSheet() {
         updateState(
-            isOpenImageBottomSheet = !_uiState.value.isOpenImageBottomSheet,
-            pagerState = _uiState.value.pagerState
+            isOpenImageBottomSheet = !_uiState.value.isOpenImageBottomSheet
         )
         this.takePicList = fileManager.getImageList().toMutableStateList()
     }
@@ -89,8 +79,8 @@ class ManageScreenViewModel(
         updateState(inputMemoText = inputText)
     }
 
-    override fun saveEditMemo() {
-        vegeRepositoryList[_uiState.value.pagerState.currentPage].memo = _uiState.value.inputMemoText
+    override fun saveEditMemo(index: Int) {
+        vegeRepositoryList[index].memo = _uiState.value.inputMemoText
         fileManager.saveVegeRepository(vegeRepositoryList = vegeRepositoryList)
         updateState(
             inputMemoText = "",
@@ -98,9 +88,9 @@ class ManageScreenViewModel(
         )
     }
 
-    override fun changeOpenMemoEditorBottomSheet() {
+    override fun changeOpenMemoEditorBottomSheet(index: Int) {
         if (!_uiState.value.isOpenMemoEditorBottomSheet) {
-            updateState(inputMemoText = vegeRepositoryList[_uiState.value.pagerState.currentPage].memo)
+            updateState(inputMemoText = vegeRepositoryList[index].memo)
         }
         updateState(
             isOpenMemoEditorBottomSheet = !_uiState.value.isOpenMemoEditorBottomSheet

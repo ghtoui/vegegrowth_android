@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Icon
@@ -67,6 +68,7 @@ fun ManageScreen(
     viewModel: ManageViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val pagerState = rememberPagerState(initialPage = 0)
 
     val scope = rememberCoroutineScope()
 
@@ -97,7 +99,7 @@ fun ManageScreen(
                     )
             ) {
                 DrawLineChart(
-                    currentIndex = uiState.pagerState.currentPage,
+                    currentIndex = pagerState.currentPage,
                     data = uiState.vegeRepositoryList,
                     modifier = Modifier
                         .fillMaxSize()
@@ -106,20 +108,20 @@ fun ManageScreen(
             }
             ImageCarousel(
                 pagerCount = uiState.pagerCount,
-                pagerState = uiState.pagerState,
+                pagerState = pagerState,
                 modifier = Modifier.weight(1f),
                 currentImageBarHeight = 5,
                 imageList = viewModel.takePicList,
                 onImageClick = { viewModel.changeOpenImageBottomSheet() },
                 // ボトムバークリックでも画像遷移できるように -> Coroutineが必要
-                onImageBottomBarClick = { scope.launch { viewModel.moveImage(it) } },
+                onImageBottomBarClick = { scope.launch { pagerState.animateScrollToPage(it) } },
                 currentImageBarModifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 72.dp, top = 12.dp, end = 72.dp, bottom = 8.dp)
             )
             DetailData(
-                memoData = uiState.vegeRepositoryList[uiState.pagerState.currentPage].memo,
-                onEditClick = { viewModel.changeOpenMemoEditorBottomSheet() },
+                memoData = uiState.vegeRepositoryList[pagerState.currentPage].memo,
+                onEditClick = { viewModel.changeOpenMemoEditorBottomSheet(pagerState.currentPage) },
                 modifier = Modifier.weight(0.7f)
             )
         }
@@ -132,10 +134,10 @@ fun ManageScreen(
             modifier = Modifier.padding(top = 16.dp, bottom = 48.dp),
             imageList = viewModel.takePicList,
             onDismissRequest = {
-                scope.launch { viewModel.moveImage(it) }
+                scope.launch { pagerState.animateScrollToPage(it) }
                 viewModel.changeOpenImageBottomSheet()
             },
-            index = uiState.pagerState.currentPage,
+            index = pagerState.currentPage,
             currentImageBarModifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 72.dp, top = 12.dp, end = 72.dp, bottom = 12.dp)
@@ -147,7 +149,7 @@ fun ManageScreen(
             inputText = uiState.inputMemoText,
             onValueChange = { viewModel.changeMemoText(it) },
             onCancelButtonClick = { viewModel.cancelEditMemo() },
-            onSaveButtonClick = { viewModel.saveEditMemo() },
+            onSaveButtonClick = { viewModel.saveEditMemo(pagerState.currentPage) },
             modifier = Modifier.fillMaxWidth()
         )
     }
