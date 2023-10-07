@@ -20,6 +20,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.moritoui.vegegrowthapp.ui.FirstScreen
+import com.moritoui.vegegrowthapp.ui.FirstScreenViewModel
 import com.moritoui.vegegrowthapp.ui.ManageScreen
 import com.moritoui.vegegrowthapp.ui.ManageScreenViewModel
 import com.moritoui.vegegrowthapp.ui.TakePicScreen
@@ -38,13 +39,20 @@ fun Navigation(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController()
 ) {
+
+    val context = LocalContext.current.applicationContext
     NavHost(
         modifier = modifier,
         navController = navController,
         startDestination = Screen.FirstScreen.route
     ) {
         composable(Screen.FirstScreen.route) {
-            FirstScreen(navController = navController)
+            FirstScreen(
+                viewModel = FirstScreenViewModel(
+                    applicationContext = context
+                ),
+                navController = navController
+            )
         }
         composable(
             "${Screen.TakePictureScreen.route}/{index}/{sortText}",
@@ -54,13 +62,12 @@ fun Navigation(
             )
         ) { backStackEntry ->
             TakePicScreen(
-                index = backStackEntry.arguments?.getInt("index") ?: 0,
                 sortText = backStackEntry.arguments?.getString("sortText") ?: "All",
                 navController = navController,
                 viewModel = TakePictureScreenViewModel(
                     index = backStackEntry.arguments?.getInt("index") ?: 0,
                     sortText = backStackEntry.arguments?.getString("sortText") ?: "All",
-                    applicationContext = LocalContext.current.applicationContext
+                    applicationContext = context
                 )
             )
         }
@@ -76,7 +83,7 @@ fun Navigation(
                 viewModel = ManageScreenViewModel(
                     index = backStackEntry.arguments?.getInt("index") ?: 0,
                     sortText = backStackEntry.arguments?.getString("sortText") ?: "All",
-                    applicationContext = LocalContext.current.applicationContext
+                    applicationContext = context
                 )
             )
         }

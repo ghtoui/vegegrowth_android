@@ -28,7 +28,7 @@ object VegeItemList {
                 status = VegeStatus.Default
             ),
             VegeItem(
-                name = "花",
+                name = "花1",
                 category = VegeCategory.Flower,
                 uuid = ("528bdecc-d6e4-4721-a853-db24d384fc75"),
                 status = VegeStatus.Default
@@ -58,7 +58,7 @@ object VegeItemList {
                 status = VegeStatus.Default
             ),
             VegeItem(
-                name = "花",
+                name = "花2",
                 category = VegeCategory.Flower,
                 uuid = ("321bdecc-d6e4-4721-a853-db24d384fc75"),
                 status = VegeStatus.Default
@@ -88,7 +88,7 @@ object VegeItemList {
                 status = VegeStatus.Default
             ),
             VegeItem(
-                name = "花",
+                name = "花3",
                 category = VegeCategory.Flower,
                 uuid = ("326bdecc-d6e4-4721-a853-db24d384fc75"),
                 status = VegeStatus.Default

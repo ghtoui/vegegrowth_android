@@ -1,6 +1,8 @@
-package com.moritoui.vegegrowthapp.ui
+package com.moritoui.vegegrowthapp.testviewmodel
 
 import android.graphics.Bitmap
+import com.moritoui.vegegrowthapp.di.ManageUiState
+import com.moritoui.vegegrowthapp.di.ManageViewModel
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegeItemList
 import com.moritoui.vegegrowthapp.model.VegetableRepository

@@ -55,9 +55,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.moritoui.vegegrowthapp.R
+import com.moritoui.vegegrowthapp.di.ManageViewModel
 import com.moritoui.vegegrowthapp.model.DateFormatter
 import com.moritoui.vegegrowthapp.model.VegetableRepository
 import com.moritoui.vegegrowthapp.navigation.NavigationAppTopBar
+import com.moritoui.vegegrowthapp.testviewmodel.TestManageViewModel
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 import kotlinx.coroutines.launch
 
