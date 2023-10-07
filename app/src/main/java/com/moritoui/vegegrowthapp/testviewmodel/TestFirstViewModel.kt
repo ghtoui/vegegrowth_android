@@ -6,13 +6,11 @@ import com.moritoui.vegegrowthapp.model.SortStatus
 import com.moritoui.vegegrowthapp.model.VegeCategory
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegeItemList
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 
-class testFirstViewModel : FirstViewModel {
-    private val _uiState = MutableStateFlow(FirstScreenUiState())
-    override val uiState: StateFlow<FirstScreenUiState> = _uiState.asStateFlow()
+class TestFirstViewModel : FirstViewModel {
+    override val uiState: StateFlow<FirstScreenUiState>
+        get() = uiState
     override val vegeItemList: MutableList<VegeItem> = VegeItemList.getVegeList().toMutableList()
 
     override fun closeDialog() { }
