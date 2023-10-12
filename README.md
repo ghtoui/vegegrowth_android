@@ -2,6 +2,9 @@
 
 - 育てる植物を追加して、写真とグラフで大きさを管理するアプリ
 
+<img height="300" src="https://github.com/ghtoui/vegegrowth_android/assets/92294389/8906bb75-824d-44ee-acea-c1b855dd7c26" /> </br>
+<a href='https://play.google.com/store/apps/details?id=com.moritoui.vegegrowthapp'><img alt='Google Play で手に入れよう' src='https://play.google.com/intl/ja/badges/static/images/badges/ja_badge_web_generic.png' width="200"/></a>
+
 ## 開発背景
 
 植物の目には見えない成長をグラフと写真で**可視化**することで野菜の成長を感じて、楽しく植物を育ててほしいと思い開発  
