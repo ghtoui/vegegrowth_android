@@ -48,7 +48,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.moritoui.vegegrowthapp.R
-import com.moritoui.vegegrowthapp.di.FirstViewModel
 import com.moritoui.vegegrowthapp.model.SelectMenu
 import com.moritoui.vegegrowthapp.model.SelectMenuMethod
 import com.moritoui.vegegrowthapp.model.SortStatus
@@ -65,7 +64,7 @@ import com.moritoui.vegegrowthapp.navigation.Screen
 
 @Composable
 fun FirstScreen(
-    viewModel: FirstViewModel,
+    viewModel: FirstScreenViewModel,
     navController: NavHostController
 ) {
     val uiState by viewModel.uiState.collectAsState()
