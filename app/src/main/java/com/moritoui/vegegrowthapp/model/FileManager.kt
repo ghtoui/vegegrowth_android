@@ -76,14 +76,14 @@ open class FileManager (
         }
     }
 
-    private inline fun <reified T> parseFromJson(json: String?): T? {
+    inline fun <reified T> parseFromJson(json: String?): T? {
         return when (json) {
             null -> null
             else -> Json.decodeFromString<T>(json)
         }
     }
 
-    private inline fun <reified T> parseToJson(targetData: T): String {
+    inline fun <reified T> parseToJson(targetData: T): String {
         return Json.encodeToString(targetData)
     }
 }

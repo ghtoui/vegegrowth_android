@@ -16,7 +16,7 @@ import java.io.OutputStream
 class VegetableRepositoryFileManager(
     index: Int,
     private val sortText: String,
-    private val applicationContext: Context
+    override val applicationContext: Context
 ) : FileManager(applicationContext = applicationContext) {
     private val vegeItem: VegeItem
     private val vegeRepositoryList: List<VegetableRepository>
