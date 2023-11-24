@@ -1,6 +1,7 @@
 package com.moritoui.vegegrowthapp.ui
 
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -207,13 +208,13 @@ fun DrawLineChart(
             style = Stroke(width = 4f)
         )
 
-        if (pointX != null) {
+        if (pointX != null || pointY != null) {
             // データが1つだけの時の処理
-            if (pointX!!.isNaN()) {
+            if (pointX!!.isNaN() || pointY!!.isNaN()) {
                 pointX = 0.toFloat()
+                // ここでsizeがNaNになっているからエラーが出る？
                 pointY = size.height
             }
-
             if (pointX!! < size.width / 2 && pointY!! < size.height / 2) { // 左上
                 pointTextX = pointX!! + 20
                 pointTextY = pointY!! + 30
@@ -228,17 +229,30 @@ fun DrawLineChart(
                 pointTextY = pointY!! - 150
             }
 
+            if (pointTextX.isNaN() || pointTextY.isNaN()) {
+                pointX = 0.toFloat()
+                pointY = 0.toFloat()
+                pointTextX = 20.toFloat()
+                pointTextY = 30.toFloat()
+            }
+
             // 点の描画
             drawCircle(
                 color = Color.Red,
                 radius = 16f,
                 center = Offset(pointX!!, pointY!!)
             )
-            drawText(
-                textMeasurer = textMeasurer,
-                text = detailData,
-                topLeft = Offset(x = pointTextX, y = pointTextY)
-            )
+            try {
+                if (pointTextX != null && pointTextY != null) {
+                    drawText(
+                        textMeasurer = textMeasurer,
+                        text = detailData,
+                        topLeft = Offset(x = pointTextX, y = pointTextY)
+                    )
+                }
+            } catch (e: Exception) {
+                Log.d("error", e.toString())
+            }
         }
     }
 }
