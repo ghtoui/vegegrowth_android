@@ -1,42 +1,36 @@
 package com.moritoui.vegegrowthapp.ui
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import androidx.camera.core.ImageProxy
+import androidx.lifecycle.ViewModel
 import com.moritoui.vegegrowthapp.di.TakePictureScreenUiState
-import com.moritoui.vegegrowthapp.di.TakePictureViewModel
 import com.moritoui.vegegrowthapp.model.DateFormatter
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegetableRepository
 import com.moritoui.vegegrowthapp.model.VegetableRepositoryFileManager
+import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDateTime
 import java.util.UUID
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
-class TakePictureScreenViewModel constructor(
-    private val index: Int,
-    sortText: String,
-    applicationContext: Context
-) : TakePictureViewModel {
-    private val dateFormatter = DateFormatter()
+@HiltViewModel
+class TakePictureScreenViewModel @Inject constructor(
     private val fileManager: VegetableRepositoryFileManager
+) : ViewModel() {
+    private val dateFormatter = DateFormatter()
 
     private var vegeRepositoryList: MutableList<VegetableRepository>
     private var vegeItem: VegeItem
 
     private val _uiState = MutableStateFlow(TakePictureScreenUiState())
-    override val uiState: StateFlow<TakePictureScreenUiState> = _uiState.asStateFlow()
+    val uiState: StateFlow<TakePictureScreenUiState> = _uiState.asStateFlow()
 
     init {
-        this.fileManager = VegetableRepositoryFileManager(
-            index = index,
-            sortText = sortText,
-            applicationContext = applicationContext
-        )
         this.vegeItem = fileManager.getVegeItem()
         _uiState.update { currentState ->
             currentState.copy(vegeName = this.vegeItem.name)
@@ -77,11 +71,11 @@ class TakePictureScreenViewModel constructor(
         )
     }
 
-    override fun openRegisterDialog() {
+    fun openRegisterDialog() {
         updateState(isOpenDialog = true)
     }
 
-    override fun closeRegisterDialog() {
+    fun closeRegisterDialog() {
         updateState(
             isOpenDialog = false,
             inputText = "",
@@ -89,7 +83,7 @@ class TakePictureScreenViewModel constructor(
         )
     }
 
-    override fun registerVegeData() {
+    fun registerVegeData() {
         val datetime = dateFormatter.dateToString(LocalDateTime.now())
         // ボタンが押せないようにしているから、inputTextとtakePicImageはnullにならないはず
         vegeRepositoryList.add(
@@ -107,10 +101,27 @@ class TakePictureScreenViewModel constructor(
         updateState(isVisibleNavigateButton = vegeRepositoryList.isNotEmpty())
     }
 
-    override fun setImage(takePic: ImageProxy) {
+    fun setImage(takePic: ImageProxy) {
         val rotateTakePicture = fixRotateImage(takePic = takePic)
         updateState(takePicImage = rotateTakePicture)
     }
+
+    fun changeInputText(inputText: String) {
+        val isSuccessInputText = checkInputText(inputText = inputText)
+        updateState(
+            inputText = inputText,
+            isSuccessInputText = isSuccessInputText,
+            isBeforeInputText = false
+        )
+    }
+
+    private fun checkInputText(inputText: String): Boolean {
+        return when (inputText.toDoubleOrNull()) {
+            null -> false
+            else -> true
+        }
+    }
+
 
     private fun fixRotateImage(takePic: ImageProxy): Bitmap {
         val rotation = takePic.imageInfo.rotationDegrees
@@ -121,20 +132,16 @@ class TakePictureScreenViewModel constructor(
         return Bitmap.createBitmap(takePicBitMap, 0, 0, takePic.width, takePic.height, matrix, true)
     }
 
-    override fun changeInputText(inputText: String) {
-        val isSuccessInputText = checkInputText(inputText = inputText)
-        updateState(
-            inputText = inputText,
-            isSuccessInputText = isSuccessInputText,
-            isBeforeInputText = false
-        )
-    }
+//    fun changeInputText(inputText: String) {
+//        val isSuccessInputText = checkInputText(inputText = inputText)
+//        updateState(
+//            inputText = inputText,
+//            isSuccessInputText = isSuccessInputText,
+//            isBeforeInputText = false
+//        )
+//    }
 
-    override fun getIndex(): Int {
-        return index
-    }
-
-    override fun changeCameraOpenState() {
+    fun changeCameraOpenState() {
         updateState(isCameraOpen = !_uiState.value.isCameraOpen)
     }
 }

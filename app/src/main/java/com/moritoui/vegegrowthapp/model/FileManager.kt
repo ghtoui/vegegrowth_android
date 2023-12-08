@@ -3,9 +3,7 @@ package com.moritoui.vegegrowthapp.model
 import android.content.Context
 import android.util.Log
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import java.io.BufferedReader
 import java.io.File
@@ -15,9 +13,8 @@ import java.io.IOException
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import javax.inject.Singleton
 
-interface FileManagerImpl {
+interface FileManager {
     val applicationContext: Context
     fun readJsonData(fileName: String): String?
     fun saveVegeItemListData(vegeItemList: List<VegeItem>)
@@ -27,21 +24,11 @@ interface FileManagerImpl {
 @Module
 @InstallIn(SingletonComponent::class)
 object FileMangerModule {
-    @Provides
-    @Singleton
-    fun provideContext(@ApplicationContext context: Context): Context {
-        return context
-    }
-    @Provides
-    @Singleton
-    fun provideFileManager(context: Context): FileManagerImpl {
-        return FileManager(context)
-    }
 }
 
-open class FileManager (
+open class FileManagerImpl (
     override val applicationContext: Context
-) : FileManagerImpl {
+) : FileManager {
 
     init {
         Log.d("auto", "ok")

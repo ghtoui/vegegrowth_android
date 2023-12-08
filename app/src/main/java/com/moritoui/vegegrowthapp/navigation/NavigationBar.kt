@@ -22,9 +22,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.moritoui.vegegrowthapp.ui.FirstScreen
 import com.moritoui.vegegrowthapp.ui.ManageScreen
-import com.moritoui.vegegrowthapp.ui.ManageScreenViewModel
 import com.moritoui.vegegrowthapp.ui.TakePicScreen
-import com.moritoui.vegegrowthapp.ui.TakePictureScreenViewModel
 
 sealed class Screen(
     val route: String,
@@ -61,11 +59,7 @@ fun Navigation(
             TakePicScreen(
                 sortText = backStackEntry.arguments?.getString("sortText") ?: "All",
                 navController = navController,
-                viewModel = TakePictureScreenViewModel(
-                    index = backStackEntry.arguments?.getInt("index") ?: 0,
-                    sortText = backStackEntry.arguments?.getString("sortText") ?: "All",
-                    applicationContext = context
-                )
+                viewModel = hiltViewModel()
             )
         }
         composable(
@@ -77,11 +71,7 @@ fun Navigation(
         ) { backStackEntry ->
             ManageScreen(
                 navController = navController,
-                viewModel = ManageScreenViewModel(
-                    index = backStackEntry.arguments?.getInt("index") ?: 0,
-                    sortText = backStackEntry.arguments?.getString("sortText") ?: "All",
-                    applicationContext = context
-                )
+                viewModel = hiltViewModel()
             )
         }
     }

@@ -1,15 +1,17 @@
 package com.moritoui.vegegrowthapp.ui
 
-import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
-import com.moritoui.vegegrowthapp.di.FirstScreenUiState
-import com.moritoui.vegegrowthapp.model.FileManagerImpl
 import com.moritoui.vegegrowthapp.model.SelectMenu
 import com.moritoui.vegegrowthapp.model.SortStatus
 import com.moritoui.vegegrowthapp.model.VegeCategory
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegeStatus
-import com.moritoui.vegegrowthapp.model.sortStatusMap
+import com.moritoui.vegegrowthapp.usecases.AddVegeItemUseCase
+import com.moritoui.vegegrowthapp.usecases.DeleteVegeItemUseCase
+import com.moritoui.vegegrowthapp.usecases.GetVegeItemListUseCase
+import com.moritoui.vegegrowthapp.usecases.SaveVegeItemListUseCase
+import com.moritoui.vegegrowthapp.usecases.SetSelectSortStatusUseCase
+import com.moritoui.vegegrowthapp.usecases.SetSelectedIndexUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.UUID
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,24 +20,33 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
+data class FirstScreenUiState(
+    val isOpenAddDialog: Boolean = false,
+    val inputText: String = "",
+    val selectCategory: VegeCategory = VegeCategory.None,
+    val isAddAble: Boolean = false,
+    val selectMenu: SelectMenu = SelectMenu.None,
+    val selectStatus: VegeStatus = VegeStatus.Default,
+    val sortStatus: SortStatus = SortStatus.All
+)
+
 @HiltViewModel
 class FirstScreenViewModel @Inject constructor(
-    private val fileManger: FileManagerImpl
+    private val addVegeItemUseCase: AddVegeItemUseCase,
+    private val deleteVegeItemUseCase: DeleteVegeItemUseCase,
+    private val getVegeItemListUseCase: GetVegeItemListUseCase,
+    private val setSelectedIndexUseCase: SetSelectedIndexUseCase,
+    private val setSelectSortStatusUseCase: SetSelectSortStatusUseCase,
+    private val saveVegeItemListUseCase: SaveVegeItemListUseCase
 ) : ViewModel() {
     private var deleteList: MutableList<VegeItem> = mutableListOf()
 
     private val _uiState = MutableStateFlow(FirstScreenUiState())
     val uiState: StateFlow<FirstScreenUiState> = _uiState.asStateFlow()
 
-    private var _vegeItemList: MutableList<VegeItem>
-    private var sortItemList: MutableList<VegeItem>
+    private var _vegeItemList: MutableList<VegeItem> = getVegeItemListUseCase()
     val vegeItemList: MutableList<VegeItem>
-        get() = sortItemList
-
-    init {
-        this._vegeItemList = fileManger.getVegeItemList().toMutableStateList()
-        this.sortItemList = _vegeItemList
-    }
+        get() = _vegeItemList
 
     private fun updateState(
         isOpenAddDialog: Boolean = _uiState.value.isOpenAddDialog,
@@ -55,10 +66,16 @@ class FirstScreenViewModel @Inject constructor(
                 sortStatus = sortStatus
             )
         }
-        sortItemList = sortList(
-            sortStatus = _uiState.value.sortStatus,
-            itemList = _vegeItemList
-        )
+        setSelectSortStatusUseCase(sortStatus)
+        updateVegeItemList()
+    }
+
+    private fun updateVegeItemList() {
+        _vegeItemList = getVegeItemListUseCase()
+    }
+
+    fun selectedIndex(index: Int) {
+        setSelectedIndexUseCase(index)
     }
 
     fun closeDialog() {
@@ -76,7 +93,7 @@ class FirstScreenViewModel @Inject constructor(
     }
 
     fun selectStatus() {
-        fileManger.saveVegeItemListData(vegeItemList = _vegeItemList)
+        saveVegeItemListUseCase()
     }
 
     fun changeInputText(inputText: String) {
@@ -88,15 +105,13 @@ class FirstScreenViewModel @Inject constructor(
     }
 
     fun saveVegeItemListData() {
-        _vegeItemList.add(
-            VegeItem(
-                name = _uiState.value.inputText,
-                category = _uiState.value.selectCategory,
-                uuid = UUID.randomUUID().toString(),
-                status = VegeStatus.Default
-            )
+        val vegeItem = VegeItem(
+            name = _uiState.value.inputText,
+            category = _uiState.value.selectCategory,
+            uuid = UUID.randomUUID().toString(),
+            status = VegeStatus.Default
         )
-        fileManger.saveVegeItemListData(vegeItemList = _vegeItemList)
+        addVegeItemUseCase(vegeItem)
         closeDialog()
     }
 
@@ -118,11 +133,8 @@ class FirstScreenViewModel @Inject constructor(
     }
 
     private fun deleteItemList() {
-        deleteList.forEach { item ->
-            _vegeItemList.remove(item)
-        }
+        deleteVegeItemUseCase(deleteList)
         deleteList = mutableListOf()
-        fileManger.saveVegeItemListData(vegeItemList = vegeItemList)
     }
 
     fun deleteItem(item: VegeItem, isDelete: Boolean) {
@@ -143,6 +155,7 @@ class FirstScreenViewModel @Inject constructor(
     }
 
     fun setSortItemList(sortStatus: SortStatus) {
+        setSelectSortStatusUseCase(sortStatus = sortStatus)
         updateState(sortStatus = sortStatus)
     }
 
@@ -150,17 +163,6 @@ class FirstScreenViewModel @Inject constructor(
         return when (inputText) {
             "" -> false
             else -> true
-        }
-    }
-
-    private fun sortList(sortStatus: SortStatus, itemList: List<VegeItem>): MutableList<VegeItem> {
-        return when (sortStatus) {
-            SortStatus.All -> itemList.toMutableList()
-            else -> {
-                itemList.filter { item ->
-                    item.status == sortStatusMap[sortStatus] || item.category == sortStatusMap[sortStatus]
-                }.toMutableList()
-            }
         }
     }
 }

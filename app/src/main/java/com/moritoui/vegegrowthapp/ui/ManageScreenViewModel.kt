@@ -1,40 +1,33 @@
 package com.moritoui.vegegrowthapp.ui
 
-import android.content.Context
 import android.graphics.Bitmap
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.toMutableStateList
+import androidx.lifecycle.ViewModel
 import com.moritoui.vegegrowthapp.di.ManageUiState
-import com.moritoui.vegegrowthapp.di.ManageViewModel
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegetableRepository
 import com.moritoui.vegegrowthapp.model.VegetableRepositoryFileManager
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
-@OptIn(ExperimentalFoundationApi::class)
-class ManageScreenViewModel(
-    index: Int,
-    sortText: String,
-    applicationContext: Context
-) : ManageViewModel {
+@HiltViewModel
+class ManageScreenViewModel @Inject constructor(
     private val fileManager: VegetableRepositoryFileManager
+) : ViewModel() {
     private var vegeItem: VegeItem
     private var vegeRepositoryList: MutableList<VegetableRepository>
 
-    override var takePicList: List<Bitmap?> = emptyList()
+    var takePicList: List<Bitmap?> = emptyList()
 
     private val _uiState = MutableStateFlow(ManageUiState())
-    override val uiState: StateFlow<ManageUiState> = _uiState.asStateFlow()
+    val uiState: StateFlow<ManageUiState> = _uiState.asStateFlow()
 
     init {
-        this.fileManager = VegetableRepositoryFileManager(
-            index = index,
-            sortText = sortText,
-            applicationContext = applicationContext
-        )
         this.vegeItem = fileManager.getVegeItem()
         this.vegeRepositoryList = fileManager.readVegeRepositoryList(fileManager.readJsonData(vegeItem.uuid))
         updateState(
@@ -63,25 +56,25 @@ class ManageScreenViewModel(
         }
     }
 
-    override fun changeOpenImageBottomSheet() {
+    fun changeOpenImageBottomSheet() {
         updateState(
             isOpenImageBottomSheet = !_uiState.value.isOpenImageBottomSheet
         )
         this.takePicList = fileManager.getImageList().toMutableStateList()
     }
 
-    override fun cancelEditMemo() {
+    fun cancelEditMemo() {
         updateState(
             inputMemoText = "",
             isOpenMemoEditorBottomSheet = false
         )
     }
 
-    override fun changeMemoText(inputText: String) {
+    fun changeMemoText(inputText: String) {
         updateState(inputMemoText = inputText)
     }
 
-    override fun saveEditMemo(index: Int) {
+    fun saveEditMemo(index: Int) {
         vegeRepositoryList[index].memo = _uiState.value.inputMemoText
         fileManager.saveVegeRepository(vegeRepositoryList = vegeRepositoryList)
         updateState(
@@ -90,7 +83,7 @@ class ManageScreenViewModel(
         )
     }
 
-    override fun changeOpenMemoEditorBottomSheet(index: Int) {
+    fun changeOpenMemoEditorBottomSheet(index: Int) {
         if (!_uiState.value.isOpenMemoEditorBottomSheet) {
             updateState(inputMemoText = vegeRepositoryList[index].memo)
         }

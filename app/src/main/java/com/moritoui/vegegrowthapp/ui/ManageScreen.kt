@@ -1,6 +1,7 @@
 package com.moritoui.vegegrowthapp.ui
 
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -10,7 +11,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -52,14 +52,13 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.moritoui.vegegrowthapp.R
-import com.moritoui.vegegrowthapp.di.ManageViewModel
 import com.moritoui.vegegrowthapp.model.DateFormatter
 import com.moritoui.vegegrowthapp.model.VegetableRepository
 import com.moritoui.vegegrowthapp.navigation.NavigationAppTopBar
-import com.moritoui.vegegrowthapp.testviewmodel.TestManageViewModel
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 import kotlinx.coroutines.launch
 
@@ -67,10 +66,11 @@ import kotlinx.coroutines.launch
 @Composable
 fun ManageScreen(
     navController: NavHostController,
-    viewModel: ManageViewModel
+    viewModel: ManageScreenViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val pagerState = rememberPagerState(initialPage = 0)
+    // 最初に表示するページ
+    val pagerState = rememberPagerState{ 0 }
 
     val scope = rememberCoroutineScope()
 
@@ -108,6 +108,7 @@ fun ManageScreen(
                         .padding(16.dp)
                 )
             }
+
             ImageCarousel(
                 pagerCount = uiState.pagerCount,
                 pagerState = pagerState,
@@ -255,6 +256,7 @@ fun ImageCarousel(
     currentImageBarModifier: Modifier = Modifier,
     imageList: List<Bitmap?>
 ) {
+    Log.d("test", pagerState.currentPage.toString())
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.SpaceAround
@@ -263,10 +265,10 @@ fun ImageCarousel(
             modifier = Modifier
                 .weight(1f),
             state = pagerState,
-            pageCount = pagerCount,
-            contentPadding = PaddingValues(start = 24.dp, top = 12.dp, end = 24.dp),
-            pageSpacing = 8.dp,
-        ) {
+        ) { page ->
+//            pageCount = pagerCount,
+//            contentPadding = PaddingValues(start = 24.dp, top = 12.dp, end = 24.dp),
+//            pageSpacing = 8.dp,
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -277,7 +279,7 @@ fun ImageCarousel(
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                if (imageList[pagerState.currentPage] != null) {
+                if (imageList[page] != null) {
                     Image(
                         BitmapPainter(imageList[pagerState.currentPage]!!.asImageBitmap()),
                         contentDescription = null,
@@ -418,9 +420,7 @@ fun ManageScreenPreview() {
         )
         ManageScreen(
             navController = navController,
-            viewModel = TestManageViewModel(
-                index = 1
-            )
+            viewModel = viewModel()
         )
     }
 }

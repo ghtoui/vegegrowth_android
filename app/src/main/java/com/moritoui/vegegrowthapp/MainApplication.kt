@@ -1,4 +1,4 @@
-package com.moritoui.vegegrowthapp.di.module
+package com.moritoui.vegegrowthapp
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
