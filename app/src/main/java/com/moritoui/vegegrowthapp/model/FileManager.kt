@@ -2,15 +2,11 @@ package com.moritoui.vegegrowthapp.model
 
 import android.content.Context
 import android.util.Log
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
 import java.io.IOException
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
@@ -19,11 +15,6 @@ interface FileManager {
     fun readJsonData(fileName: String): String?
     fun saveVegeItemListData(vegeItemList: List<VegeItem>)
     fun getVegeItemList(): MutableList<VegeItem>
-}
-
-@Module
-@InstallIn(SingletonComponent::class)
-object FileMangerModule {
 }
 
 open class FileManagerImpl (

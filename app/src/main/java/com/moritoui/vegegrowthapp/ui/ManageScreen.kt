@@ -1,7 +1,6 @@
 package com.moritoui.vegegrowthapp.ui
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -11,6 +10,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -46,13 +46,11 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.moritoui.vegegrowthapp.R
@@ -69,8 +67,8 @@ fun ManageScreen(
     viewModel: ManageScreenViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    // 最初に表示するページ
-    val pagerState = rememberPagerState{ 0 }
+
+    val pagerState = rememberPagerState { uiState.pagerCount }
 
     val scope = rememberCoroutineScope()
 
@@ -158,7 +156,6 @@ fun ManageScreen(
     }
 }
 
-@OptIn(ExperimentalTextApi::class)
 @Composable
 fun DrawLineChart(
     data: List<VegetableRepository>,
@@ -256,7 +253,6 @@ fun ImageCarousel(
     currentImageBarModifier: Modifier = Modifier,
     imageList: List<Bitmap?>
 ) {
-    Log.d("test", pagerState.currentPage.toString())
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.SpaceAround
@@ -265,10 +261,9 @@ fun ImageCarousel(
             modifier = Modifier
                 .weight(1f),
             state = pagerState,
+            contentPadding = PaddingValues(start = 24.dp, top = 12.dp, end = 24.dp),
+            pageSpacing = 8.dp
         ) { page ->
-//            pageCount = pagerCount,
-//            contentPadding = PaddingValues(start = 24.dp, top = 12.dp, end = 24.dp),
-//            pageSpacing = 8.dp,
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -417,10 +412,6 @@ fun ManageScreenPreview() {
             painterResource(id = R.drawable.ic_launcher_foreground),
             painterResource(id = R.drawable.ic_launcher_background),
             painterResource(id = R.drawable.ic_launcher_foreground),
-        )
-        ManageScreen(
-            navController = navController,
-            viewModel = viewModel()
         )
     }
 }

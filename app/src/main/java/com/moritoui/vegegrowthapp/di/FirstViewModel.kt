@@ -7,7 +7,6 @@ import com.moritoui.vegegrowthapp.model.sortStatusMap
 import com.moritoui.vegegrowthapp.ui.FirstScreenUiState
 import kotlinx.coroutines.flow.StateFlow
 
-
 interface FirstViewModel {
     val uiState: StateFlow<FirstScreenUiState>
     val vegeItemList: MutableList<VegeItem>

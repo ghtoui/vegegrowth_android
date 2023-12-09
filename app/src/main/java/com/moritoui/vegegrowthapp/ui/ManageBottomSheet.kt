@@ -9,6 +9,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -54,8 +55,8 @@ fun ImageBottomSheet(
     val bottomSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = skipPartiallyExpanded
     )
-    // 最初のページはindex
-    val pagerState = rememberPagerState{ index }
+
+    val pagerState = rememberPagerState(initialPage = index) { pagerCount }
     val scope = rememberCoroutineScope()
 
     ModalBottomSheet(
@@ -67,10 +68,9 @@ fun ImageBottomSheet(
         ) {
             HorizontalPager(
                 state = pagerState,
+                contentPadding = PaddingValues(start = 24.dp, top = 12.dp, end = 24.dp),
+                pageSpacing = 8.dp
             ) { page ->
-//                pageCount = pagerCount,
-//                contentPadding = PaddingValues(start = 24.dp, top = 12.dp, end = 24.dp),
-//                pageSpacing = 8.dp
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -81,7 +81,7 @@ fun ImageBottomSheet(
                         ),
                     contentAlignment = Alignment.Center
                 ) {
-                    if (imageList[pagerState.currentPage] != null) {
+                    if (imageList[page] != null) {
                         Image(
                             BitmapPainter(imageList[pagerState.currentPage]!!.asImageBitmap()),
                             contentDescription = null,

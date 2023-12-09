@@ -122,7 +122,6 @@ class TakePictureScreenViewModel @Inject constructor(
         }
     }
 
-
     private fun fixRotateImage(takePic: ImageProxy): Bitmap {
         val rotation = takePic.imageInfo.rotationDegrees
         val takePicBitMap = takePic.toBitmap()
