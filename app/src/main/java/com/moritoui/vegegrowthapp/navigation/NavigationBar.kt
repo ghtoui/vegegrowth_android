@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -20,11 +21,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.moritoui.vegegrowthapp.ui.FirstScreen
-import com.moritoui.vegegrowthapp.ui.FirstScreenViewModel
 import com.moritoui.vegegrowthapp.ui.ManageScreen
-import com.moritoui.vegegrowthapp.ui.ManageScreenViewModel
 import com.moritoui.vegegrowthapp.ui.TakePicScreen
-import com.moritoui.vegegrowthapp.ui.TakePictureScreenViewModel
 
 sealed class Screen(
     val route: String,
@@ -39,7 +37,6 @@ fun Navigation(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController()
 ) {
-
     val context = LocalContext.current.applicationContext
     NavHost(
         modifier = modifier,
@@ -48,9 +45,7 @@ fun Navigation(
     ) {
         composable(Screen.FirstScreen.route) {
             FirstScreen(
-                viewModel = FirstScreenViewModel(
-                    applicationContext = context
-                ),
+                viewModel = hiltViewModel(),
                 navController = navController
             )
         }
@@ -64,11 +59,7 @@ fun Navigation(
             TakePicScreen(
                 sortText = backStackEntry.arguments?.getString("sortText") ?: "All",
                 navController = navController,
-                viewModel = TakePictureScreenViewModel(
-                    index = backStackEntry.arguments?.getInt("index") ?: 0,
-                    sortText = backStackEntry.arguments?.getString("sortText") ?: "All",
-                    applicationContext = context
-                )
+                viewModel = hiltViewModel()
             )
         }
         composable(
@@ -80,11 +71,7 @@ fun Navigation(
         ) { backStackEntry ->
             ManageScreen(
                 navController = navController,
-                viewModel = ManageScreenViewModel(
-                    index = backStackEntry.arguments?.getInt("index") ?: 0,
-                    sortText = backStackEntry.arguments?.getString("sortText") ?: "All",
-                    applicationContext = context
-                )
+                viewModel = hiltViewModel()
             )
         }
     }

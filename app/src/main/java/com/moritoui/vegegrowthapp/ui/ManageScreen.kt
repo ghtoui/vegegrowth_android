@@ -47,7 +47,6 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
@@ -56,11 +55,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.moritoui.vegegrowthapp.R
-import com.moritoui.vegegrowthapp.di.ManageViewModel
 import com.moritoui.vegegrowthapp.model.DateFormatter
-import com.moritoui.vegegrowthapp.model.VegetableRepository
+import com.moritoui.vegegrowthapp.model.VegeItemDetail
 import com.moritoui.vegegrowthapp.navigation.NavigationAppTopBar
-import com.moritoui.vegegrowthapp.testviewmodel.TestManageViewModel
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 import kotlinx.coroutines.launch
 
@@ -68,10 +65,11 @@ import kotlinx.coroutines.launch
 @Composable
 fun ManageScreen(
     navController: NavHostController,
-    viewModel: ManageViewModel
+    viewModel: ManageScreenViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val pagerState = rememberPagerState(initialPage = 0)
+
+    val pagerState = rememberPagerState { uiState.pagerCount }
 
     val scope = rememberCoroutineScope()
 
@@ -109,6 +107,7 @@ fun ManageScreen(
                         .padding(16.dp)
                 )
             }
+
             ImageCarousel(
                 pagerCount = uiState.pagerCount,
                 pagerState = pagerState,
@@ -158,10 +157,9 @@ fun ManageScreen(
     }
 }
 
-@OptIn(ExperimentalTextApi::class)
 @Composable
 fun DrawLineChart(
-    data: List<VegetableRepository>,
+    data: List<VegeItemDetail>,
     currentIndex: Int,
     modifier: Modifier = Modifier
 ) {
@@ -208,7 +206,7 @@ fun DrawLineChart(
             style = Stroke(width = 4f)
         )
 
-        if (pointX != null || pointY != null) {
+        if (pointX != null) {
             // データが1つだけの時の処理
             if (pointX!!.isNaN() || pointY!!.isNaN()) {
                 pointX = 0.toFloat()
@@ -243,15 +241,13 @@ fun DrawLineChart(
                 center = Offset(pointX!!, pointY!!)
             )
             try {
-                if (pointTextX != null && pointTextY != null) {
-                    drawText(
-                        textMeasurer = textMeasurer,
-                        text = detailData,
-                        topLeft = Offset(x = pointTextX, y = pointTextY)
-                    )
-                }
+                drawText(
+                    textMeasurer = textMeasurer,
+                    text = detailData,
+                    topLeft = Offset(x = pointTextX, y = pointTextY)
+                )
             } catch (e: Exception) {
-                Log.d("error", e.toString())
+                Log.e("error", e.toString())
             }
         }
     }
@@ -277,10 +273,9 @@ fun ImageCarousel(
             modifier = Modifier
                 .weight(1f),
             state = pagerState,
-            pageCount = pagerCount,
             contentPadding = PaddingValues(start = 24.dp, top = 12.dp, end = 24.dp),
-            pageSpacing = 8.dp,
-        ) {
+            pageSpacing = 8.dp
+        ) { page ->
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -291,7 +286,7 @@ fun ImageCarousel(
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                if (imageList[pagerState.currentPage] != null) {
+                if (imageList[page] != null) {
                     Image(
                         BitmapPainter(imageList[pagerState.currentPage]!!.asImageBitmap()),
                         contentDescription = null,
@@ -429,12 +424,6 @@ fun ManageScreenPreview() {
             painterResource(id = R.drawable.ic_launcher_foreground),
             painterResource(id = R.drawable.ic_launcher_background),
             painterResource(id = R.drawable.ic_launcher_foreground),
-        )
-        ManageScreen(
-            navController = navController,
-            viewModel = TestManageViewModel(
-                index = 1
-            )
         )
     }
 }

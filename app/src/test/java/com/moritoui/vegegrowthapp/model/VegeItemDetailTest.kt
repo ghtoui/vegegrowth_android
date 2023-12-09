@@ -4,11 +4,11 @@ import com.google.common.truth.Truth.assertThat
 import java.util.UUID
 import org.junit.Test
 
-class VegetableRepositoryTest {
+class VegeItemDetailTest {
 
     @Test
     fun getDiffDatetime() {
-        val vegetableRepository = VegetableRepository(
+        val vegeItemDetail = VegeItemDetail(
             itemUuid = UUID.randomUUID().toString(),
             uuid = UUID.randomUUID().toString(),
             name = "name",
@@ -16,7 +16,7 @@ class VegetableRepositoryTest {
             memo = "",
             date = "2023-09-29 20:30:14"
         )
-        val diffDate = vegetableRepository.getDiffDatetime("2023-09-25 20:30:14")
+        val diffDate = vegeItemDetail.getDiffDatetime("2023-09-25 20:30:14")
         val ansDiffDate = "4"
 
         assertThat(ansDiffDate).isEqualTo(diffDate)

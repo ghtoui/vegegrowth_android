@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -56,7 +55,8 @@ fun ImageBottomSheet(
     val bottomSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = skipPartiallyExpanded
     )
-    val pagerState = rememberPagerState(initialPage = index)
+
+    val pagerState = rememberPagerState(initialPage = index) { pagerCount }
     val scope = rememberCoroutineScope()
 
     ModalBottomSheet(
@@ -68,10 +68,9 @@ fun ImageBottomSheet(
         ) {
             HorizontalPager(
                 state = pagerState,
-                pageCount = pagerCount,
                 contentPadding = PaddingValues(start = 24.dp, top = 12.dp, end = 24.dp),
-                pageSpacing = 8.dp,
-            ) {
+                pageSpacing = 8.dp
+            ) { page ->
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -82,7 +81,7 @@ fun ImageBottomSheet(
                         ),
                     contentAlignment = Alignment.Center
                 ) {
-                    if (imageList[pagerState.currentPage] != null) {
+                    if (imageList[page] != null) {
                         Image(
                             BitmapPainter(imageList[pagerState.currentPage]!!.asImageBitmap()),
                             contentDescription = null,
@@ -163,7 +162,6 @@ fun MemoEditorBottomSheet(
 @Composable
 fun BottomSheetPreview() {
     val scope = rememberCoroutineScope()
-    val pagerState = PagerState()
     val imageList = listOf<Bitmap?>(
         null, null, null, null, null
     )

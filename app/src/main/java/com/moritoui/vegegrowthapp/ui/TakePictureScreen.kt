@@ -41,7 +41,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.moritoui.vegegrowthapp.R
-import com.moritoui.vegegrowthapp.di.TakePictureViewModel
 import com.moritoui.vegegrowthapp.navigation.NavigateItem
 import com.moritoui.vegegrowthapp.navigation.NavigationAppTopBar
 import com.moritoui.vegegrowthapp.navigation.Screen
@@ -50,7 +49,7 @@ import com.moritoui.vegegrowthapp.navigation.Screen
 fun TakePicScreen(
     sortText: String,
     navController: NavHostController,
-    viewModel: TakePictureViewModel
+    viewModel: TakePictureScreenViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -62,7 +61,7 @@ fun TakePicScreen(
                 isVisibleNavigationButton = uiState.isVisibleNavigateButton
             ) {
                 NavigateItem {
-                    navController.navigate("${Screen.ManageVegeScreen.route}/${viewModel.getIndex()}/$sortText") {
+                    navController.navigate("${Screen.ManageVegeScreen.route}/0/$sortText") {
                         popUpTo(navController.graph.startDestinationId)
                     }
                 }
