@@ -21,10 +21,6 @@ open class FileManagerImpl(
     override val applicationContext: Context
 ) : FileManager {
 
-    init {
-        Log.d("auto", "ok")
-    }
-
     override fun readJsonData(fileName: String): String? {
         var json: String? = null
         val jsonFileName = "$fileName.json"
