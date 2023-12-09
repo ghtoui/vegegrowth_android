@@ -1,13 +1,12 @@
 package com.moritoui.vegegrowthapp.ui
 
 import android.graphics.Bitmap
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import com.moritoui.vegegrowthapp.di.ManageUiState
-import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegeItemDetail
-import com.moritoui.vegegrowthapp.model.VegetableRepositoryFileManager
+import com.moritoui.vegegrowthapp.usecases.GetTakePictureListUseCase
+import com.moritoui.vegegrowthapp.usecases.GetVegeItemDetailListUseCase
+import com.moritoui.vegegrowthapp.usecases.SaveVegeDetailMemoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,27 +16,24 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ManageScreenViewModel @Inject constructor(
-    private val fileManager: VegetableRepositoryFileManager
+    getVegeItemDetailListUseCase: GetVegeItemDetailListUseCase,
+    private val saveVegeDetailMemoUseCase: SaveVegeDetailMemoUseCase,
+    private val getTakePictureListUseCase: GetTakePictureListUseCase
 ) : ViewModel() {
-    private var vegeItem: VegeItem
-    private var vegeRepositoryList: MutableList<VegeItemDetail>
+    private var vegeItemDetailList: MutableList<VegeItemDetail> = getVegeItemDetailListUseCase()
 
-    var takePicList: List<Bitmap?> = emptyList()
+    var takePicList: List<Bitmap?> = getTakePictureListUseCase()
 
     private val _uiState = MutableStateFlow(ManageUiState())
     val uiState: StateFlow<ManageUiState> = _uiState.asStateFlow()
 
     init {
-        this.vegeItem = fileManager.getVegeItem()
-        this.vegeRepositoryList = fileManager.readVegeRepositoryList(fileManager.readJsonData(vegeItem.uuid))
         updateState(
-            pagerCount = vegeRepositoryList.size,
-            vegeRepositoryList = vegeRepositoryList
+            pagerCount = vegeItemDetailList.size,
+            vegeRepositoryList = vegeItemDetailList
         )
-        this.takePicList = fileManager.getImageList().toMutableStateList()
     }
 
-    @OptIn(ExperimentalFoundationApi::class)
     private fun updateState(
         pagerCount: Int = _uiState.value.pagerCount,
         vegeRepositoryList: List<VegeItemDetail> = _uiState.value.vegeRepositoryList,
@@ -60,7 +56,6 @@ class ManageScreenViewModel @Inject constructor(
         updateState(
             isOpenImageBottomSheet = !_uiState.value.isOpenImageBottomSheet
         )
-        this.takePicList = fileManager.getImageList().toMutableStateList()
     }
 
     fun cancelEditMemo() {
@@ -75,8 +70,7 @@ class ManageScreenViewModel @Inject constructor(
     }
 
     fun saveEditMemo(index: Int) {
-        vegeRepositoryList[index].memo = _uiState.value.inputMemoText
-        fileManager.saveVegeRepository(vegeRepositoryList = vegeRepositoryList)
+        saveVegeDetailMemoUseCase(index = index, memo = _uiState.value.inputMemoText)
         updateState(
             inputMemoText = "",
             isOpenMemoEditorBottomSheet = false
@@ -85,7 +79,7 @@ class ManageScreenViewModel @Inject constructor(
 
     fun changeOpenMemoEditorBottomSheet(index: Int) {
         if (!_uiState.value.isOpenMemoEditorBottomSheet) {
-            updateState(inputMemoText = vegeRepositoryList[index].memo)
+            updateState(inputMemoText = vegeItemDetailList[index].memo)
         }
         updateState(
             isOpenMemoEditorBottomSheet = !_uiState.value.isOpenMemoEditorBottomSheet
