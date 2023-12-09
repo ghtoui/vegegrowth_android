@@ -17,7 +17,7 @@ interface FileManager {
     fun getVegeItemList(): MutableList<VegeItem>
 }
 
-open class FileManagerImpl (
+open class FileManagerImpl(
     override val applicationContext: Context
 ) : FileManager {
 
