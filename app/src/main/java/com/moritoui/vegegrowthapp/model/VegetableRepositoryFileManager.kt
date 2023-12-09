@@ -20,7 +20,7 @@ class VegetableRepositoryFileManager @Inject constructor(
     @ApplicationContext applicationContext: Context,
     getSelectVegeItemUseCase: GetSelectVegeItemUseCase
 ) : FileManagerImpl(applicationContext) {
-    private val vegeRepositoryList: List<VegetableRepository>
+    private val vegeRepositoryList: List<VegeItemDetail>
     private val imageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
     private val selectVegeItem: VegeItem = getSelectVegeItemUseCase()
 
@@ -30,7 +30,7 @@ class VegetableRepositoryFileManager @Inject constructor(
     }
 
     fun saveVegeRepositoryAndImage(
-        vegeRepositoryList: List<VegetableRepository>,
+        vegeRepositoryList: List<VegeItemDetail>,
         takePicImage: Bitmap?
     ) {
         saveImage(
@@ -40,7 +40,7 @@ class VegetableRepositoryFileManager @Inject constructor(
         saveVegeRepository(vegeRepositoryList = vegeRepositoryList)
     }
 
-    fun saveImage(
+    private fun saveImage(
         takePicImage: Bitmap?,
         fileName: String
     ) {
@@ -52,7 +52,7 @@ class VegetableRepositoryFileManager @Inject constructor(
         saveVegeRepository(vegeRepositoryList = vegeRepositoryList)
     }
 
-    fun saveVegeRepository(vegeRepositoryList: List<VegetableRepository>) {
+    fun saveVegeRepository(vegeRepositoryList: List<VegeItemDetail>) {
         val jsonFileName = "${selectVegeItem.uuid}.json"
         val jsonFilePath = File(applicationContext.filesDir, jsonFileName)
         FileWriter(jsonFilePath).use { stream ->
@@ -88,8 +88,8 @@ class VegetableRepositoryFileManager @Inject constructor(
         return takePicImageList
     }
 
-    fun readVegeRepositoryList(json: String?): MutableList<VegetableRepository> {
-        return when (val vegeRepositoryList = parseFromJson<List<VegetableRepository>>(json)) {
+    fun readVegeRepositoryList(json: String?): MutableList<VegeItemDetail> {
+        return when (val vegeRepositoryList = parseFromJson<List<VegeItemDetail>>(json)) {
             null -> mutableListOf()
             else -> vegeRepositoryList.toMutableList()
         }
@@ -99,7 +99,7 @@ class VegetableRepositoryFileManager @Inject constructor(
         return selectVegeItem
     }
 
-    fun getVegeRepositoryList(): MutableList<VegetableRepository> {
+    fun getVegeRepositoryList(): MutableList<VegeItemDetail> {
         return vegeRepositoryList.toMutableList()
     }
 }

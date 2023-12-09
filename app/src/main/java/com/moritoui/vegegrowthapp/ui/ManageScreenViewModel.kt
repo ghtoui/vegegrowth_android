@@ -6,7 +6,7 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import com.moritoui.vegegrowthapp.di.ManageUiState
 import com.moritoui.vegegrowthapp.model.VegeItem
-import com.moritoui.vegegrowthapp.model.VegetableRepository
+import com.moritoui.vegegrowthapp.model.VegeItemDetail
 import com.moritoui.vegegrowthapp.model.VegetableRepositoryFileManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +20,7 @@ class ManageScreenViewModel @Inject constructor(
     private val fileManager: VegetableRepositoryFileManager
 ) : ViewModel() {
     private var vegeItem: VegeItem
-    private var vegeRepositoryList: MutableList<VegetableRepository>
+    private var vegeRepositoryList: MutableList<VegeItemDetail>
 
     var takePicList: List<Bitmap?> = emptyList()
 
@@ -40,7 +40,7 @@ class ManageScreenViewModel @Inject constructor(
     @OptIn(ExperimentalFoundationApi::class)
     private fun updateState(
         pagerCount: Int = _uiState.value.pagerCount,
-        vegeRepositoryList: List<VegetableRepository> = _uiState.value.vegeRepositoryList,
+        vegeRepositoryList: List<VegeItemDetail> = _uiState.value.vegeRepositoryList,
         isOpenImageBottomSheet: Boolean = _uiState.value.isOpenImageBottomSheet,
         inputMemoText: String = _uiState.value.inputMemoText,
         isOpenMemoEditorBottomSheet: Boolean = _uiState.value.isOpenMemoEditorBottomSheet

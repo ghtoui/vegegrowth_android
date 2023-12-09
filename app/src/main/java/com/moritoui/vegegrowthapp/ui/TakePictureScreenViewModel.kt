@@ -7,8 +7,10 @@ import androidx.lifecycle.ViewModel
 import com.moritoui.vegegrowthapp.di.TakePictureScreenUiState
 import com.moritoui.vegegrowthapp.model.DateFormatter
 import com.moritoui.vegegrowthapp.model.VegeItem
-import com.moritoui.vegegrowthapp.model.VegetableRepository
-import com.moritoui.vegegrowthapp.model.VegetableRepositoryFileManager
+import com.moritoui.vegegrowthapp.model.VegeItemDetail
+import com.moritoui.vegegrowthapp.usecases.GetSelectVegeItemUseCase
+import com.moritoui.vegegrowthapp.usecases.GetVegeItemDetailListUseCase
+import com.moritoui.vegegrowthapp.usecases.SaveVegeItemDetailDataUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDateTime
 import java.util.UUID
@@ -20,22 +22,22 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TakePictureScreenViewModel @Inject constructor(
-    private val fileManager: VegetableRepositoryFileManager
+    private val dateFormatter: DateFormatter,
+    getSelectVegeItemUseCase: GetSelectVegeItemUseCase,
+    getVegeItemDetailListUseCase: GetVegeItemDetailListUseCase,
+    private val saveVegeItemDetailDataUseCase: SaveVegeItemDetailDataUseCase
 ) : ViewModel() {
-    private val dateFormatter = DateFormatter()
 
-    private var vegeRepositoryList: MutableList<VegetableRepository>
-    private var vegeItem: VegeItem
+    private var vegeRepositoryList: MutableList<VegeItemDetail> = getVegeItemDetailListUseCase()
+    private var vegeItem: VegeItem = getSelectVegeItemUseCase()
 
     private val _uiState = MutableStateFlow(TakePictureScreenUiState())
     val uiState: StateFlow<TakePictureScreenUiState> = _uiState.asStateFlow()
 
     init {
-        this.vegeItem = fileManager.getVegeItem()
         _uiState.update { currentState ->
             currentState.copy(vegeName = this.vegeItem.name)
         }
-        this.vegeRepositoryList = fileManager.getVegeRepositoryList()
         updateState(isVisibleNavigateButton = vegeRepositoryList.isNotEmpty())
     }
 
@@ -87,7 +89,7 @@ class TakePictureScreenViewModel @Inject constructor(
         val datetime = dateFormatter.dateToString(LocalDateTime.now())
         // ボタンが押せないようにしているから、inputTextとtakePicImageはnullにならないはず
         vegeRepositoryList.add(
-            VegetableRepository(
+            VegeItemDetail(
                 itemUuid = vegeItem.uuid.toString(),
                 uuid = UUID.randomUUID().toString(),
                 name = vegeItem.name,
@@ -96,7 +98,7 @@ class TakePictureScreenViewModel @Inject constructor(
                 date = datetime
             )
         )
-        fileManager.saveVegeRepositoryAndImage(vegeRepositoryList = vegeRepositoryList, takePicImage = _uiState.value.takePicImage)
+        saveVegeItemDetailDataUseCase(takePicture = _uiState.value.takePicImage)
         resetState()
         updateState(isVisibleNavigateButton = vegeRepositoryList.isNotEmpty())
     }
@@ -130,15 +132,6 @@ class TakePictureScreenViewModel @Inject constructor(
         matrix.postRotate(rotation.toFloat())
         return Bitmap.createBitmap(takePicBitMap, 0, 0, takePic.width, takePic.height, matrix, true)
     }
-
-//    fun changeInputText(inputText: String) {
-//        val isSuccessInputText = checkInputText(inputText = inputText)
-//        updateState(
-//            inputText = inputText,
-//            isSuccessInputText = isSuccessInputText,
-//            isBeforeInputText = false
-//        )
-//    }
 
     fun changeCameraOpenState() {
         updateState(isCameraOpen = !_uiState.value.isCameraOpen)

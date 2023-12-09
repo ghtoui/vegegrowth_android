@@ -56,7 +56,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.moritoui.vegegrowthapp.R
 import com.moritoui.vegegrowthapp.model.DateFormatter
-import com.moritoui.vegegrowthapp.model.VegetableRepository
+import com.moritoui.vegegrowthapp.model.VegeItemDetail
 import com.moritoui.vegegrowthapp.navigation.NavigationAppTopBar
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 import kotlinx.coroutines.launch
@@ -159,7 +159,7 @@ fun ManageScreen(
 
 @Composable
 fun DrawLineChart(
-    data: List<VegetableRepository>,
+    data: List<VegeItemDetail>,
     currentIndex: Int,
     modifier: Modifier = Modifier
 ) {
