@@ -16,13 +16,14 @@ class VegeItemDetailRepositoryImpl @Inject constructor(
     private val fileManager: VegetableRepositoryFileManager
 ) : VegeItemDetailRepository {
     override val vegeItemDetailList: MutableList<VegeItemDetail> = fileManager.getVegeRepositoryList()
-    override val takePictureList: List<Bitmap?> = fileManager.getImageList()
+    override var takePictureList: List<Bitmap?> = fileManager.getImageList()
 
     override fun saveVegeDetail(takePicture: Bitmap?) {
         fileManager.saveVegeRepositoryAndImage(
             vegeRepositoryList = vegeItemDetailList,
             takePicImage = takePicture
         )
+        takePictureList = fileManager.getImageList()
     }
 
     override fun saveVegeDetailMemo(index: Int, memo: String) {
