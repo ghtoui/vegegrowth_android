@@ -4,8 +4,8 @@ import android.graphics.Bitmap
 import com.moritoui.vegegrowthapp.di.ManageUiState
 import com.moritoui.vegegrowthapp.di.ManageViewModel
 import com.moritoui.vegegrowthapp.model.VegeItem
+import com.moritoui.vegegrowthapp.model.VegeItemDetail
 import com.moritoui.vegegrowthapp.model.VegeItemList
-import com.moritoui.vegegrowthapp.model.VegetableRepository
 import com.moritoui.vegegrowthapp.model.VegetableRepositoryList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,7 +17,7 @@ class TestManageViewModel(
 ) : ManageViewModel {
 
     private var vegeItem: VegeItem
-    private var vegeRepositoryList: MutableList<VegetableRepository>
+    private var vegeRepositoryList: MutableList<VegeItemDetail>
 
     private val _uiState = MutableStateFlow(ManageUiState())
     override val uiState: StateFlow<ManageUiState> = _uiState.asStateFlow()
@@ -41,7 +41,7 @@ class TestManageViewModel(
 
     private fun updateState(
         pagerCount: Int = _uiState.value.pagerCount,
-        vegeRepositoryList: List<VegetableRepository> = _uiState.value.vegeRepositoryList,
+        vegeRepositoryList: List<VegeItemDetail> = _uiState.value.vegeRepositoryList,
     ) {
         _uiState.update { currentState ->
             currentState.copy(

@@ -7,15 +7,21 @@ import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
 import java.io.IOException
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-open class FileManager(
-    private val applicationContext: Context
-) {
+interface FileManager {
+    val applicationContext: Context
+    fun readJsonData(fileName: String): String?
+    fun saveVegeItemListData(vegeItemList: List<VegeItem>)
+    fun getVegeItemList(): MutableList<VegeItem>
+}
 
-    fun readJsonData(fileName: String): String? {
+open class FileManagerImpl(
+    override val applicationContext: Context
+) : FileManager {
+
+    override fun readJsonData(fileName: String): String? {
         var json: String? = null
         val jsonFileName = "$fileName.json"
         val jsonFilePath = File(applicationContext.filesDir, jsonFileName)
@@ -29,14 +35,7 @@ open class FileManager(
         return json
     }
 
-    inline fun <reified T> parseFromJson(json: String?): T? {
-        return when (json) {
-            null -> null
-            else -> Json.decodeFromString<T>(json)
-        }
-    }
-
-    fun saveVegeItemListData(vegeItemList: List<VegeItem>) {
+    override fun saveVegeItemListData(vegeItemList: List<VegeItem>) {
         val jsonFileName = "vegeItemList.json"
         val jsonFilePath = File(applicationContext.filesDir, jsonFileName)
         FileWriter(jsonFilePath).use { stream ->
@@ -44,14 +43,21 @@ open class FileManager(
         }
     }
 
-    inline fun <reified T> parseToJson(targetData: T): String {
-        return Json.encodeToString(targetData)
-    }
-
-    fun getVegeItemList(): MutableList<VegeItem> {
+    override fun getVegeItemList(): MutableList<VegeItem> {
         return when (val vegeItemList = parseFromJson<List<VegeItem>>(readJsonData(fileName = "vegeItemList"))) {
             null -> mutableListOf()
             else -> vegeItemList.toMutableList()
         }
+    }
+
+    inline fun <reified T> parseFromJson(json: String?): T? {
+        return when (json) {
+            null -> null
+            else -> Json.decodeFromString<T>(json)
+        }
+    }
+
+    inline fun <reified T> parseToJson(targetData: T): String {
+        return Json.encodeToString(targetData)
     }
 }

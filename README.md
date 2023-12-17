@@ -57,7 +57,8 @@ https://github.com/ghtoui/vegegrowth_android/assets/92294389/1546a1f2-d84f-4ddc-
 |Circle CI      |CI/CD         |
 |JetPack Compose|UIアプリ開発  |
 |ktlint         |フォーマッター|
-|ユニットテスト   |Truth　　　　|
+|ユニットテスト |Truth　　　　 |
+|Hilt           |依存性注入    |
 
 ### プログラムメモ
 

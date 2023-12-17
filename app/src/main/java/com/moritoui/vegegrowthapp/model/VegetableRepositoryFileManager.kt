@@ -5,6 +5,8 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Environment
 import android.util.Log
+import com.moritoui.vegegrowthapp.usecases.GetSelectVegeItemUseCase
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -12,35 +14,23 @@ import java.io.FileWriter
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
+import javax.inject.Inject
 
-class VegetableRepositoryFileManager(
-    index: Int,
-    private val sortText: String,
-    private val applicationContext: Context
-) : FileManager(applicationContext = applicationContext) {
-    private val vegeItem: VegeItem
-    private val vegeRepositoryList: List<VegetableRepository>
+class VegetableRepositoryFileManager @Inject constructor(
+    @ApplicationContext applicationContext: Context,
+    getSelectVegeItemUseCase: GetSelectVegeItemUseCase
+) : FileManagerImpl(applicationContext) {
+    private val vegeRepositoryList: List<VegeItemDetail>
     private val imageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+    private val selectVegeItem: VegeItem = getSelectVegeItemUseCase()
 
     init {
-        this.vegeItem = sortItemList(getVegeItemList())[index]
-        this.vegeRepositoryList = readVegeRepositoryList(readJsonData(vegeItem.uuid))
+        this.vegeRepositoryList = readVegeRepositoryList(readJsonData(selectVegeItem.uuid))
         readJsonData(fileName = "vegeItemList")
     }
 
-    private fun sortItemList(vegeItemList: MutableList<VegeItem>): MutableList<VegeItem> {
-        return when (val sortStatus = SortStatus.valueOf(sortText)) {
-            SortStatus.All -> vegeItemList
-            else -> {
-                vegeItemList.filter { item ->
-                    item.status == sortStatusMap[sortStatus] || item.category == sortStatusMap[sortStatus]
-                }.toMutableList()
-            }
-        }
-    }
-
     fun saveVegeRepositoryAndImage(
-        vegeRepositoryList: List<VegetableRepository>,
+        vegeRepositoryList: List<VegeItemDetail>,
         takePicImage: Bitmap?
     ) {
         saveImage(
@@ -50,7 +40,7 @@ class VegetableRepositoryFileManager(
         saveVegeRepository(vegeRepositoryList = vegeRepositoryList)
     }
 
-    fun saveImage(
+    private fun saveImage(
         takePicImage: Bitmap?,
         fileName: String
     ) {
@@ -62,8 +52,8 @@ class VegetableRepositoryFileManager(
         saveVegeRepository(vegeRepositoryList = vegeRepositoryList)
     }
 
-    fun saveVegeRepository(vegeRepositoryList: List<VegetableRepository>) {
-        val jsonFileName = "${vegeItem.uuid}.json"
+    fun saveVegeRepository(vegeRepositoryList: List<VegeItemDetail>) {
+        val jsonFileName = "${selectVegeItem.uuid}.json"
         val jsonFilePath = File(applicationContext.filesDir, jsonFileName)
         FileWriter(jsonFilePath).use { stream ->
             stream.write(parseToJson(targetData = vegeRepositoryList))
@@ -79,6 +69,7 @@ class VegetableRepositoryFileManager(
         var takePicImage: Bitmap?
         val imageFileName = "$fileName.jpg"
         val imageFilePath = File(imageDirectory, imageFileName)
+
         try {
             val inputStream: InputStream = FileInputStream(imageFilePath)
             takePicImage = BitmapFactory.decodeStream(inputStream)
@@ -97,18 +88,18 @@ class VegetableRepositoryFileManager(
         return takePicImageList
     }
 
-    fun readVegeRepositoryList(json: String?): MutableList<VegetableRepository> {
-        return when (val vegeRepositoryList = parseFromJson<List<VegetableRepository>>(json)) {
+    fun readVegeRepositoryList(json: String?): MutableList<VegeItemDetail> {
+        return when (val vegeRepositoryList = parseFromJson<List<VegeItemDetail>>(json)) {
             null -> mutableListOf()
             else -> vegeRepositoryList.toMutableList()
         }
     }
 
     fun getVegeItem(): VegeItem {
-        return vegeItem
+        return selectVegeItem
     }
 
-    fun getVegeRepositoryList(): MutableList<VegetableRepository> {
+    fun getVegeRepositoryList(): MutableList<VegeItemDetail> {
         return vegeRepositoryList.toMutableList()
     }
 }

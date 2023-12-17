@@ -1,11 +1,11 @@
 package com.moritoui.vegegrowthapp.testviewmodel
 
-import com.moritoui.vegegrowthapp.di.FirstScreenUiState
 import com.moritoui.vegegrowthapp.di.FirstViewModel
 import com.moritoui.vegegrowthapp.model.SortStatus
 import com.moritoui.vegegrowthapp.model.VegeCategory
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegeItemList
+import com.moritoui.vegegrowthapp.ui.FirstScreenUiState
 import kotlinx.coroutines.flow.StateFlow
 
 class TestFirstViewModel : FirstViewModel {

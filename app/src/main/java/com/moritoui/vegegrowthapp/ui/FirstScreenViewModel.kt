@@ -1,40 +1,52 @@
 package com.moritoui.vegegrowthapp.ui
 
-import android.content.Context
-import androidx.compose.runtime.toMutableStateList
-import com.moritoui.vegegrowthapp.di.FirstScreenUiState
-import com.moritoui.vegegrowthapp.di.FirstViewModel
-import com.moritoui.vegegrowthapp.model.FileManager
+import androidx.lifecycle.ViewModel
 import com.moritoui.vegegrowthapp.model.SelectMenu
 import com.moritoui.vegegrowthapp.model.SortStatus
 import com.moritoui.vegegrowthapp.model.VegeCategory
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegeStatus
+import com.moritoui.vegegrowthapp.usecases.AddVegeItemUseCase
+import com.moritoui.vegegrowthapp.usecases.DeleteVegeItemUseCase
+import com.moritoui.vegegrowthapp.usecases.GetVegeItemListUseCase
+import com.moritoui.vegegrowthapp.usecases.SaveVegeItemListUseCase
+import com.moritoui.vegegrowthapp.usecases.SetSelectSortStatusUseCase
+import com.moritoui.vegegrowthapp.usecases.SetSelectedIndexUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.UUID
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
-class FirstScreenViewModel(
-    applicationContext: Context
-) : FirstViewModel {
-    private val fileManger: FileManager
+data class FirstScreenUiState(
+    val isOpenAddDialog: Boolean = false,
+    val inputText: String = "",
+    val selectCategory: VegeCategory = VegeCategory.None,
+    val isAddAble: Boolean = false,
+    val selectMenu: SelectMenu = SelectMenu.None,
+    val selectStatus: VegeStatus = VegeStatus.Default,
+    val sortStatus: SortStatus = SortStatus.All
+)
+
+@HiltViewModel
+class FirstScreenViewModel @Inject constructor(
+    private val addVegeItemUseCase: AddVegeItemUseCase,
+    private val deleteVegeItemUseCase: DeleteVegeItemUseCase,
+    private val getVegeItemListUseCase: GetVegeItemListUseCase,
+    private val setSelectedIndexUseCase: SetSelectedIndexUseCase,
+    private val setSelectSortStatusUseCase: SetSelectSortStatusUseCase,
+    private val saveVegeItemListUseCase: SaveVegeItemListUseCase
+) : ViewModel() {
     private var deleteList: MutableList<VegeItem> = mutableListOf()
 
     private val _uiState = MutableStateFlow(FirstScreenUiState())
-    override val uiState: StateFlow<FirstScreenUiState> = _uiState.asStateFlow()
+    val uiState: StateFlow<FirstScreenUiState> = _uiState.asStateFlow()
 
-    private var _vegeItemList: MutableList<VegeItem>
-    private var sortItemList: MutableList<VegeItem>
-    override val vegeItemList: MutableList<VegeItem>
-        get() = sortItemList
-
-    init {
-        fileManger = FileManager(applicationContext = applicationContext)
-        this._vegeItemList = fileManger.getVegeItemList().toMutableStateList()
-        this.sortItemList = _vegeItemList
-    }
+    private var _vegeItemList: MutableList<VegeItem> = getVegeItemListUseCase()
+    val vegeItemList: MutableList<VegeItem>
+        get() = _vegeItemList
 
     private fun updateState(
         isOpenAddDialog: Boolean = _uiState.value.isOpenAddDialog,
@@ -54,19 +66,25 @@ class FirstScreenViewModel(
                 sortStatus = sortStatus
             )
         }
-        sortItemList = sortList(
-            sortStatus = _uiState.value.sortStatus,
-            itemList = _vegeItemList
-        )
+        setSelectSortStatusUseCase(sortStatus)
+        updateVegeItemList()
     }
 
-    override fun closeDialog() {
+    private fun updateVegeItemList() {
+        _vegeItemList = getVegeItemListUseCase()
+    }
+
+    fun selectedIndex(index: Int) {
+        setSelectedIndexUseCase(index)
+    }
+
+    fun closeDialog() {
         updateState(
             isOpenAddDialog = false
         )
     }
 
-    override fun openAddDialog() {
+    fun openAddDialog() {
         updateState(
             isOpenAddDialog = true,
             inputText = "",
@@ -74,11 +92,11 @@ class FirstScreenViewModel(
         )
     }
 
-    override fun selectStatus() {
-        fileManger.saveVegeItemListData(vegeItemList = _vegeItemList)
+    fun selectStatus() {
+        saveVegeItemListUseCase()
     }
 
-    override fun changeInputText(inputText: String) {
+    fun changeInputText(inputText: String) {
         val isAddAble = checkInputText(inputText = inputText)
         updateState(
             inputText = inputText,
@@ -86,20 +104,18 @@ class FirstScreenViewModel(
         )
     }
 
-    override fun saveVegeItemListData() {
-        _vegeItemList.add(
-            VegeItem(
-                name = _uiState.value.inputText,
-                category = _uiState.value.selectCategory,
-                uuid = UUID.randomUUID().toString(),
-                status = VegeStatus.Default
-            )
+    fun saveVegeItemListData() {
+        val vegeItem = VegeItem(
+            name = _uiState.value.inputText,
+            category = _uiState.value.selectCategory,
+            uuid = UUID.randomUUID().toString(),
+            status = VegeStatus.Default
         )
-        fileManger.saveVegeItemListData(vegeItemList = _vegeItemList)
+        addVegeItemUseCase(vegeItem)
         closeDialog()
     }
 
-    override fun changeDeleteMode() {
+    fun changeDeleteMode() {
         if (_uiState.value.selectMenu == SelectMenu.Delete) {
             updateState(selectMenu = SelectMenu.None)
             deleteItemList()
@@ -108,7 +124,7 @@ class FirstScreenViewModel(
         }
     }
 
-    override fun changeEditMode() {
+    fun changeEditMode() {
         if (_uiState.value.selectMenu == SelectMenu.Edit) {
             updateState(selectMenu = SelectMenu.None)
         } else {
@@ -117,14 +133,11 @@ class FirstScreenViewModel(
     }
 
     private fun deleteItemList() {
-        deleteList.forEach { item ->
-            _vegeItemList.remove(item)
-        }
+        deleteVegeItemUseCase(deleteList)
         deleteList = mutableListOf()
-        fileManger.saveVegeItemListData(vegeItemList = vegeItemList)
     }
 
-    override fun deleteItem(item: VegeItem, isDelete: Boolean) {
+    fun deleteItem(item: VegeItem, isDelete: Boolean) {
         if (!isDelete) {
             deleteList.add(item)
         } else {
@@ -132,16 +145,24 @@ class FirstScreenViewModel(
         }
     }
 
-    override fun cancelMenu() {
+    fun cancelMenu() {
         deleteList = mutableListOf()
         updateState(selectMenu = SelectMenu.None)
     }
 
-    override fun selectCategory(selectCategory: VegeCategory) {
+    fun selectCategory(selectCategory: VegeCategory) {
         updateState(selectCategory = selectCategory)
     }
 
-    override fun setSortItemList(sortStatus: SortStatus) {
+    fun setSortItemList(sortStatus: SortStatus) {
+        setSelectSortStatusUseCase(sortStatus = sortStatus)
         updateState(sortStatus = sortStatus)
+    }
+
+    private fun checkInputText(inputText: String): Boolean {
+        return when (inputText) {
+            "" -> false
+            else -> true
+        }
     }
 }

@@ -3,10 +3,10 @@ package com.moritoui.vegegrowthapp.model
 import java.util.UUID
 
 object VegetableRepositoryList {
-    fun getVegeRepositoryList(): List<VegetableRepository> {
+    fun getVegeRepositoryList(): List<VegeItemDetail> {
         val itemUuid = UUID.fromString("9600ce0b-adc9-48c1-9384-098c59976eb5").toString()
         return listOf(
-            VegetableRepository(
+            VegeItemDetail(
                 itemUuid = itemUuid,
                 uuid = UUID.randomUUID().toString(),
                 name = "トマト",
@@ -14,7 +14,7 @@ object VegetableRepositoryList {
                 memo = "トマトの種を土に植えました。水をあげました",
                 date = "2023-09-22 20:30:14"
             ),
-            VegetableRepository(
+            VegeItemDetail(
                 itemUuid = itemUuid,
                 uuid = UUID.randomUUID().toString(),
                 name = "トマト",
@@ -22,7 +22,7 @@ object VegetableRepositoryList {
                 memo = "小さな苗ができました。",
                 date = "2023-09-23 20:30:14"
             ),
-            VegetableRepository(
+            VegeItemDetail(
                 itemUuid = itemUuid,
                 uuid = UUID.randomUUID().toString(),
                 name = "トマト",
@@ -30,7 +30,7 @@ object VegetableRepositoryList {
                 memo = "苗が少し大きくなりました。",
                 date = "2023-09-24 20:30:14"
             ),
-            VegetableRepository(
+            VegeItemDetail(
                 itemUuid = itemUuid,
                 uuid = UUID.randomUUID().toString(),
                 name = "トマト",
@@ -38,7 +38,7 @@ object VegetableRepositoryList {
                 memo = "葉っぱが生えて大きくなりました。",
                 date = "2023-09-25 20:30:14"
             ),
-            VegetableRepository(
+            VegeItemDetail(
                 itemUuid = itemUuid,
                 uuid = UUID.randomUUID().toString(),
                 name = "トマト",
@@ -46,7 +46,7 @@ object VegetableRepositoryList {
                 memo = "苗がさらに大きくなったので、支柱を立てました。",
                 date = "2023-09-26 20:30:14"
             ),
-            VegetableRepository(
+            VegeItemDetail(
                 itemUuid = itemUuid,
                 uuid = UUID.randomUUID().toString(),
                 name = "トマト",
@@ -54,7 +54,7 @@ object VegetableRepositoryList {
                 memo = "蕾ができました。",
                 date = "2023-09-27 20:30:14"
             ),
-            VegetableRepository(
+            VegeItemDetail(
                 itemUuid = itemUuid,
                 uuid = UUID.randomUUID().toString(),
                 name = "トマト",
@@ -62,7 +62,7 @@ object VegetableRepositoryList {
                 memo = "蕾から花が咲きました。",
                 date = "2023-09-28 20:30:14"
             ),
-            VegetableRepository(
+            VegeItemDetail(
                 itemUuid = itemUuid,
                 uuid = UUID.randomUUID().toString(),
                 name = "トマト",
@@ -70,7 +70,7 @@ object VegetableRepositoryList {
                 memo = "緑の小さいトマトができました。",
                 date = "2023-09-29 20:30:14"
             ),
-            VegetableRepository(
+            VegeItemDetail(
                 itemUuid = itemUuid,
                 uuid = UUID.randomUUID().toString(),
                 name = "トマト",
@@ -78,7 +78,7 @@ object VegetableRepositoryList {
                 memo = "黄色く丸いトマトまで成長しました。",
                 date = "2023-09-30 20:30:14"
             ),
-            VegetableRepository(
+            VegeItemDetail(
                 itemUuid = itemUuid,
                 uuid = UUID.randomUUID().toString(),
                 name = "トマト",

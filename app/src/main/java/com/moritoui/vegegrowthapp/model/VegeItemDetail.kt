@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 // UUIDは文字列にしないとJsonに変換できない
 @Serializable
-data class VegetableRepository(
+data class VegeItemDetail(
     val itemUuid: String,
     val uuid: String,
     val name: String,
