@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Environment
 import android.util.Log
+import androidx.core.content.ContextCompat
 import com.moritoui.vegegrowthapp.usecases.GetSelectVegeItemUseCase
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.File
@@ -14,19 +15,29 @@ import java.io.FileWriter
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
+import java.nio.file.Files
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class VegetableRepositoryFileManager @Inject constructor(
     @ApplicationContext applicationContext: Context,
     getSelectVegeItemUseCase: GetSelectVegeItemUseCase
 ) : FileManagerImpl(applicationContext) {
-    private val vegeRepositoryList: List<VegeItemDetail>
-    private val imageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+    private var vegeRepositoryList: List<VegeItemDetail>
+    private val imageDirectory = ContextCompat.getDataDir(applicationContext)
+    private val oldImageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
     private val selectVegeItem: VegeItem = getSelectVegeItemUseCase()
 
     init {
         this.vegeRepositoryList = readVegeRepositoryList(readJsonData(selectVegeItem.uuid))
-        readJsonData(fileName = "vegeItemList")
+        // 非同期処理で昔のファイルパスで保存していたものを新しいパスに移動する
+        val scope = CoroutineScope(Dispatchers.IO)
+        scope.launch {
+            oldImagePath()
+        }
     }
 
     fun saveVegeRepositoryAndImage(
@@ -38,6 +49,7 @@ class VegetableRepositoryFileManager @Inject constructor(
             fileName = vegeRepositoryList.last().uuid
         )
         saveVegeRepository(vegeRepositoryList = vegeRepositoryList)
+        this.vegeRepositoryList = vegeRepositoryList
     }
 
     private fun saveImage(
@@ -48,8 +60,6 @@ class VegetableRepositoryFileManager @Inject constructor(
         val imageFilePath = File(imageDirectory, imageFileName)
         val outputStream: OutputStream = FileOutputStream(imageFilePath)
         takePicImage?.compress(Bitmap.CompressFormat.JPEG, 50, outputStream)
-
-        saveVegeRepository(vegeRepositoryList = vegeRepositoryList)
     }
 
     fun saveVegeRepository(vegeRepositoryList: List<VegeItemDetail>) {
@@ -75,7 +85,7 @@ class VegetableRepositoryFileManager @Inject constructor(
             takePicImage = BitmapFactory.decodeStream(inputStream)
         } catch (e: IOException) {
             takePicImage = null
-            Log.d("Error", "File Read Error$imageFileName")
+            Log.e("Error", "File Read Error$imageFileName")
         }
         return takePicImage
     }
@@ -88,7 +98,24 @@ class VegetableRepositoryFileManager @Inject constructor(
         return takePicImageList
     }
 
-    fun readVegeRepositoryList(json: String?): MutableList<VegeItemDetail> {
+    // 非同期処理で実行
+    // 古いパスで保存していた写真を新しいパスに移動させる
+    private suspend fun oldImagePath() {
+        withContext(Dispatchers.IO) {
+            vegeRepositoryList.forEach { item ->
+                val oldPath = File(oldImageDirectory, "${item.uuid}.jpg")
+                val newPath = File(imageDirectory, "${item.uuid}.jpg")
+                try {
+                    Files.move(oldPath.toPath(), newPath.toPath())
+                    Log.d("IO", "Success")
+                } catch (e: IOException) {
+                    Log.d("IO", e.toString())
+                }
+            }
+        }
+    }
+
+    private fun readVegeRepositoryList(json: String?): MutableList<VegeItemDetail> {
         return when (val vegeRepositoryList = parseFromJson<List<VegeItemDetail>>(json)) {
             null -> mutableListOf()
             else -> vegeRepositoryList.toMutableList()
