@@ -90,7 +90,7 @@ fun ImageBottomSheet(
                 ) {
                     if (imageList[page] != null) {
                         Image(
-                            BitmapPainter(imageList[pagerState.currentPage]!!.asImageBitmap()),
+                            BitmapPainter(imageList[page]!!.asImageBitmap()),
                             contentDescription = null,
                             modifier = Modifier
                                 .aspectRatio(1f / 1f)
