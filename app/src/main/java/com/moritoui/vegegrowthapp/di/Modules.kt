@@ -38,7 +38,6 @@ object Modules {
     }
 
     @Provides
-    @Singleton
     fun provideVegeDetailRepository(fileManger: VegetableRepositoryFileManager): VegeItemDetailRepository {
         return VegeItemDetailRepositoryImpl(fileManger)
     }

@@ -98,7 +98,7 @@ class TakePictureScreenViewModel @Inject constructor(
                 date = datetime
             )
         )
-        saveVegeItemDetailDataUseCase(takePicture = _uiState.value.takePicImage)
+        saveVegeItemDetailDataUseCase(takePicture = _uiState.value.takePicImage, vegeItemDetailList = vegeRepositoryList)
         resetState()
         updateState(isVisibleNavigateButton = vegeRepositoryList.isNotEmpty())
     }
