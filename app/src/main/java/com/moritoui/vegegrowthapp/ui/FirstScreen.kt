@@ -107,7 +107,7 @@ fun FirstScreen(
                             onDeleteClick = { item, isDelete ->
                                 viewModel.deleteItem(item = item, isDelete = isDelete)
                             },
-                            onMenuItemIconClick = { viewModel.selectStatus() },
+                            onMenuItemIconClick = { viewModel.selectStatus(it) },
                             onClick = {
                                 val sortIndex = uiState.sortStatus.toString()
                                 viewModel.selectedIndex(index)
@@ -140,7 +140,7 @@ fun VegeItemElement(
     onDeleteClick: (VegeItem, Boolean) -> Unit,
     selectMenu: SelectMenu,
     onClick: () -> Unit = { },
-    onMenuItemIconClick: () -> Unit,
+    onMenuItemIconClick: (VegeItem) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
@@ -231,7 +231,7 @@ fun VegeItemElement(
                                 onClick = {
                                     showStatus = status
                                     item.status = status
-                                    onMenuItemIconClick()
+                                    onMenuItemIconClick(item)
                                     expanded = false
                                 }
                             )
