@@ -39,7 +39,13 @@ class VegeItemListRepositoryImpl @Inject constructor(
         vegeItemList = sortItemList()
     }
 
+    /**
+     * ソートした状態のリストで削除・追加・変更をしてから、保存をすると
+     * ソート外の表示されていないものは保存されずに失われてしまう
+     */
     override fun deleteVegeItem(deleteItemList: MutableList<VegeItem>) {
+        // 要素を削除するときは、並び替えているときでもリスト全体から削除する必要がある
+        vegeItemList = loadVegeItemList()
         deleteItemList.forEach { item ->
             vegeItemList.remove(item)
         }
@@ -47,6 +53,8 @@ class VegeItemListRepositoryImpl @Inject constructor(
     }
 
     override fun addVegeItem(vegeItem: VegeItem) {
+        // 要素を変更するときは、並び替えているときでもリスト全体で変える必要がある
+        vegeItemList = loadVegeItemList()
         vegeItemList.add(vegeItem)
         saveVegeItemList()
     }
@@ -73,6 +81,7 @@ class VegeItemListRepositoryImpl @Inject constructor(
         }
     }
 
+    // 保存されている全てのデータを持ってくる
     private fun loadVegeItemList(): MutableList<VegeItem> {
         return fileManager.getVegeItemList()
     }

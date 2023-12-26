@@ -138,6 +138,7 @@ class FirstScreenViewModel @Inject constructor(
     private fun deleteItemList() {
         deleteVegeItemUseCase(deleteList)
         deleteList = mutableListOf()
+        _vegeItemList = getVegeItemListUseCase()
     }
 
     fun deleteItem(item: VegeItem, isDelete: Boolean) {
