@@ -15,8 +15,8 @@ android {
         applicationId = "com.moritoui.vegegrowthapp"
         minSdk = 28
         targetSdk = 34
-        versionCode = 6
-        versionName = "6.0"
+        versionCode = 7
+        versionName = versionCode.toString()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
