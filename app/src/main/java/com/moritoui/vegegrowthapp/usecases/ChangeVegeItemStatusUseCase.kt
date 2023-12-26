@@ -7,7 +7,7 @@ import javax.inject.Inject
 class ChangeVegeItemStatusUseCase @Inject constructor(
     private val vegeItemListRepository: VegeItemListRepository
 ) {
-    operator fun invoke (vegeItem: VegeItem) {
+    operator fun invoke(vegeItem: VegeItem) {
         vegeItemListRepository.changeVegeItemStatus(vegeItem)
     }
 }
