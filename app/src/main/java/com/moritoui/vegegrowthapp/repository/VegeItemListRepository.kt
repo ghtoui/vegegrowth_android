@@ -1,6 +1,5 @@
 package com.moritoui.vegegrowthapp.repository
 
-import android.util.Log
 import com.moritoui.vegegrowthapp.model.FileManager
 import com.moritoui.vegegrowthapp.model.SortStatus
 import com.moritoui.vegegrowthapp.model.VegeItem
@@ -17,6 +16,7 @@ interface VegeItemListRepository {
     fun addVegeItem(vegeItem: VegeItem)
     fun sortItemList(): MutableList<VegeItem>
     fun saveVegeItemList()
+    fun changeVegeItemStatus(vegeItem: VegeItem)
 }
 class VegeItemListRepositoryImpl @Inject constructor(
     private val fileManager: FileManager,
@@ -31,7 +31,6 @@ class VegeItemListRepositoryImpl @Inject constructor(
     }
 
     override fun saveVegeItemList() {
-        Log.d("test", vegeItemList.toString())
         fileManager.saveVegeItemListData(vegeItemList)
     }
 
@@ -50,6 +49,16 @@ class VegeItemListRepositoryImpl @Inject constructor(
     override fun addVegeItem(vegeItem: VegeItem) {
         vegeItemList.add(vegeItem)
         saveVegeItemList()
+    }
+
+    override fun changeVegeItemStatus(vegeItem: VegeItem) {
+        // 要素を変更するときは、並び替えているときでもリスト全体で変える必要がある
+        vegeItemList = loadVegeItemList().map {
+            if (it.uuid == vegeItem.uuid) {
+                it.status = vegeItem.status
+            }
+            it
+        }.toMutableList()
     }
 
     override fun sortItemList(): MutableList<VegeItem> {

@@ -7,6 +7,7 @@ import com.moritoui.vegegrowthapp.model.VegeCategory
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegeStatus
 import com.moritoui.vegegrowthapp.usecases.AddVegeItemUseCase
+import com.moritoui.vegegrowthapp.usecases.ChangeVegeItemStatusUseCase
 import com.moritoui.vegegrowthapp.usecases.DeleteVegeItemUseCase
 import com.moritoui.vegegrowthapp.usecases.GetVegeItemListUseCase
 import com.moritoui.vegegrowthapp.usecases.SaveVegeItemListUseCase
@@ -37,7 +38,8 @@ class FirstScreenViewModel @Inject constructor(
     private val getVegeItemListUseCase: GetVegeItemListUseCase,
     private val setSelectedIndexUseCase: SetSelectedIndexUseCase,
     private val setSelectSortStatusUseCase: SetSelectSortStatusUseCase,
-    private val saveVegeItemListUseCase: SaveVegeItemListUseCase
+    private val saveVegeItemListUseCase: SaveVegeItemListUseCase,
+    private val changeVegeItemStatusUseCase: ChangeVegeItemStatusUseCase
 ) : ViewModel() {
     private var deleteList: MutableList<VegeItem> = mutableListOf()
 
@@ -92,7 +94,8 @@ class FirstScreenViewModel @Inject constructor(
         )
     }
 
-    fun selectStatus() {
+    fun selectStatus(vegeItem: VegeItem) {
+        changeVegeItemStatusUseCase(vegeItem)
         saveVegeItemListUseCase()
     }
 
