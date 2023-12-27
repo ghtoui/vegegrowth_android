@@ -15,7 +15,7 @@ android {
         applicationId = "com.moritoui.vegegrowthapp"
         minSdk = 28
         targetSdk = 34
-        versionCode = 7
+        versionCode = 8
         versionName = versionCode.toString()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
