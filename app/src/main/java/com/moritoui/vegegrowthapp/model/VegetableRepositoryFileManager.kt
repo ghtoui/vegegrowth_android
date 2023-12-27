@@ -2,18 +2,15 @@ package com.moritoui.vegegrowthapp.model
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Environment
 import android.util.Log
 import androidx.core.content.ContextCompat
 import com.moritoui.vegegrowthapp.usecases.GetSelectVegeItemUseCase
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.File
-import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.FileWriter
 import java.io.IOException
-import java.io.InputStream
 import java.io.OutputStream
 import java.nio.file.Files
 import kotlinx.coroutines.CoroutineScope
@@ -70,32 +67,15 @@ class VegetableRepositoryFileManager @Inject constructor(
         }
     }
 
-    fun getImagePath(fileName: String): String {
+    private fun getImagePath(fileName: String): String {
         val imageFileName = "$fileName.jpg"
         return File(imageDirectory, imageFileName).toString()
     }
 
-    private fun readImage(fileName: String): Bitmap? {
-        var takePicImage: Bitmap?
-        val imageFileName = "$fileName.jpg"
-        val imageFilePath = File(imageDirectory, imageFileName)
-
-        try {
-            val inputStream: InputStream = FileInputStream(imageFilePath)
-            takePicImage = BitmapFactory.decodeStream(inputStream)
-        } catch (e: IOException) {
-            takePicImage = null
-            Log.e("Error", "File Read Error$imageFileName")
+    fun getImagePathList(): List<String> {
+        return vegeRepositoryList.map {
+            getImagePath(it.uuid)
         }
-        return takePicImage
-    }
-
-    fun getImageList(): List<Bitmap?> {
-        var takePicImageList: MutableList<Bitmap?> = mutableListOf()
-        vegeRepositoryList.forEach { item ->
-            takePicImageList.add(readImage(fileName = item.uuid))
-        }
-        return takePicImageList
     }
 
     // 非同期処理で実行
@@ -120,10 +100,6 @@ class VegetableRepositoryFileManager @Inject constructor(
             null -> mutableListOf()
             else -> vegeRepositoryList.toMutableList()
         }
-    }
-
-    fun getVegeItem(): VegeItem {
-        return selectVegeItem
     }
 
     fun getVegeRepositoryList(): MutableList<VegeItemDetail> {

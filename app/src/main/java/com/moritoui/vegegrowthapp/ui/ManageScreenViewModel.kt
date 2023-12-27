@@ -1,10 +1,9 @@
 package com.moritoui.vegegrowthapp.ui
 
-import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import com.moritoui.vegegrowthapp.di.ManageUiState
 import com.moritoui.vegegrowthapp.model.VegeItemDetail
-import com.moritoui.vegegrowthapp.usecases.GetTakePictureListUseCase
+import com.moritoui.vegegrowthapp.usecases.GetTakePictureFilePathListUseCase
 import com.moritoui.vegegrowthapp.usecases.GetVegeItemDetailListUseCase
 import com.moritoui.vegegrowthapp.usecases.SaveVegeDetailMemoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,11 +17,11 @@ import javax.inject.Inject
 class ManageScreenViewModel @Inject constructor(
     getVegeItemDetailListUseCase: GetVegeItemDetailListUseCase,
     private val saveVegeDetailMemoUseCase: SaveVegeDetailMemoUseCase,
-    private val getTakePictureListUseCase: GetTakePictureListUseCase
+    getTakePictureFilePathListUseCase: GetTakePictureFilePathListUseCase
 ) : ViewModel() {
     private var vegeItemDetailList: MutableList<VegeItemDetail> = getVegeItemDetailListUseCase()
 
-    var takePicList: List<Bitmap?> = getTakePictureListUseCase()
+    var takePicFileList: List<String> = getTakePictureFilePathListUseCase()
 
     private val _uiState = MutableStateFlow(ManageUiState())
     val uiState: StateFlow<ManageUiState> = _uiState.asStateFlow()
