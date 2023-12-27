@@ -4,13 +4,11 @@ import android.graphics.Bitmap
 import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -20,7 +18,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
@@ -44,19 +41,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.drawText
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.moritoui.vegegrowthapp.R
 import com.moritoui.vegegrowthapp.model.DateFormatter
 import com.moritoui.vegegrowthapp.model.VegeItemDetail
@@ -116,13 +110,13 @@ fun ManageScreen(
                 pagerState = pagerState,
                 modifier = Modifier.weight(1f),
                 currentImageBarHeight = 5,
-                imageList = viewModel.takePicList,
                 onImageClick = { viewModel.changeOpenImageBottomSheet() },
                 // ボトムバークリックでも画像遷移できるように -> Coroutineが必要
                 onImageBottomBarClick = { scope.launch { pagerState.animateScrollToPage(it) } },
                 currentImageBarModifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 72.dp, top = 12.dp, end = 72.dp, bottom = 8.dp)
+                    .padding(start = 72.dp, top = 12.dp, end = 72.dp, bottom = 8.dp),
+                imagePathList = viewModel.takePicFileList
             )
             DetailData(
                 memoData = uiState.vegeRepositoryList[pagerState.currentPage].memo,
@@ -137,7 +131,7 @@ fun ManageScreen(
             pagerCount = uiState.pagerCount,
             currentImageBarHeight = 5,
             modifier = Modifier.padding(top = 16.dp, bottom = 48.dp),
-            imageList = viewModel.takePicList,
+            imageFilePathList = viewModel.takePicFileList,
             onDismissRequest = {
                 scope.launch { pagerState.animateScrollToPage(it) }
                 viewModel.changeOpenImageBottomSheet()
@@ -266,7 +260,7 @@ fun ImageCarousel(
     onImageClick: () -> Unit,
     onImageBottomBarClick: (Int) -> Unit,
     currentImageBarModifier: Modifier = Modifier,
-    imageList: List<Bitmap?>
+    imagePathList: List<String>
 ) {
     Column(
         modifier = modifier,
@@ -289,40 +283,15 @@ fun ImageCarousel(
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                // nullじゃないなら、画像を表示
-                // nullならNo Imageと表示する
-                if (imageList[page] != null) {
-                    Image(
-                        BitmapPainter(imageList[page]!!.asImageBitmap()),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .aspectRatio(1f / 1f)
-                            .clickable { onImageClick() }
-                            .padding(8.dp)
-                    )
-                } else {
-                    Column(
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.aspectRatio(1f / 1f)
-                            .clickable { onImageClick() }
-                    ) {
-                        BoxWithConstraints {
-                            val width = with(LocalDensity.current) { constraints.maxWidth.toDp() }
-                            Icon(
-                                painter = painterResource(id = R.drawable.photo),
-                                contentDescription = null,
-                                tint = Color.DarkGray,
-                                modifier = Modifier.size(width / 2)
-                            )
-                        }
-                        Text(
-                            text = "No Image",
-                            fontWeight = FontWeight.ExtraBold,
-                            color = Color.DarkGray
-                        )
-                    }
-                }
+                AsyncImage(
+                    model = imagePathList[page],
+                    contentDescription = null,
+                    modifier = Modifier
+                        .aspectRatio(1f / 1f)
+                        .clickable { onImageClick() }
+                        .padding(8.dp),
+                    error = painterResource(id = R.drawable.no_image)
+                )
             }
         }
         Row(
@@ -453,13 +422,13 @@ fun ManageScreenPreview() {
                 pagerCount = imageList.size,
                 pagerState = rememberPagerState { imageList.size },
                 currentImageBarHeight = 5,
-                imageList = imageList,
                 onImageClick = { },
                 // ボトムバークリックでも画像遷移できるように -> Coroutineが必要
                 onImageBottomBarClick = { },
                 currentImageBarModifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 72.dp, top = 12.dp, end = 72.dp, bottom = 8.dp)
+                    .padding(start = 72.dp, top = 12.dp, end = 72.dp, bottom = 8.dp),
+                imagePathList = listOf("")
             )
         }
     }

@@ -70,7 +70,7 @@ class VegetableRepositoryFileManager @Inject constructor(
         }
     }
 
-    fun getImagePath(fileName: String): String {
+    private fun getImagePath(fileName: String): String {
         val imageFileName = "$fileName.jpg"
         return File(imageDirectory, imageFileName).toString()
     }
@@ -90,12 +90,10 @@ class VegetableRepositoryFileManager @Inject constructor(
         return takePicImage
     }
 
-    fun getImageList(): List<Bitmap?> {
-        var takePicImageList: MutableList<Bitmap?> = mutableListOf()
-        vegeRepositoryList.forEach { item ->
-            takePicImageList.add(readImage(fileName = item.uuid))
+    fun getImagePathList(): List<String> {
+        return vegeRepositoryList.map {
+            getImagePath(it.uuid)
         }
-        return takePicImageList
     }
 
     // 非同期処理で実行
