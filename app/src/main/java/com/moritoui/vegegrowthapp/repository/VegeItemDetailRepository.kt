@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 interface VegeItemDetailRepository {
     val vegeItemDetailList: MutableList<VegeItemDetail>
-    val takePictureList: List<Bitmap?>
+    var takePictureFilePathList: List<String>
     fun saveVegeDetail(takePicture: Bitmap?, vegeItemDetailList: MutableList<VegeItemDetail>)
     fun saveVegeDetailMemo(index: Int, memo: String)
 }
@@ -16,14 +16,14 @@ class VegeItemDetailRepositoryImpl @Inject constructor(
     private val fileManager: VegetableRepositoryFileManager
 ) : VegeItemDetailRepository {
     override val vegeItemDetailList: MutableList<VegeItemDetail> = fileManager.getVegeRepositoryList()
-    override var takePictureList: List<Bitmap?> = fileManager.getImageList()
+    override var takePictureFilePathList: List<String> = fileManager.getImagePathList()
 
     override fun saveVegeDetail(takePicture: Bitmap?, vegeItemDetailList: MutableList<VegeItemDetail>) {
         fileManager.saveVegeRepositoryAndImage(
             vegeRepositoryList = vegeItemDetailList,
             takePicImage = takePicture
         )
-        takePictureList = fileManager.getImageList()
+        takePictureFilePathList = fileManager.getImagePathList()
     }
 
     override fun saveVegeDetailMemo(index: Int, memo: String) {
