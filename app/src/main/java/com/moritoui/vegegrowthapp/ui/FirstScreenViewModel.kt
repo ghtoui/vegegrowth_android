@@ -1,11 +1,13 @@
 package com.moritoui.vegegrowthapp.ui
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.moritoui.vegegrowthapp.model.SelectMenu
 import com.moritoui.vegegrowthapp.model.SortStatus
 import com.moritoui.vegegrowthapp.model.VegeCategory
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegeStatus
+import com.moritoui.vegegrowthapp.repository.datamigration.DataMigrationRepository
 import com.moritoui.vegegrowthapp.usecases.AddVegeItemUseCase
 import com.moritoui.vegegrowthapp.usecases.ChangeVegeItemStatusUseCase
 import com.moritoui.vegegrowthapp.usecases.DeleteVegeItemUseCase
@@ -19,6 +21,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class FirstScreenUiState(
@@ -39,7 +42,8 @@ class FirstScreenViewModel @Inject constructor(
     private val setSelectedIndexUseCase: SetSelectedIndexUseCase,
     private val setSelectSortStatusUseCase: SetSelectSortStatusUseCase,
     private val saveVegeItemListUseCase: SaveVegeItemListUseCase,
-    private val changeVegeItemStatusUseCase: ChangeVegeItemStatusUseCase
+    private val changeVegeItemStatusUseCase: ChangeVegeItemStatusUseCase,
+    private val dataMigrationRepository: DataMigrationRepository,
 ) : ViewModel() {
     private var deleteList: MutableList<VegeItem> = mutableListOf()
 
@@ -50,6 +54,11 @@ class FirstScreenViewModel @Inject constructor(
     val vegeItemList: MutableList<VegeItem>
         get() = _vegeItemList
 
+    init {
+        viewModelScope.launch {
+            dataMigrationRepository.dataMigration()
+        }
+    }
     private fun updateState(
         isOpenAddDialog: Boolean = _uiState.value.isOpenAddDialog,
         inputText: String = _uiState.value.inputText,

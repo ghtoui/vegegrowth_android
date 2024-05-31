@@ -1,9 +1,12 @@
 package com.moritoui.vegegrowthapp.repository
 
+import com.moritoui.vegegrowthapp.data.room.dao.VegetableDao
+import com.moritoui.vegegrowthapp.data.room.model.toVegeItem
 import com.moritoui.vegegrowthapp.model.FileManager
 import com.moritoui.vegegrowthapp.model.SortStatus
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.sortStatusMap
+import com.moritoui.vegegrowthapp.model.toVegeTableEntity
 import javax.inject.Inject
 
 interface VegeItemListRepository {
@@ -17,9 +20,12 @@ interface VegeItemListRepository {
     fun sortItemList(): MutableList<VegeItem>
     fun saveVegeItemList()
     fun changeVegeItemStatus(vegeItem: VegeItem)
+    suspend fun insertVegetable(vegeItem: VegeItem)
+    suspend fun getVegetables(): List<VegeItem>
 }
 class VegeItemListRepositoryImpl @Inject constructor(
     private val fileManager: FileManager,
+    private val vegetableDao: VegetableDao,
 ) : VegeItemListRepository {
     override var vegeItemList: MutableList<VegeItem> = loadVegeItemList()
     // 画面遷移前はnullだが、画面遷移時にはnullではなくなるはず
@@ -79,6 +85,14 @@ class VegeItemListRepositoryImpl @Inject constructor(
                 }.toMutableList()
             }
         }
+    }
+
+    override suspend fun insertVegetable(vegeItem: VegeItem) {
+        vegetableDao.insertVegetable(vegeItem.toVegeTableEntity())
+    }
+
+    override suspend fun getVegetables(): List<VegeItem> {
+        return vegetableDao.getVegetables().map { it.toVegeItem() }
     }
 
     // 保存されている全てのデータを持ってくる
