@@ -95,7 +95,7 @@ class TakePictureScreenViewModel @Inject constructor(
                 name = vegeItem.name,
                 size = _uiState.value.inputText.toDouble(),
                 memo = "",
-                date = datetime
+                date = datetime,
             )
         )
         saveVegeItemDetailDataUseCase(takePicture = _uiState.value.takePicImage, vegeItemDetailList = vegeRepositoryList)

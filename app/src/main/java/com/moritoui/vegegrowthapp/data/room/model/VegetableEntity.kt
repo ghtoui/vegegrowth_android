@@ -18,6 +18,6 @@ data class VegetableEntity (
 fun VegetableEntity.toVegeItem(): VegeItem = VegeItem(
     name = vegetableName,
     category = vegetableCategory,
-    id = id.toString(),
+    id = id,
     status = vegetableState,
 )
