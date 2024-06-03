@@ -9,12 +9,12 @@ data class VegeItemDetail(
     val id: Int = 0,
     val vegeItemId: Int = 0,
     val itemUuid: String = "",
-    val uuid: String = "",
+    val uuid: String,
     val name: String,
     val size: Double,
     var memo: String,
     val date: String,
-    val image: String = "",
+    val imagePath: String = "",
 ) {
     fun getDiffDatetime(baseDatetime: String): String {
         val dateFormatter = DateFormatter()
@@ -29,6 +29,7 @@ fun VegeItemDetail.toVegetableEntity(): VegetableDetailEntity = VegetableDetailE
     vegetableId = vegeItemId,
     size = size,
     name = name,
-    image = image,
+    imagePath = imagePath,
     date = date,
+    uuid = uuid
 )

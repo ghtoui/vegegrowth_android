@@ -51,6 +51,10 @@ class FirstScreenViewModel @Inject constructor(
     val uiState: StateFlow<FirstScreenUiState> = _uiState.asStateFlow()
 
     private var _vegeItemList: MutableList<VegeItem> = getVegeItemListUseCase()
+
+    private val _isDataMigrating = dataMigrationRepository.isDataMigrating
+    val isDataMigrating: StateFlow<Boolean> = _isDataMigrating.asStateFlow()
+
     val vegeItemList: MutableList<VegeItem>
         get() = _vegeItemList
 

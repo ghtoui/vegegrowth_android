@@ -21,10 +21,11 @@ data class VegetableDetailEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo(name = "vegetable_id") val vegetableId: Int,
     @ColumnInfo(name = "name") val name: String,
-    @ColumnInfo(name = "image") val image: String,
+    @ColumnInfo(name = "imagePath") val imagePath: String,
     @ColumnInfo(name = "size") val size: Double,
     @ColumnInfo(name = "note") val note: String,
-    @ColumnInfo(name = "date") val date: String
+    @ColumnInfo(name = "date") val date: String,
+    @ColumnInfo(name = "uuid") val uuid: String,
 )
 
 fun VegetableDetailEntity.toVegeItemDetail(): VegeItemDetail = VegeItemDetail(
@@ -33,6 +34,7 @@ fun VegetableDetailEntity.toVegeItemDetail(): VegeItemDetail = VegeItemDetail(
     size = size,
     memo = note,
     date = date,
-    image = image,
+    imagePath = imagePath,
     name = name,
+    uuid = uuid,
 )
