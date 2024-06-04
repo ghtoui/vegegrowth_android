@@ -14,7 +14,7 @@ import com.moritoui.vegegrowthapp.data.room.model.VegetableEntity
     ],
     version = 1,
     autoMigrations = [],
-    exportSchema = true
+    exportSchema = false
 )
 abstract class VegetableDatabase : RoomDatabase() {
     abstract fun vegetableDao(): VegetableDao

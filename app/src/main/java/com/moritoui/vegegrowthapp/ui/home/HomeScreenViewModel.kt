@@ -2,25 +2,26 @@ package com.moritoui.vegegrowthapp.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.moritoui.vegegrowthapp.model.FilterStatus
 import com.moritoui.vegegrowthapp.model.SelectMenu
-import com.moritoui.vegegrowthapp.model.SortStatus
 import com.moritoui.vegegrowthapp.model.VegeCategory
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegeStatus
+import com.moritoui.vegegrowthapp.model.filterStatusMap
 import com.moritoui.vegegrowthapp.repository.datamigration.DataMigrationRepository
 import com.moritoui.vegegrowthapp.ui.home.model.HomeScreenUiState
 import com.moritoui.vegegrowthapp.usecases.AddVegeItemUseCase
 import com.moritoui.vegegrowthapp.usecases.ChangeVegeItemStatusUseCase
 import com.moritoui.vegegrowthapp.usecases.DeleteVegeItemUseCase
 import com.moritoui.vegegrowthapp.usecases.GetVegeItemListUseCase
-import com.moritoui.vegegrowthapp.usecases.SaveVegeItemUseCase
-import com.moritoui.vegegrowthapp.usecases.SetSelectSortStatusUseCase
 import com.moritoui.vegegrowthapp.usecases.SetSelectedIndexUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.UUID
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -31,8 +32,6 @@ class HomeScreenViewModel @Inject constructor(
     private val deleteVegeItemUseCase: DeleteVegeItemUseCase,
     private val getVegeItemListUseCase: GetVegeItemListUseCase,
     private val setSelectedIndexUseCase: SetSelectedIndexUseCase,
-    private val setSelectSortStatusUseCase: SetSelectSortStatusUseCase,
-    private val saveVegeItemUseCase: SaveVegeItemUseCase,
     private val changeVegeItemStatusUseCase: ChangeVegeItemStatusUseCase,
     private val dataMigrationRepository: DataMigrationRepository,
 ) : ViewModel() {
@@ -51,6 +50,10 @@ class HomeScreenViewModel @Inject constructor(
                 )
             }
         }
+
+        _uiState.onEach {
+            reloadVegetables()
+        }.launchIn(viewModelScope)
     }
 
     fun selectedIndex(index: Int) {
@@ -106,8 +109,9 @@ class HomeScreenViewModel @Inject constructor(
         )
         viewModelScope.launch {
             addVegeItemUseCase(vegeItem)
+            reloadVegetables()
+            closeDialog()
         }
-        closeDialog()
     }
 
     fun changeDeleteMode() {
@@ -157,11 +161,10 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     // 現在選択されている
-    fun setFilterItemList(sortStatus: SortStatus) {
-        setSelectSortStatusUseCase(sortStatus = sortStatus)
+    fun setFilterItemList(filterStatus: FilterStatus) {
         _uiState.update {
             it.copy(
-                filterStatus = sortStatus
+                filterStatus = filterStatus
             )
         }
     }
@@ -170,6 +173,24 @@ class HomeScreenViewModel @Inject constructor(
         return when (inputText) {
             "" -> false
             else -> true
+        }
+    }
+
+    private fun reloadVegetables() {
+        viewModelScope.launch {
+            val filterStatus = _uiState.value.filterStatus
+            val filteredVegetables = getVegeItemListUseCase().filter { item ->
+                if (filterStatus == FilterStatus.All) {
+                    true
+                } else {
+                    item.status == filterStatusMap[filterStatus] || item.category == filterStatusMap[filterStatus]
+                }
+            }
+            _uiState.update {
+                it.copy(
+                    vegetables = filteredVegetables
+                )
+            }
         }
     }
 }

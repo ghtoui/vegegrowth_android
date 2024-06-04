@@ -89,10 +89,10 @@ dependencies {
     implementation("com.google.truth:truth:1.1.5")
 
     // hilt
-    val hilt_version = "2.48"
+    val hilt_version = "2.51"
     implementation("com.google.dagger:hilt-android:$hilt_version")
     kapt("com.google.dagger:hilt-android-compiler:$hilt_version")
-    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
     // coil
     implementation("io.coil-kt:coil:2.5.0")

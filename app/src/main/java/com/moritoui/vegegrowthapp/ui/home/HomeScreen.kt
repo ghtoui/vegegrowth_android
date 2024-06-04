@@ -48,9 +48,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.moritoui.vegegrowthapp.R
+import com.moritoui.vegegrowthapp.model.FilterStatus
 import com.moritoui.vegegrowthapp.model.SelectMenu
 import com.moritoui.vegegrowthapp.model.SelectMenuMethod
-import com.moritoui.vegegrowthapp.model.SortStatus
 import com.moritoui.vegegrowthapp.model.VegeCategory
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegeStatus
@@ -94,7 +94,7 @@ private fun HomeScreen(
     onCancelMenuClick: () -> Unit,
     onDeleteIconClick: () -> Unit,
     onEditIconClick: () -> Unit,
-    onFilterItemClick: (SortStatus) -> Unit,
+    onFilterItemClick: (FilterStatus) -> Unit,
     onItemDelete: (VegeItem) -> Unit,
     onSelectVegeStatus: (VegeItem) -> Unit,
     onVegeItemClick: () -> Unit,
@@ -348,7 +348,7 @@ fun ItemListTopBar(
     onCancelClick: () -> Unit,
     onDeleteIconClick: () -> Unit,
     onEditIconClick: () -> Unit,
-    onFilterItemClick: (SortStatus) -> Unit,
+    onFilterItemClick: (FilterStatus) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var selectMenuExpanded by rememberSaveable { mutableStateOf(false) }
@@ -380,7 +380,7 @@ fun ItemListTopBar(
                 expanded = sortMenuExpanded,
                 onDismissRequest = { sortMenuExpanded = false }
             ) {
-                SortStatus.values().forEach { sortStatus ->
+                FilterStatus.values().forEach { sortStatus ->
                     DropdownMenuItem(
                         text = {
                             Text(

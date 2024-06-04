@@ -12,7 +12,8 @@ data class VegeItem(
     var status: VegeStatus
 )
 fun VegeItem.toVegeTableEntity(): VegetableEntity = VegetableEntity(
+    id = id,
     vegetableState = status,
     vegetableName = name,
-    vegetableCategory = category
+    vegetableCategory = category,
 )

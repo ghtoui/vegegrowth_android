@@ -1,7 +1,7 @@
 package com.moritoui.vegegrowthapp.ui.home.model
 
+import com.moritoui.vegegrowthapp.model.FilterStatus
 import com.moritoui.vegegrowthapp.model.SelectMenu
-import com.moritoui.vegegrowthapp.model.SortStatus
 import com.moritoui.vegegrowthapp.model.VegeCategory
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegeStatus
@@ -13,7 +13,7 @@ data class HomeScreenUiState(
     val isAddAble: Boolean,
     val selectMenu: SelectMenu,
     val selectStatus: VegeStatus,
-    val filterStatus: SortStatus,
+    val filterStatus: FilterStatus,
     val vegetables: List<VegeItem>
 ) {
     companion object {
@@ -24,7 +24,7 @@ data class HomeScreenUiState(
             isAddAble = false,
             selectMenu = SelectMenu.None,
             selectStatus = VegeStatus.Default,
-            filterStatus = SortStatus.All,
+            filterStatus = FilterStatus.All,
             vegetables = emptyList()
         )
     }
