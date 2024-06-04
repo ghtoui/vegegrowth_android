@@ -2,9 +2,9 @@ package com.moritoui.vegegrowthapp.data.room.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
-import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Upsert
 import com.moritoui.vegegrowthapp.data.room.model.VegetableEntity
 import com.moritoui.vegegrowthapp.data.room.model.VegetableWIthDetails
 
@@ -14,10 +14,10 @@ import com.moritoui.vegegrowthapp.data.room.model.VegetableWIthDetails
 @Dao
 interface VegetableDao {
     /**
-     * 登録する
+     * すでにあれば，更新. なければ登録
      */
-    @Insert
-    suspend fun insertVegetable(vegetable: VegetableEntity)
+    @Upsert
+    suspend fun upsertVegetable(vegetable: VegetableEntity)
 
     /**
      * 保存されている全ての野菜を取得する

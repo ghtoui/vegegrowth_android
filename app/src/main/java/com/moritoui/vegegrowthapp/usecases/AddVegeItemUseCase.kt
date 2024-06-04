@@ -1,13 +1,13 @@
 package com.moritoui.vegegrowthapp.usecases
 
 import com.moritoui.vegegrowthapp.model.VegeItem
-import com.moritoui.vegegrowthapp.repository.VegeItemListRepository
+import com.moritoui.vegegrowthapp.repository.vegetable.VegetableRepository
 import javax.inject.Inject
 
 class AddVegeItemUseCase @Inject constructor(
-    private val vegeItemListRepository: VegeItemListRepository
+    private val vegetableRepository: VegetableRepository
 ) {
-    operator fun invoke(vegeItem: VegeItem) {
-        vegeItemListRepository.addVegeItem(vegeItem)
+    suspend operator fun invoke(vegeItem: VegeItem) {
+        vegetableRepository.addVegeItem(vegeItem)
     }
 }

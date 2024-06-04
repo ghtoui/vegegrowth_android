@@ -8,7 +8,6 @@ import com.moritoui.vegegrowthapp.data.room.dao.VegetableDetailDao
 import com.moritoui.vegegrowthapp.data.room.model.VegetableDetailEntity
 import com.moritoui.vegegrowthapp.data.room.model.toVegeItem
 import com.moritoui.vegegrowthapp.model.FileManagerImpl
-import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegeItemDetail
 import com.moritoui.vegegrowthapp.model.VegetableRepositoryFileManager
 import com.moritoui.vegegrowthapp.model.toVegeTableEntity
@@ -17,7 +16,6 @@ import com.moritoui.vegegrowthapp.repository.VegeItemListRepositoryImpl
 import com.moritoui.vegegrowthapp.usecases.GetSelectVegeItemUseCase
 import com.moritoui.vegegrowthapp.usecases.GetTakePictureFilePathListUseCase
 import com.moritoui.vegegrowthapp.usecases.GetVegeItemDetailListUseCase
-import com.moritoui.vegegrowthapp.usecases.GetVegeItemListUseCase
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
@@ -28,12 +26,10 @@ class DataMigrationRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     private val vegetableDao: VegetableDao,
     private val vegetableDetailDao: VegetableDetailDao,
-    getVegeItemListUseCase: GetVegeItemListUseCase,
     private val migratePreferences: DataStore<MigratePreferences>
 ) : DataMigrationRepository {
     override var isDataMigrating: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
-    private var vegeItemList: MutableList<VegeItem> = getVegeItemListUseCase()
     private var vegeItemDetailList: MutableList<VegeItemDetail> = mutableListOf()
     private var picturePathList: List<String> = emptyList()
 
@@ -42,6 +38,8 @@ class DataMigrationRepositoryImpl @Inject constructor(
      */
     override suspend fun dataMigration() {
         val isMigrate: Boolean = migratePreferences.data.first().isMigrated
+        val vegeItemListRepository = VegeItemListRepositoryImpl(FileManagerImpl(context), vegetableDao)
+        var vegeItemList = vegeItemListRepository.sortItemList()
         if (vegeItemList.isEmpty() || isMigrate) {
             return
         }
@@ -50,7 +48,6 @@ class DataMigrationRepositoryImpl @Inject constructor(
             true
         }
 
-        val vegeItemListRepository = VegeItemListRepositoryImpl(FileManagerImpl(context), vegetableDao)
         vegeItemListRepository.selectIndex = 0
         val getSelectedIndexUseCase = GetSelectVegeItemUseCase(vegeItemListRepository)
         val vegeItemDetailRepository = VegeItemDetailRepositoryImpl(
@@ -61,7 +58,7 @@ class DataMigrationRepositoryImpl @Inject constructor(
             vegeItemDetailRepository
         )
         vegeItemList.forEach {
-            vegetableDao.insertVegetable(it.toVegeTableEntity())
+            vegetableDao.upsertVegetable(it.toVegeTableEntity())
         }
         vegeItemList = vegetableDao.getVegetables().map { it.toVegeItem() }.toMutableList()
         vegeItemList.forEach {

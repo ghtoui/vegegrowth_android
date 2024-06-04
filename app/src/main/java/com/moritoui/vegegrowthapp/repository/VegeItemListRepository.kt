@@ -88,7 +88,7 @@ class VegeItemListRepositoryImpl @Inject constructor(
     }
 
     override suspend fun insertVegetable(vegeItem: VegeItem) {
-        vegetableDao.insertVegetable(vegeItem.toVegeTableEntity())
+        vegetableDao.upsertVegetable(vegeItem.toVegeTableEntity())
     }
 
     override suspend fun getVegetables(): List<VegeItem> {

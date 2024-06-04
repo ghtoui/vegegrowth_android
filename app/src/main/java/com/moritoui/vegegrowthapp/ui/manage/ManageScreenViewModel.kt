@@ -1,4 +1,4 @@
-package com.moritoui.vegegrowthapp.ui
+package com.moritoui.vegegrowthapp.ui.manage
 
 import androidx.lifecycle.ViewModel
 import com.moritoui.vegegrowthapp.di.ManageUiState

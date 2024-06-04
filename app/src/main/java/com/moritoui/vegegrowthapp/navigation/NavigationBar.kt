@@ -20,9 +20,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.moritoui.vegegrowthapp.ui.FirstScreen
-import com.moritoui.vegegrowthapp.ui.ManageScreen
-import com.moritoui.vegegrowthapp.ui.TakePicScreen
+import com.moritoui.vegegrowthapp.ui.home.HomeScreen
+import com.moritoui.vegegrowthapp.ui.manage.ManageScreen
+import com.moritoui.vegegrowthapp.ui.takepicture.TakePicScreen
 
 sealed class Screen(
     val route: String,
@@ -44,7 +44,7 @@ fun Navigation(
         startDestination = Screen.FirstScreen.route
     ) {
         composable(Screen.FirstScreen.route) {
-            FirstScreen(
+            HomeScreen(
                 viewModel = hiltViewModel(),
                 navController = navController
             )

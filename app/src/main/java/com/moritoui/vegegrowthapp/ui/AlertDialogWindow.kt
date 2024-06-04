@@ -32,6 +32,8 @@ import com.moritoui.vegegrowthapp.R
 import com.moritoui.vegegrowthapp.model.VegeCategory
 import com.moritoui.vegegrowthapp.model.VegeStatus
 import com.moritoui.vegegrowthapp.model.VegeStatusMethod
+import com.moritoui.vegegrowthapp.ui.home.CategoryDropMenu
+import com.moritoui.vegegrowthapp.ui.home.ItemListDropDownMenuItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,7 +45,7 @@ fun AddAlertWindow(
     onValueChange: (String) -> Unit,
     onConfirmClick: () -> Unit,
     onDismissClick: () -> Unit,
-    onDropDownMenuClick: (VegeCategory) -> Unit
+    onSelectVegeCategory: (VegeCategory) -> Unit
 ) {
     if (isOpenDialog) {
         AlertDialog(
@@ -61,7 +63,7 @@ fun AddAlertWindow(
                     )
                     CategoryDropMenu(
                         selectCategory = selectCategory,
-                        onDropDownMenuClick = onDropDownMenuClick,
+                        onDropDownMenuClick = onSelectVegeCategory,
                         modifier = Modifier
                             .padding(top = 4.dp)
                     )

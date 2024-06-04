@@ -1,4 +1,4 @@
-package com.moritoui.vegegrowthapp.ui
+package com.moritoui.vegegrowthapp.ui.home
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
@@ -60,23 +60,55 @@ import com.moritoui.vegegrowthapp.model.getText
 import com.moritoui.vegegrowthapp.model.getTint
 import com.moritoui.vegegrowthapp.navigation.AddItem
 import com.moritoui.vegegrowthapp.navigation.FirstNavigationAppTopBar
-import com.moritoui.vegegrowthapp.navigation.Screen
+import com.moritoui.vegegrowthapp.ui.AddAlertWindow
+import com.moritoui.vegegrowthapp.ui.home.model.HomeScreenUiState
 
 @Composable
-fun FirstScreen(
-    viewModel: FirstScreenViewModel,
+fun HomeScreen(
+    viewModel: HomeScreenViewModel,
     navController: NavHostController
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    HomeScreen(
+        uiState = uiState,
+        openAddVegeItemDialog = viewModel::openAddDialog,
+        onCancelMenuClick = viewModel::onCancelMenuClick,
+        onDeleteIconClick = viewModel::changeDeleteMode,
+        onEditIconClick = viewModel::changeEditMode,
+        onFilterItemClick = viewModel::setFilterItemList,
+        onItemDelete = viewModel::deleteItem,
+        onSelectVegeStatus = viewModel::selectStatus,
+        onVegeItemClick = {
 
+        },
+        changeInputText = viewModel::changeInputText,
+        onConfirmClick = viewModel::saveVegeItem,
+        onDismiss = viewModel::closeDialog,
+        onSelectVegeCategory = viewModel::selectCategory
+    )
+}
+@Composable
+private fun HomeScreen(
+    uiState: HomeScreenUiState,
+    openAddVegeItemDialog: () -> Unit,
+    onCancelMenuClick: () -> Unit,
+    onDeleteIconClick: () -> Unit,
+    onEditIconClick: () -> Unit,
+    onFilterItemClick: (SortStatus) -> Unit,
+    onItemDelete: (VegeItem) -> Unit,
+    onSelectVegeStatus: (VegeItem) -> Unit,
+    onVegeItemClick: () -> Unit,
+    changeInputText: (String) -> Unit,
+    onConfirmClick: () -> Unit,
+    onDismiss: () -> Unit,
+    onSelectVegeCategory: (VegeCategory) -> Unit
+) {
     Scaffold(
         topBar = {
             FirstNavigationAppTopBar(
                 title = stringResource(R.string.first_screen_title)
             ) {
-                AddItem(onAddClick = {
-                    viewModel.openAddDialog()
-                })
+                AddItem(onAddClick = openAddVegeItemDialog)
             }
         }
     ) { it ->
@@ -84,37 +116,38 @@ fun FirstScreen(
             Scaffold(
                 topBar = {
                     ItemListTopBar(
-                        onCancelClick = { viewModel.cancelMenu() },
-                        onDeleteIconClick = { viewModel.changeDeleteMode() },
-                        onEditIconClick = { viewModel.changeEditMode() },
+                        onCancelClick = onCancelMenuClick,
+                        onDeleteIconClick = onDeleteIconClick,
+                        onEditIconClick = onEditIconClick,
+                        onFilterItemClick = onFilterItemClick,
                         selectMenu = uiState.selectMenu,
-                        onSortItemClick = { viewModel.setSortItemList(it) },
                         modifier = Modifier
                             .padding(start = 24.dp, top = 16.dp, end = 8.dp)
                     )
                 }
-            ) {
+            ) { it ->
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(it)
                         .padding(start = 32.dp, end = 24.dp)
                 ) {
-                    itemsIndexed(viewModel.vegeItemList) { index, item ->
+                    itemsIndexed(uiState.vegetables) { index, item ->
                         VegeItemElement(
                             item = item,
                             selectMenu = uiState.selectMenu,
-                            onDeleteClick = { item, isDelete ->
-                                viewModel.deleteItem(item = item, isDelete = isDelete)
+                            onItemDeleteClick = { item ->
+                                onItemDelete(item)
                             },
-                            onMenuItemIconClick = { viewModel.selectStatus(it) },
-                            onClick = {
-                                val sortIndex = uiState.sortStatus.toString()
-                                viewModel.selectedIndex(index)
-                                navController.navigate("${Screen.TakePictureScreen.route}/$index/$sortIndex") {
-                                    popUpTo(navController.graph.startDestinationId)
-                                }
-                            }
+                            onSelectVegeStatus = onSelectVegeStatus,
+                            onClick = onVegeItemClick
+//                            {
+//                                val sortIndex = uiState.filterStatus.toString()
+//                                viewModel.selectedIndex(index)
+//                                navController.navigate("${Screen.TakePictureScreen.route}/$index/$sortIndex") {
+//                                    popUpTo(navController.graph.startDestinationId)
+//                                }
+//                            }
                         )
                     }
                 }
@@ -126,22 +159,22 @@ fun FirstScreen(
         isOpenDialog = uiState.isOpenAddDialog,
         inputText = uiState.inputText,
         isAddAble = uiState.isAddAble,
-        onValueChange = { viewModel.changeInputText(inputText = it) },
-        onConfirmClick = { viewModel.saveVegeItemListData() },
-        onDismissClick = { viewModel.closeDialog() },
-        onDropDownMenuClick = { viewModel.selectCategory(it) }
+        onValueChange = changeInputText,
+        onConfirmClick = onConfirmClick,
+        onDismissClick = onDismiss,
+        onSelectVegeCategory = onSelectVegeCategory,
     )
 }
 
 @SuppressLint("ResourceType")
 @Composable
 fun VegeItemElement(
+    modifier: Modifier = Modifier,
     item: VegeItem,
-    onDeleteClick: (VegeItem, Boolean) -> Unit,
+    onItemDeleteClick: (VegeItem) -> Unit,
     selectMenu: SelectMenu,
     onClick: () -> Unit = { },
-    onMenuItemIconClick: (VegeItem) -> Unit,
-    modifier: Modifier = Modifier
+    onSelectVegeStatus: (VegeItem) -> Unit,
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     var isCheck by rememberSaveable { mutableStateOf(false) }
@@ -191,7 +224,7 @@ fun VegeItemElement(
                 contentAlignment = Alignment.BottomEnd
             ) {
                 IconButton(onClick = {
-                    onDeleteClick(item, isCheck)
+                    onItemDeleteClick(item)
                     isCheck = !isCheck
                 }) {
                     if (selectMenu == SelectMenu.Delete) {
@@ -231,7 +264,7 @@ fun VegeItemElement(
                                 onClick = {
                                     showStatus = status
                                     item.status = status
-                                    onMenuItemIconClick(item)
+                                    onSelectVegeStatus(item)
                                     expanded = false
                                 }
                             )
@@ -315,7 +348,7 @@ fun ItemListTopBar(
     onCancelClick: () -> Unit,
     onDeleteIconClick: () -> Unit,
     onEditIconClick: () -> Unit,
-    onSortItemClick: (SortStatus) -> Unit,
+    onFilterItemClick: (SortStatus) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var selectMenuExpanded by rememberSaveable { mutableStateOf(false) }
@@ -355,7 +388,7 @@ fun ItemListTopBar(
                             )
                         },
                         onClick = {
-                            onSortItemClick(sortStatus)
+                            onFilterItemClick(sortStatus)
                             sortMenuExpanded = false
                         }
                     )
@@ -470,7 +503,7 @@ fun FirstScreenPreview() {
             onCancelClick = { /*TODO*/ },
             onDeleteIconClick = { /*TODO*/ },
             onEditIconClick = { /*TODO*/ },
-            onSortItemClick = { },
+            onFilterItemClick = { },
             modifier = Modifier.background(Color.White)
         )
     }

@@ -4,8 +4,10 @@ import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.repository.vegetable.VegetableRepository
 import javax.inject.Inject
 
-class GetVegeItemListUseCase @Inject constructor(
+class SaveVegeItemUseCase @Inject constructor(
     private val vegetableRepository: VegetableRepository
 ) {
-    suspend operator fun invoke(): List<VegeItem> = vegetableRepository.getVegetables()
+    suspend operator fun invoke(vegeItem: VegeItem) {
+        vegetableRepository.addVegeItem(vegeItem)
+    }
 }

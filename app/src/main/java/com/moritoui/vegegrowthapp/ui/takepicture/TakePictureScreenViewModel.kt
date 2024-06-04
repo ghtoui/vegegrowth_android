@@ -1,4 +1,4 @@
-package com.moritoui.vegegrowthapp.ui
+package com.moritoui.vegegrowthapp.ui.takepicture
 
 import android.graphics.Bitmap
 import android.graphics.Matrix
