@@ -1,6 +1,8 @@
 package com.moritoui.vegegrowthapp.repository.datamigration
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import com.moritoui.vegegrowthapp.data.datastores.migrate.MigratePreferences
 import com.moritoui.vegegrowthapp.data.room.dao.VegetableDao
 import com.moritoui.vegegrowthapp.data.room.dao.VegetableDetailDao
 import com.moritoui.vegegrowthapp.data.room.model.VegetableDetailEntity
@@ -18,6 +20,7 @@ import com.moritoui.vegegrowthapp.usecases.GetVegeItemDetailListUseCase
 import com.moritoui.vegegrowthapp.usecases.GetVegeItemListUseCase
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
@@ -26,6 +29,7 @@ class DataMigrationRepositoryImpl @Inject constructor(
     private val vegetableDao: VegetableDao,
     private val vegetableDetailDao: VegetableDetailDao,
     getVegeItemListUseCase: GetVegeItemListUseCase,
+    private val migratePreferences: DataStore<MigratePreferences>
 ) : DataMigrationRepository {
     override var isDataMigrating: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
@@ -37,12 +41,15 @@ class DataMigrationRepositoryImpl @Inject constructor(
      * Roomに保存されていないデータを保存する
      */
     override suspend fun dataMigration() {
-        if (vegeItemList.isEmpty()) {
+        val isMigrate: Boolean = migratePreferences.data.first().isMigrated
+        if (vegeItemList.isEmpty() || isMigrate) {
             return
         }
+
         isDataMigrating.update {
             true
         }
+
         val vegeItemListRepository = VegeItemListRepositoryImpl(FileManagerImpl(context), vegetableDao)
         vegeItemListRepository.selectIndex = 0
         val getSelectedIndexUseCase = GetSelectVegeItemUseCase(vegeItemListRepository)
@@ -60,7 +67,7 @@ class DataMigrationRepositoryImpl @Inject constructor(
         vegeItemList.forEach {
             vegeItemDetailList = getVegeItemDetailListUseCase()
             picturePathList = getTakePictureFilePathListUseCase()
-            for (i in 0..picturePathList.size) {
+            for (i in picturePathList.indices) {
                 vegetableDetailDao.insertVegetableDetail(
                     VegetableDetailEntity(
                         vegetableId = it.id,
@@ -75,7 +82,13 @@ class DataMigrationRepositoryImpl @Inject constructor(
             }
         }
         isDataMigrating.update {
-            true
+            false
+        }
+
+        migratePreferences.updateData {
+            it.copy(
+                isMigrated = true
+            )
         }
     }
 }

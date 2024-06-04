@@ -1,6 +1,8 @@
-package com.moritoui.vegegrowthapp.data.datastores
+package com.moritoui.vegegrowthapp.data.datastores.migrate
 
-data class MigrationPreferences(
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class MigratePreferences(
     val isMigrated: Boolean
-) {
-}
+)
