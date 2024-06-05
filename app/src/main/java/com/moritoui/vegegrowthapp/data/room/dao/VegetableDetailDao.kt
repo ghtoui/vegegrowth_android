@@ -7,8 +7,8 @@ import com.moritoui.vegegrowthapp.data.room.model.VegetableDetailEntity
 @Dao
 interface VegetableDetailDao {
     /**
-    * 登録する
-    */
+     * 登録する
+     */
     @Insert
     suspend fun insertVegetableDetail(vegetableDetail: VegetableDetailEntity): Long
 }
