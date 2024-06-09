@@ -1,4 +1,4 @@
-package com.moritoui.vegegrowthapp.ui
+package com.moritoui.vegegrowthapp.ui.manage.view
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.ExperimentalFoundationApi

@@ -1,30 +1,36 @@
 package com.moritoui.vegegrowthapp.repository
 
+import com.moritoui.vegegrowthapp.data.room.dao.VegetableDao
+import com.moritoui.vegegrowthapp.data.room.model.toVegeItem
 import com.moritoui.vegegrowthapp.model.FileManager
-import com.moritoui.vegegrowthapp.model.SortStatus
+import com.moritoui.vegegrowthapp.model.FilterStatus
 import com.moritoui.vegegrowthapp.model.VegeItem
-import com.moritoui.vegegrowthapp.model.sortStatusMap
+import com.moritoui.vegegrowthapp.model.filterStatusMap
+import com.moritoui.vegegrowthapp.model.toVegeTableEntity
 import javax.inject.Inject
 
 interface VegeItemListRepository {
     var vegeItemList: MutableList<VegeItem>
     var selectIndex: Int?
-    var sortStatus: SortStatus
+    var filterStatus: FilterStatus
     fun setSelectedIndex(index: Int)
-    fun setSelectedSortStatus(sortStatus: SortStatus)
+    fun setSelectedSortStatus(filterStatus: FilterStatus)
     fun deleteVegeItem(deleteItemList: MutableList<VegeItem>)
     fun addVegeItem(vegeItem: VegeItem)
     fun sortItemList(): MutableList<VegeItem>
     fun saveVegeItemList()
     fun changeVegeItemStatus(vegeItem: VegeItem)
+    suspend fun insertVegetable(vegeItem: VegeItem)
+    suspend fun getVegetables(): List<VegeItem>
 }
 class VegeItemListRepositoryImpl @Inject constructor(
     private val fileManager: FileManager,
+    private val vegetableDao: VegetableDao,
 ) : VegeItemListRepository {
     override var vegeItemList: MutableList<VegeItem> = loadVegeItemList()
     // 画面遷移前はnullだが、画面遷移時にはnullではなくなるはず
     override var selectIndex: Int? = null
-    override var sortStatus: SortStatus = SortStatus.All
+    override var filterStatus: FilterStatus = FilterStatus.All
 
     override fun setSelectedIndex(index: Int) {
         selectIndex = index
@@ -34,8 +40,8 @@ class VegeItemListRepositoryImpl @Inject constructor(
         fileManager.saveVegeItemListData(vegeItemList)
     }
 
-    override fun setSelectedSortStatus(sortStatus: SortStatus) {
-        this.sortStatus = sortStatus
+    override fun setSelectedSortStatus(filterStatus: FilterStatus) {
+        this.filterStatus = filterStatus
         vegeItemList = sortItemList()
     }
 
@@ -71,14 +77,22 @@ class VegeItemListRepositoryImpl @Inject constructor(
 
     override fun sortItemList(): MutableList<VegeItem> {
         val loadVegeItemList = loadVegeItemList()
-        return when (sortStatus) {
-            SortStatus.All -> loadVegeItemList
+        return when (filterStatus) {
+            FilterStatus.All -> loadVegeItemList
             else -> {
                 loadVegeItemList.filter { item ->
-                    item.status == sortStatusMap[sortStatus] || item.category == sortStatusMap[sortStatus]
+                    item.status == filterStatusMap[filterStatus] || item.category == filterStatusMap[filterStatus]
                 }.toMutableList()
             }
         }
+    }
+
+    override suspend fun insertVegetable(vegeItem: VegeItem) {
+        vegetableDao.upsertVegetable(vegeItem.toVegeTableEntity())
+    }
+
+    override suspend fun getVegetables(): List<VegeItem> {
+        return vegetableDao.getVegetables().map { it.toVegeItem() }
     }
 
     // 保存されている全てのデータを持ってくる

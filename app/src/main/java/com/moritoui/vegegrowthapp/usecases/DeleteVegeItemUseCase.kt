@@ -1,13 +1,13 @@
 package com.moritoui.vegegrowthapp.usecases
 
 import com.moritoui.vegegrowthapp.model.VegeItem
-import com.moritoui.vegegrowthapp.repository.VegeItemListRepository
+import com.moritoui.vegegrowthapp.repository.vegetable.VegetableRepository
 import javax.inject.Inject
 
 class DeleteVegeItemUseCase @Inject constructor(
-    private val vegeItemListRepository: VegeItemListRepository
+    private val vegetableRepository: VegetableRepository
 ) {
-    operator fun invoke(deleteItemList: MutableList<VegeItem>) {
-        vegeItemListRepository.deleteVegeItem(deleteItemList)
+    suspend operator fun invoke(vegeItem: VegeItem) {
+        vegetableRepository.deleteVegeItem(vegeItem)
     }
 }

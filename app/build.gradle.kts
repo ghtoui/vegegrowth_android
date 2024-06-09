@@ -76,7 +76,7 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
     // CameraX
-    val camerax_version = "1.4.0-alpha02"
+    val camerax_version = "1.4.0-beta01"
     implementation("androidx.camera:camera-camera2:$camerax_version")
     implementation("androidx.camera:camera-lifecycle:$camerax_version")
     implementation("androidx.camera:camera-view:$camerax_version")
@@ -89,14 +89,23 @@ dependencies {
     implementation("com.google.truth:truth:1.1.5")
 
     // hilt
-    val hilt_version = "2.48"
+    val hilt_version = "2.51"
     implementation("com.google.dagger:hilt-android:$hilt_version")
     kapt("com.google.dagger:hilt-android-compiler:$hilt_version")
-    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
     // coil
     implementation("io.coil-kt:coil:2.5.0")
     implementation("io.coil-kt:coil-compose:2.5.0")
+
+    // room
+    val room_version = "2.6.1"
+    implementation("androidx.room:room-runtime:$room_version")
+    kapt("androidx.room:room-compiler:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
+
+    // preferences datastore
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
 }
 
 // Allow references to generated code

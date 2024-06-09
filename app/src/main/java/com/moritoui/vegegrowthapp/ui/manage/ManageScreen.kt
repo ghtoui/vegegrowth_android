@@ -1,4 +1,4 @@
-package com.moritoui.vegegrowthapp.ui
+package com.moritoui.vegegrowthapp.ui.manage
 
 import android.graphics.Bitmap
 import android.util.Log
@@ -55,6 +55,8 @@ import com.moritoui.vegegrowthapp.R
 import com.moritoui.vegegrowthapp.model.DateFormatter
 import com.moritoui.vegegrowthapp.model.VegeItemDetail
 import com.moritoui.vegegrowthapp.navigation.NavigationAppTopBar
+import com.moritoui.vegegrowthapp.ui.manage.view.ImageBottomSheet
+import com.moritoui.vegegrowthapp.ui.manage.view.MemoEditorBottomSheet
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 import kotlinx.coroutines.launch
 

@@ -1,6 +1,7 @@
 package com.moritoui.vegegrowthapp.di
 
 import android.content.Context
+import com.moritoui.vegegrowthapp.data.room.dao.VegetableDao
 import com.moritoui.vegegrowthapp.model.DateFormatter
 import com.moritoui.vegegrowthapp.model.FileManager
 import com.moritoui.vegegrowthapp.model.FileManagerImpl
@@ -27,8 +28,8 @@ object Modules {
 
     @Provides
     @Singleton
-    fun provideVegeItemRepository(fileManger: FileManager): VegeItemListRepository {
-        return VegeItemListRepositoryImpl(fileManger)
+    fun provideVegeItemRepository(fileManger: FileManager, vegetableDao: VegetableDao): VegeItemListRepository {
+        return VegeItemListRepositoryImpl(fileManger, vegetableDao)
     }
 
     @Provides

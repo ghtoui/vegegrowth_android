@@ -1,4 +1,4 @@
-package com.moritoui.vegegrowthapp.ui
+package com.moritoui.vegegrowthapp.ui.takepicture
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -44,6 +44,7 @@ import com.moritoui.vegegrowthapp.R
 import com.moritoui.vegegrowthapp.navigation.NavigateItem
 import com.moritoui.vegegrowthapp.navigation.NavigationAppTopBar
 import com.moritoui.vegegrowthapp.navigation.Screen
+import com.moritoui.vegegrowthapp.ui.takepicture.view.CameraScreen
 
 @Composable
 fun TakePicScreen(
