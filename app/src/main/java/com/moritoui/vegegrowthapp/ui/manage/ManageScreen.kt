@@ -82,6 +82,9 @@ fun ManageScreen(
             }
         }
     ) { it ->
+        if (uiState.vegeRepositoryList.isEmpty()) {
+            return@Scaffold
+        }
         Column(
             modifier = Modifier
                 .fillMaxSize()

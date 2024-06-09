@@ -59,7 +59,7 @@ fun TakePictureScreen(
             NavigationAppTopBar(
                 navController = navController,
                 title = uiState.vegeName,
-                isVisibleNavigationButton = true
+                isVisibleNavigationButton = uiState.isVisibleNavigateButton
             ) {
                 NavigateItem {
                     navController.navigateToManage(viewModel.args)

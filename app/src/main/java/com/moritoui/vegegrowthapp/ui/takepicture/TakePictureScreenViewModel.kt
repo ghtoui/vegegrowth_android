@@ -2,40 +2,40 @@ package com.moritoui.vegegrowthapp.ui.takepicture
 
 import android.graphics.Bitmap
 import android.graphics.Matrix
-import android.util.Log
 import androidx.camera.core.ImageProxy
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.moritoui.vegegrowthapp.di.TakePictureScreenUiState
+import com.moritoui.vegegrowthapp.model.DateFormatter
+import com.moritoui.vegegrowthapp.usecases.GetVegetableDetailsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class TakePictureScreenViewModel @Inject constructor(
-//    private val dateFormatter: DateFormatter,
-//    getSelectVegeItemUseCase: GetSelectVegeItemUseCase,
-//    getVegeItemDetailListUseCase: GetVegeItemDetailListUseCase,
-//    private val saveVegeItemDetailDataUseCase: SaveVegeItemDetailDataUseCase,
-    savedStateHandle: SavedStateHandle
+    private val dateFormatter: DateFormatter,
+    savedStateHandle: SavedStateHandle,
+    private val getVegetableDetailsUseCase: GetVegetableDetailsUseCase,
 ) : ViewModel() {
     val args = checkNotNull(savedStateHandle.get<Int>("vegetableId"))
-
-//    private var vegeRepositoryList: MutableList<VegeItemDetail> = getVegeItemDetailListUseCase()
-//    private var vegeItem: VegeItem = getSelectVegeItemUseCase()
 
     private val _uiState = MutableStateFlow(TakePictureScreenUiState())
     val uiState: StateFlow<TakePictureScreenUiState> = _uiState.asStateFlow()
 
     init {
-        Log.d("test", "$args ${args is Int} ${args::class.qualifiedName}")
-//        _uiState.update { currentState ->
-//            currentState.copy(vegeName = this.vegeItem.name)
-//        }
-//        updateState(isVisibleNavigateButton = vegeRepositoryList.isNotEmpty())
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(
+                    isVisibleNavigateButton = getVegetableDetailsUseCase(args).isNotEmpty()
+                )
+            }
+        }
     }
 
     private fun updateState(
