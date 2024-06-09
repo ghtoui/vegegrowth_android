@@ -13,9 +13,9 @@ import com.moritoui.vegegrowthapp.model.VegetableRepositoryFileManager
 import com.moritoui.vegegrowthapp.model.toVegeTableEntity
 import com.moritoui.vegegrowthapp.repository.VegeItemDetailRepositoryImpl
 import com.moritoui.vegegrowthapp.repository.VegeItemListRepositoryImpl
+import com.moritoui.vegegrowthapp.usecases.GetOldTakePictureFilePathListUseCase
+import com.moritoui.vegegrowthapp.usecases.GetOldVegeItemDetailListUseCase
 import com.moritoui.vegegrowthapp.usecases.GetSelectVegeItemUseCase
-import com.moritoui.vegegrowthapp.usecases.GetTakePictureFilePathListUseCase
-import com.moritoui.vegegrowthapp.usecases.GetVegeItemDetailListUseCase
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
@@ -49,27 +49,28 @@ class DataMigrationRepositoryImpl @Inject constructor(
         }
 
         vegeItemListRepository.selectIndex = 0
-        val getSelectedIndexUseCase = GetSelectVegeItemUseCase(vegeItemListRepository)
-        val vegeItemDetailRepository = VegeItemDetailRepositoryImpl(
-            VegetableRepositoryFileManager(context, getSelectedIndexUseCase)
-        )
-        val getVegeItemDetailListUseCase = GetVegeItemDetailListUseCase(vegeItemDetailRepository)
-        val getTakePictureFilePathListUseCase = GetTakePictureFilePathListUseCase(
-            vegeItemDetailRepository
-        )
         vegeItemList.forEach {
             vegetableDao.upsertVegetable(it.toVegeTableEntity())
         }
         vegeItemList = vegetableDao.getVegetables().map { it.toVegeItem() }.toMutableList()
-        vegeItemList.forEach {
+        vegeItemList.forEachIndexed { itemIndex, item ->
+            vegeItemListRepository.selectIndex = itemIndex
+            val getSelectedIndexUseCase = GetSelectVegeItemUseCase(vegeItemListRepository)
+            val vegeItemDetailRepository = VegeItemDetailRepositoryImpl(
+                VegetableRepositoryFileManager(context, getSelectedIndexUseCase)
+            )
+            val getVegeItemDetailListUseCase = GetOldVegeItemDetailListUseCase(vegeItemDetailRepository)
+            val getTakePictureFilePathListUseCase = GetOldTakePictureFilePathListUseCase(
+                vegeItemDetailRepository
+            )
             vegeItemDetailList = getVegeItemDetailListUseCase()
             picturePathList = getTakePictureFilePathListUseCase()
             for (i in picturePathList.indices) {
-                vegetableDetailDao.insertVegetableDetail(
+                vegetableDetailDao.upsertVegetableDetail(
                     VegetableDetailEntity(
-                        vegetableId = it.id,
+                        vegetableId = item.id,
                         imagePath = picturePathList[i],
-                        name = it.name,
+                        name = item.name,
                         date = vegeItemDetailList[i].date,
                         note = vegeItemDetailList[i].memo,
                         size = vegeItemDetailList[i].size,

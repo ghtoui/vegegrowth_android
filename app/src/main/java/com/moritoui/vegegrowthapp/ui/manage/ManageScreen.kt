@@ -48,7 +48,8 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.moritoui.vegegrowthapp.R
@@ -63,8 +64,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ManageScreen(
-    navController: NavHostController,
-    viewModel: ManageScreenViewModel
+    navController: NavController,
+    viewModel: ManageScreenViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -81,6 +82,9 @@ fun ManageScreen(
             }
         }
     ) { it ->
+        if (uiState.vegeRepositoryList.isEmpty()) {
+            return@Scaffold
+        }
         Column(
             modifier = Modifier
                 .fillMaxSize()

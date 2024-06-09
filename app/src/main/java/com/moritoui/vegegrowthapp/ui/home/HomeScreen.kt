@@ -1,6 +1,5 @@
 package com.moritoui.vegegrowthapp.ui.home
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -46,7 +45,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.moritoui.vegegrowthapp.R
 import com.moritoui.vegegrowthapp.model.FilterStatus
 import com.moritoui.vegegrowthapp.model.SelectMenu
@@ -62,11 +62,12 @@ import com.moritoui.vegegrowthapp.navigation.AddItem
 import com.moritoui.vegegrowthapp.navigation.FirstNavigationAppTopBar
 import com.moritoui.vegegrowthapp.ui.AddAlertWindow
 import com.moritoui.vegegrowthapp.ui.home.model.HomeScreenUiState
+import com.moritoui.vegegrowthapp.ui.takepicture.navigateToTakePicture
 
 @Composable
 fun HomeScreen(
-    viewModel: HomeScreenViewModel,
-    navController: NavHostController
+    viewModel: HomeScreenViewModel = hiltViewModel(),
+    navController: NavController,
 ) {
     val uiState by viewModel.uiState.collectAsState()
     HomeScreen(
@@ -78,8 +79,7 @@ fun HomeScreen(
         onFilterItemClick = viewModel::setFilterItemList,
         onItemDelete = viewModel::deleteItem,
         onSelectVegeStatus = viewModel::selectStatus,
-        onVegeItemClick = {
-
+        onVegeItemClick = { navController.navigateToTakePicture(it)
         },
         changeInputText = viewModel::changeInputText,
         onConfirmClick = viewModel::saveVegeItem,
@@ -97,7 +97,7 @@ private fun HomeScreen(
     onFilterItemClick: (FilterStatus) -> Unit,
     onItemDelete: (VegeItem) -> Unit,
     onSelectVegeStatus: (VegeItem) -> Unit,
-    onVegeItemClick: () -> Unit,
+    onVegeItemClick: (Int) -> Unit,
     changeInputText: (String) -> Unit,
     onConfirmClick: () -> Unit,
     onDismiss: () -> Unit,
@@ -140,7 +140,7 @@ private fun HomeScreen(
                                 onItemDelete(item)
                             },
                             onSelectVegeStatus = onSelectVegeStatus,
-                            onClick = onVegeItemClick
+                            onVegeItemClick = { onVegeItemClick(it.id) }
 //                            {
 //                                val sortIndex = uiState.filterStatus.toString()
 //                                viewModel.selectedIndex(index)
@@ -166,14 +166,13 @@ private fun HomeScreen(
     )
 }
 
-@SuppressLint("ResourceType")
 @Composable
 fun VegeItemElement(
     modifier: Modifier = Modifier,
     item: VegeItem,
     onItemDeleteClick: (VegeItem) -> Unit,
     selectMenu: SelectMenu,
-    onClick: () -> Unit = { },
+    onVegeItemClick: (VegeItem) -> Unit = { },
     onSelectVegeStatus: (VegeItem) -> Unit,
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
@@ -190,7 +189,7 @@ fun VegeItemElement(
         modifier = modifier
             .fillMaxWidth()
             .height(48.dp)
-            .clickable(onClick = { onClick() }),
+            .clickable(onClick = { onVegeItemClick(item) }),
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (categoryIcon != null) {
