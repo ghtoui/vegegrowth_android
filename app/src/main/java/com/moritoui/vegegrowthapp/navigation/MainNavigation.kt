@@ -10,70 +10,37 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
-import com.moritoui.vegegrowthapp.ui.home.HomeScreen
-import com.moritoui.vegegrowthapp.ui.manage.ManageScreen
-import com.moritoui.vegegrowthapp.ui.takepicture.TakePicScreen
+import com.moritoui.vegegrowthapp.ui.home.homeScreenRoute
+import com.moritoui.vegegrowthapp.ui.manage.manageScreenRoute
+import com.moritoui.vegegrowthapp.ui.takepicture.takePictureScreenRoute
 
 sealed class Screen(
     val route: String,
 ) {
-    object FirstScreen : Screen("firstScreen")
+    object HomeScreen : Screen("homeScreen")
     object TakePictureScreen : Screen("takePictureScreen")
-    object ManageVegeScreen : Screen("manageVegeScreen")
+    object ManageScreen : Screen("manageScreen")
 }
 
 @Composable
-fun Navigation(
+fun MainNavigation(
     modifier: Modifier = Modifier,
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
 ) {
-    val context = LocalContext.current.applicationContext
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = Screen.FirstScreen.route
+        startDestination = Screen.HomeScreen.route
     ) {
-        composable(Screen.FirstScreen.route) {
-            HomeScreen(
-                viewModel = hiltViewModel(),
-                navController = navController
-            )
-        }
-        composable(
-            "${Screen.TakePictureScreen.route}/{index}/{sortText}",
-            arguments = listOf(
-                navArgument("index") { type = NavType.IntType },
-                navArgument("sortText") { type = NavType.StringType }
-            )
-        ) { backStackEntry ->
-            TakePicScreen(
-                sortText = backStackEntry.arguments?.getString("sortText") ?: "All",
-                navController = navController,
-                viewModel = hiltViewModel()
-            )
-        }
-        composable(
-            "${Screen.ManageVegeScreen.route}/{index}/{sortText}",
-            arguments = listOf(
-                navArgument("index") { type = NavType.IntType },
-                navArgument("sortText") { type = NavType.StringType }
-            )
-        ) { backStackEntry ->
-            ManageScreen(
-                navController = navController,
-                viewModel = hiltViewModel()
-            )
-        }
+        homeScreenRoute(navController)
+        takePictureScreenRoute(navController)
+        manageScreenRoute(navController)
     }
 }
 
@@ -81,7 +48,7 @@ fun Navigation(
 @Composable
 fun NavigationAppTopBar(
     isVisibleNavigationButton: Boolean = true,
-    navController: NavHostController,
+    navController: NavController,
     title: String,
     actions: @Composable () -> Unit = { }
 ) {

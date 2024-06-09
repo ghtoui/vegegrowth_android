@@ -39,18 +39,18 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.moritoui.vegegrowthapp.R
 import com.moritoui.vegegrowthapp.navigation.NavigateItem
 import com.moritoui.vegegrowthapp.navigation.NavigationAppTopBar
-import com.moritoui.vegegrowthapp.navigation.Screen
+import com.moritoui.vegegrowthapp.ui.manage.navigateToManage
 import com.moritoui.vegegrowthapp.ui.takepicture.view.CameraScreen
 
 @Composable
-fun TakePicScreen(
-    sortText: String,
-    navController: NavHostController,
-    viewModel: TakePictureScreenViewModel
+fun TakePictureScreen(
+    navController: NavController,
+    viewModel: TakePictureScreenViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -59,12 +59,10 @@ fun TakePicScreen(
             NavigationAppTopBar(
                 navController = navController,
                 title = uiState.vegeName,
-                isVisibleNavigationButton = uiState.isVisibleNavigateButton
+                isVisibleNavigationButton = true
             ) {
                 NavigateItem {
-                    navController.navigate("${Screen.ManageVegeScreen.route}/0/$sortText") {
-                        popUpTo(navController.graph.startDestinationId)
-                    }
+                    navController.navigateToManage(viewModel.args)
                 }
             }
         }

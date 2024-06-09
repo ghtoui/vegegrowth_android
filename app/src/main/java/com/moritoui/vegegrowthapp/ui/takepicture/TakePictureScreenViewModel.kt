@@ -2,18 +2,12 @@ package com.moritoui.vegegrowthapp.ui.takepicture
 
 import android.graphics.Bitmap
 import android.graphics.Matrix
+import android.util.Log
 import androidx.camera.core.ImageProxy
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.moritoui.vegegrowthapp.di.TakePictureScreenUiState
-import com.moritoui.vegegrowthapp.model.DateFormatter
-import com.moritoui.vegegrowthapp.model.VegeItem
-import com.moritoui.vegegrowthapp.model.VegeItemDetail
-import com.moritoui.vegegrowthapp.usecases.GetSelectVegeItemUseCase
-import com.moritoui.vegegrowthapp.usecases.GetVegeItemDetailListUseCase
-import com.moritoui.vegegrowthapp.usecases.SaveVegeItemDetailDataUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.time.LocalDateTime
-import java.util.UUID
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,23 +16,26 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TakePictureScreenViewModel @Inject constructor(
-    private val dateFormatter: DateFormatter,
-    getSelectVegeItemUseCase: GetSelectVegeItemUseCase,
-    getVegeItemDetailListUseCase: GetVegeItemDetailListUseCase,
-    private val saveVegeItemDetailDataUseCase: SaveVegeItemDetailDataUseCase
+//    private val dateFormatter: DateFormatter,
+//    getSelectVegeItemUseCase: GetSelectVegeItemUseCase,
+//    getVegeItemDetailListUseCase: GetVegeItemDetailListUseCase,
+//    private val saveVegeItemDetailDataUseCase: SaveVegeItemDetailDataUseCase,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+    val args = checkNotNull(savedStateHandle.get<Int>("vegetableId"))
 
-    private var vegeRepositoryList: MutableList<VegeItemDetail> = getVegeItemDetailListUseCase()
-    private var vegeItem: VegeItem = getSelectVegeItemUseCase()
+//    private var vegeRepositoryList: MutableList<VegeItemDetail> = getVegeItemDetailListUseCase()
+//    private var vegeItem: VegeItem = getSelectVegeItemUseCase()
 
     private val _uiState = MutableStateFlow(TakePictureScreenUiState())
     val uiState: StateFlow<TakePictureScreenUiState> = _uiState.asStateFlow()
 
     init {
-        _uiState.update { currentState ->
-            currentState.copy(vegeName = this.vegeItem.name)
-        }
-        updateState(isVisibleNavigateButton = vegeRepositoryList.isNotEmpty())
+        Log.d("test", "$args ${args is Int} ${args::class.qualifiedName}")
+//        _uiState.update { currentState ->
+//            currentState.copy(vegeName = this.vegeItem.name)
+//        }
+//        updateState(isVisibleNavigateButton = vegeRepositoryList.isNotEmpty())
     }
 
     private fun updateState(
@@ -86,21 +83,21 @@ class TakePictureScreenViewModel @Inject constructor(
     }
 
     fun registerVegeData() {
-        val datetime = dateFormatter.dateToString(LocalDateTime.now())
+//        val datetime = dateFormatter.dateToString(LocalDateTime.now())
         // ボタンが押せないようにしているから、inputTextとtakePicImageはnullにならないはず
-        vegeRepositoryList.add(
-            VegeItemDetail(
-                itemUuid = vegeItem.uuid.toString(),
-                uuid = UUID.randomUUID().toString(),
-                name = vegeItem.name,
-                size = _uiState.value.inputText.toDouble(),
-                memo = "",
-                date = datetime,
-            )
-        )
-        saveVegeItemDetailDataUseCase(takePicture = _uiState.value.takePicImage, vegeItemDetailList = vegeRepositoryList)
+//        vegeRepositoryList.add(
+//            VegeItemDetail(
+//                itemUuid = vegeItem.uuid.toString(),
+//                uuid = UUID.randomUUID().toString(),
+//                name = vegeItem.name,
+//                size = _uiState.value.inputText.toDouble(),
+//                memo = "",
+//                date = datetime,
+//            )
+//        )
+//        saveVegeItemDetailDataUseCase(takePicture = _uiState.value.takePicImage, vegeItemDetailList = vegeRepositoryList)
         resetState()
-        updateState(isVisibleNavigateButton = vegeRepositoryList.isNotEmpty())
+//        updateState(isVisibleNavigateButton = vegeRepositoryList.isNotEmpty())
     }
 
     fun setImage(takePic: ImageProxy) {

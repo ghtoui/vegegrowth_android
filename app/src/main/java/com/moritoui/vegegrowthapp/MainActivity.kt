@@ -8,7 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
-import com.moritoui.vegegrowthapp.navigation.Navigation
+import com.moritoui.vegegrowthapp.navigation.MainNavigation
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Navigation()
+                    MainNavigation()
                 }
             }
         }
