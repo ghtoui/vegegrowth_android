@@ -88,7 +88,7 @@ fun TakePictureScreen(
             onCloseCamera = { viewModel.changeCameraOpenState() },
             onTakePicClick = {
                 viewModel.onTakePicture(it)
-//                viewModel.changeCameraOpenState()
+                viewModel.changeCameraOpenState()
             }
         )
     }

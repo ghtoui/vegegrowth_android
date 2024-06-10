@@ -5,7 +5,7 @@ import android.graphics.Bitmap
 import android.os.Environment
 import android.util.Log
 import androidx.core.content.ContextCompat
-import com.moritoui.vegegrowthapp.usecases.GetSelectVegeItemUseCase
+import com.moritoui.vegegrowthapp.usecases.GetOldSelectVegeItemUseCase
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.File
 import java.io.FileOutputStream
@@ -21,7 +21,7 @@ import javax.inject.Inject
 
 class VegetableRepositoryFileManager @Inject constructor(
     @ApplicationContext applicationContext: Context,
-    getSelectVegeItemUseCase: GetSelectVegeItemUseCase
+    getSelectVegeItemUseCase: GetOldSelectVegeItemUseCase
 ) : FileManagerImpl(applicationContext) {
     private var vegeRepositoryList: List<VegeItemDetail>
     private val imageDirectory = ContextCompat.getDataDir(applicationContext)

@@ -112,7 +112,6 @@ private fun CameraXContent(
                 captureImage(imageCapture, context) { caputuredImage ->
                     if (caputuredImage != null) {
                         onTakePicClick(caputuredImage)
-                        onCloseCamera()
                     }
                 }
             },

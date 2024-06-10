@@ -8,8 +8,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.moritoui.vegegrowthapp.di.TakePictureScreenUiState
 import com.moritoui.vegegrowthapp.model.DateFormatter
+import com.moritoui.vegegrowthapp.model.VegeItem
+import com.moritoui.vegegrowthapp.model.VegeItemDetail
+import com.moritoui.vegegrowthapp.repository.vegetabledetail.VegetableDetailRepository
+import com.moritoui.vegegrowthapp.usecases.GetSelectedVegeItemUseCase
 import com.moritoui.vegegrowthapp.usecases.GetVegetableDetailsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.LocalDateTime
+import java.util.UUID
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,16 +26,21 @@ import javax.inject.Inject
 @HiltViewModel
 class TakePictureScreenViewModel @Inject constructor(
     private val dateFormatter: DateFormatter,
-    savedStateHandle: SavedStateHandle,
+    private val vegetableDetailRepository: VegetableDetailRepository,
     private val getVegetableDetailsUseCase: GetVegetableDetailsUseCase,
+    private val getSelectedVegeItemUseCase: GetSelectedVegeItemUseCase,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     val args = checkNotNull(savedStateHandle.get<Int>("vegetableId"))
+
+    private lateinit var selectedVegeItem: VegeItem
 
     private val _uiState = MutableStateFlow(TakePictureScreenUiState())
     val uiState: StateFlow<TakePictureScreenUiState> = _uiState.asStateFlow()
 
     init {
         viewModelScope.launch {
+            selectedVegeItem = getSelectedVegeItemUseCase(args)
             _uiState.update {
                 it.copy(
                     isVisibleNavigateButton = getVegetableDetailsUseCase(args).isNotEmpty()
@@ -83,21 +94,24 @@ class TakePictureScreenViewModel @Inject constructor(
     }
 
     fun registerVegeData() {
-//        val datetime = dateFormatter.dateToString(LocalDateTime.now())
-        // ボタンが押せないようにしているから、inputTextとtakePicImageはnullにならないはず
-//        vegeRepositoryList.add(
-//            VegeItemDetail(
-//                itemUuid = vegeItem.uuid.toString(),
-//                uuid = UUID.randomUUID().toString(),
-//                name = vegeItem.name,
-//                size = _uiState.value.inputText.toDouble(),
-//                memo = "",
-//                date = datetime,
-//            )
-//        )
-//        saveVegeItemDetailDataUseCase(takePicture = _uiState.value.takePicImage, vegeItemDetailList = vegeRepositoryList)
+        val datetime = dateFormatter.dateToString(LocalDateTime.now())
+        // UIの部分で画像が撮影されていないとこのボタンを押せないため，nullでくることはないはず
+        val takePicImage = _uiState.value.takePicImage ?: return
+        val imagePath = vegetableDetailRepository.saveTookPicture(takePicImage)
+
+        val registerVegeItemDetail = VegeItemDetail(
+            vegeItemId = selectedVegeItem.id,
+            uuid = UUID.randomUUID().toString(),
+            name = selectedVegeItem.name,
+            size = _uiState.value.inputText.toDouble(),
+            memo = "",
+            date = datetime,
+            imagePath = imagePath
+        )
+        viewModelScope.launch {
+            vegetableDetailRepository.addVegeItemDetail(registerVegeItemDetail)
+        }
         resetState()
-//        updateState(isVisibleNavigateButton = vegeRepositoryList.isNotEmpty())
     }
 
     fun onTakePicture(takePicture: ImageProxy?) {

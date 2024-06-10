@@ -4,7 +4,7 @@ import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.repository.VegeItemListRepository
 import javax.inject.Inject
 
-class GetSelectVegeItemUseCase @Inject constructor(
+class GetOldSelectVegeItemUseCase @Inject constructor(
     private val vegeItemListRepository: VegeItemListRepository
 ) {
     // nullの時はエラー処理をしたいが
