@@ -19,6 +19,8 @@ import java.util.UUID
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -41,12 +43,15 @@ class TakePictureScreenViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             selectedVegeItem = getSelectedVegeItemUseCase(args)
+        }
+
+        _uiState.onEach {
             _uiState.update {
                 it.copy(
                     isVisibleNavigateButton = getVegetableDetailsUseCase(args).isNotEmpty()
                 )
             }
-        }
+        }.launchIn(viewModelScope)
     }
 
     private fun updateState(
