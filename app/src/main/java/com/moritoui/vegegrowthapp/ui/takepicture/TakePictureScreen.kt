@@ -85,10 +85,10 @@ fun TakePictureScreen(
 
     if (uiState.isCameraOpen) {
         CameraScreen(
-            onCancelClick = { viewModel.changeCameraOpenState() },
+            onCloseCamera = { viewModel.changeCameraOpenState() },
             onTakePicClick = {
-                viewModel.setImage(it)
-                viewModel.changeCameraOpenState()
+                viewModel.onTakePicture(it)
+//                viewModel.changeCameraOpenState()
             }
         )
     }

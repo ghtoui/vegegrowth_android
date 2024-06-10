@@ -100,8 +100,9 @@ class TakePictureScreenViewModel @Inject constructor(
 //        updateState(isVisibleNavigateButton = vegeRepositoryList.isNotEmpty())
     }
 
-    fun setImage(takePic: ImageProxy) {
-        val rotateTakePicture = fixRotateImage(takePic = takePic)
+    fun onTakePicture(takePicture: ImageProxy?) {
+        takePicture ?: return
+        val rotateTakePicture = fixRotateImage(takePic = takePicture)
         updateState(takePicImage = rotateTakePicture)
     }
 
