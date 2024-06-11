@@ -26,4 +26,8 @@
     <string name="flower_text">花</string>
     <string name="leaf_text">葉</string>
     <string name="other_category_text">分類無し</string>
+    <string name="take_picture_last_saved_vege_size">前回登録された野菜の大きさ: %1$s</string>
+    <string name="take_picture_error_enter_collect_number">正しい数値を入力してください</string>
+    <string name="take_picture_back">戻る</string>
+    <string name="common_cm_unit">cm</string>
 </resources>
