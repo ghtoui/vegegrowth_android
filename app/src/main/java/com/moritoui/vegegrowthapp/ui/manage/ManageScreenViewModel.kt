@@ -3,9 +3,9 @@ package com.moritoui.vegegrowthapp.ui.manage
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.moritoui.vegegrowthapp.di.ManageUiState
 import com.moritoui.vegegrowthapp.model.VegeItemDetail
 import com.moritoui.vegegrowthapp.repository.vegetabledetail.VegetableDetailRepository
+import com.moritoui.vegegrowthapp.ui.manage.model.ManageScreenUiState
 import com.moritoui.vegegrowthapp.usecases.GetImagePathListUseCase
 import com.moritoui.vegegrowthapp.usecases.GetVegetableDetailsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,8 +28,8 @@ class ManageScreenViewModel @Inject constructor(
 
     var takePicFileList: List<String>  = emptyList()
 
-    private val _uiState = MutableStateFlow(ManageUiState())
-    val uiState: StateFlow<ManageUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(ManageScreenUiState.initialState())
+    val uiState: StateFlow<ManageScreenUiState> = _uiState.asStateFlow()
 
     init {
         viewModelScope.launch {

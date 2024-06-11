@@ -6,11 +6,11 @@ import androidx.camera.core.ImageProxy
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.moritoui.vegegrowthapp.di.TakePictureScreenUiState
 import com.moritoui.vegegrowthapp.model.DateFormatter
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegeItemDetail
 import com.moritoui.vegegrowthapp.repository.vegetabledetail.VegetableDetailRepository
+import com.moritoui.vegegrowthapp.ui.takepicture.model.TakePictureScreenUiState
 import com.moritoui.vegegrowthapp.usecases.GetSelectedVegeItemUseCase
 import com.moritoui.vegegrowthapp.usecases.GetVegetableDetailsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -36,19 +36,26 @@ class TakePictureScreenViewModel @Inject constructor(
     val args = checkNotNull(savedStateHandle.get<Int>("vegetableId"))
 
     private lateinit var selectedVegeItem: VegeItem
+    private lateinit var vegetableDetails: List<VegeItemDetail>
 
-    private val _uiState = MutableStateFlow(TakePictureScreenUiState())
+    private val _uiState = MutableStateFlow(TakePictureScreenUiState.initialState())
     val uiState: StateFlow<TakePictureScreenUiState> = _uiState.asStateFlow()
 
     init {
         viewModelScope.launch {
             selectedVegeItem = getSelectedVegeItemUseCase(args)
+            vegetableDetails = getVegetableDetailsUseCase(args)
+            _uiState.update {
+                it.copy(
+                    lastSavedSize = vegetableDetails.last().size
+                )
+            }
         }
 
         _uiState.onEach {
             _uiState.update {
                 it.copy(
-                    isVisibleNavigateButton = getVegetableDetailsUseCase(args).isNotEmpty()
+                    isVisibleNavigateButton = vegetableDetails.isNotEmpty()
                 )
             }
         }.launchIn(viewModelScope)
