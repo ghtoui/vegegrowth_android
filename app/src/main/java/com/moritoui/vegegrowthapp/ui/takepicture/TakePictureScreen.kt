@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,7 +17,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -85,9 +85,9 @@ fun TakePictureScreen(
 
     if (uiState.isCameraOpen) {
         CameraScreen(
-            onCancelClick = { viewModel.changeCameraOpenState() },
+            onCloseCamera = { viewModel.changeCameraOpenState() },
             onTakePicClick = {
-                viewModel.setImage(it)
+                viewModel.onTakePicture(it)
                 viewModel.changeCameraOpenState()
             }
         )
@@ -96,6 +96,7 @@ fun TakePictureScreen(
     RegisterAlertWindow(
         isOpenDialog = uiState.isOpenDialog,
         inputText = uiState.inputText,
+        lastSavedSize = uiState.lastSavedSize,
         isSuccessInputText = uiState.isSuccessInputText,
         isBeforeInputText = uiState.isBeforeInputText,
         onValueChange = { viewModel.changeInputText(it) },
@@ -157,16 +158,16 @@ fun RecordButton(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterAlertWindow(
     isOpenDialog: Boolean,
     inputText: String,
+    lastSavedSize: Double?,
     isSuccessInputText: Boolean,
     isBeforeInputText: Boolean,
     onValueChange: (String) -> Unit,
     onConfirmClick: () -> Unit,
-    onDismissClick: () -> Unit
+    onDismissClick: () -> Unit,
 ) {
     if (isOpenDialog) {
         AlertDialog(
@@ -176,7 +177,16 @@ fun RegisterAlertWindow(
                 Text(text = stringResource(R.string.register_text_field_describe))
             },
             text = {
-                Column() {
+                Column {
+                    if (lastSavedSize != null) {
+                        Text(
+                            stringResource(
+                                R.string.take_picture_last_saved_vege_size,
+                                lastSavedSize
+                            ) + stringResource(id = R.string.common_cm_unit)
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
                     TextField(
                         value = inputText,
                         onValueChange = { onValueChange(it) },
@@ -184,7 +194,7 @@ fun RegisterAlertWindow(
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         label = {
                             Text(
-                                text = "cm",
+                                text = stringResource(R.string.common_cm_unit),
                                 textAlign = TextAlign.End,
                                 modifier = Modifier.fillMaxWidth()
                             )
@@ -205,7 +215,7 @@ fun RegisterAlertWindow(
                                 modifier = Modifier
                             )
                             Text(
-                                text = "正しい数値を入力してください",
+                                text = stringResource(R.string.take_picture_error_enter_collect_number),
                                 color = Color.Red
                             )
                         }
@@ -217,14 +227,14 @@ fun RegisterAlertWindow(
                     TextButton(
                         onClick = { onConfirmClick() }
                     ) {
-                        Text("登録", color = Color.Blue)
+                        Text(stringResource(id = R.string.register_button), color = Color.Blue)
                     }
                 } else {
                     TextButton(
                         onClick = { }
                     ) {
                         Text(
-                            text = "登録",
+                            stringResource(id = R.string.register_button),
                             color = Color.Gray
                         )
                     }
@@ -234,7 +244,7 @@ fun RegisterAlertWindow(
                 TextButton(
                     onClick = { onDismissClick() }
                 ) {
-                    Text("戻る", color = Color.Blue)
+                    Text(stringResource(id = R.string.take_picture_back), color = Color.Blue)
                 }
             }
         )

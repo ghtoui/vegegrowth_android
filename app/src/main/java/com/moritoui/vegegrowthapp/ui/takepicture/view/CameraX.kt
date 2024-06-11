@@ -1,66 +1,71 @@
 package com.moritoui.vegegrowthapp.ui.takepicture.view
 
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.widget.LinearLayout
+import android.content.Context
+import android.util.Log
+import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
-import androidx.camera.view.LifecycleCameraController
+import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawingPadding
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.LifecycleOwner
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
-import java.util.concurrent.Executor
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun CameraScreen(
-    onCancelClick: () -> Unit,
-    onTakePicClick: (ImageProxy) -> Unit
+    onCloseCamera: () -> Unit,
+    onTakePicClick: (ImageProxy?) -> Unit
 ) {
     val cameraPermissionState: PermissionState = rememberPermissionState(android.Manifest.permission.CAMERA)
 
     // カメラ使用許可を得る
-    LaunchedEffect(key1 = Unit) {
+    LaunchedEffect(Unit) {
         if (!cameraPermissionState.status.isGranted && !cameraPermissionState.status.shouldShowRationale) {
             cameraPermissionState.launchPermissionRequest()
         }
     }
 
     if (cameraPermissionState.status.isGranted) {
-        CameraPreview(
-            onCancelClick = onCancelClick,
+        CameraXContent(
+            onCloseCamera = onCloseCamera,
             onTakePicClick = onTakePicClick
         )
     } else {
@@ -72,103 +77,128 @@ fun CameraScreen(
 }
 
 @Composable
-fun CameraPreview(
-    onCancelClick: () -> Unit,
-    onTakePicClick: (ImageProxy) -> Unit,
+private fun CameraXContent(
+    onCloseCamera: () -> Unit,
+    onTakePicClick: (ImageProxy?) -> Unit
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
-    val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
-    val cameraController: LifecycleCameraController = remember { LifecycleCameraController(context) }
+    val previewView = remember {
+        PreviewView(context)
+    }
+    val preview = androidx.camera.core.Preview.Builder().build()
 
-    Scaffold(
-        bottomBar = {
-            CameraBottomBar(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(150.dp)
-                    .background(Color.Black)
-                    .safeDrawingPadding(),
-                onTakePicClick = {
-                    val mainExecutor: Executor = ContextCompat.getMainExecutor(context)
-                    cameraController.takePicture(
-                        mainExecutor,
-                        object : ImageCapture.OnImageCapturedCallback() {
-                            override fun onCaptureSuccess(image: ImageProxy) {
-                                onTakePicClick(image)
-                            }
-                        }
-                    )
-                },
-                onCancelClick = onCancelClick
-            )
-        }
-    ) { innerPadding: PaddingValues ->
+    val lensFacing = CameraSelector.LENS_FACING_BACK
+    val cameraxSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
+    val imageCapture = remember {
+        ImageCapture.Builder()
+            .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY)
+            .build()
+    }
+    LaunchedEffect(lensFacing) {
+        val cameraProvider = context.getCameraProvider()
+        cameraProvider.unbindAll()
+        cameraProvider.bindToLifecycle(lifecycleOwner, cameraxSelector, preview, imageCapture)
+        preview.setSurfaceProvider(previewView.surfaceProvider)
+    }
+    Box {
         AndroidView(
-            modifier = Modifier
-                .padding(innerPadding),
-            factory = { context ->
-                PreviewView(context).apply {
-                    setBackgroundColor(Color.Black.toArgb())
-                    layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
-                    scaleType = PreviewView.ScaleType.FILL_START
-                    implementationMode = PreviewView.ImplementationMode.COMPATIBLE
-                }.also { previewView ->
-                    previewView.controller = cameraController
-                    cameraController.bindToLifecycle(lifecycleOwner)
+            factory = { previewView },
+            modifier = Modifier.fillMaxSize()
+        )
+        CameraBottomBar(
+            modifier = Modifier.align(Alignment.BottomCenter),
+            onTakePicClick = {
+                captureImage(imageCapture, context) { caputuredImage ->
+                    if (caputuredImage != null) {
+                        onTakePicClick(caputuredImage)
+                    }
                 }
             },
-            onRelease = {
-                cameraController.unbind()
-            }
+            onCancelClick = onCloseCamera
         )
     }
 }
 
 @Composable
-fun CameraBottomBar(
+private fun CameraBottomBar(
+    modifier: Modifier = Modifier,
     onTakePicClick: () -> Unit,
     onCancelClick: () -> Unit,
-    modifier: Modifier = Modifier,
 ) {
-    Box(
-        modifier = modifier,
-        contentAlignment = Alignment.Center
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding())
+            .height(LocalConfiguration.current.screenHeightDp.dp / 10),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         IconButton(
-            modifier = Modifier
-                .align(Alignment.CenterStart)
-                .padding(start = 24.dp),
-            onClick = { onCancelClick() }
+            modifier = Modifier.aspectRatio(1f/1f),
+            onClick = onCancelClick
         ) {
             Icon(
-                Icons.Filled.Close,
+                modifier = Modifier.aspectRatio(1f/0.5f),
+                imageVector = Icons.Filled.Close,
                 contentDescription = "キャンセル",
                 tint = Color.White,
-                modifier = Modifier
-                    .aspectRatio(1f / 1f)
             )
         }
-        Box(
-            Modifier
-                .aspectRatio(1f / 1f)
-                .clickable(onClick = { onTakePicClick() })
-                .border(
-                    width = 8.dp,
-                    color = Color.White,
-                    shape = RoundedCornerShape(360.dp),
-                )
+        Surface(
+            modifier = Modifier.aspectRatio(1f/1f),
+            onClick = onTakePicClick,
+            shape = CircleShape,
+            border = BorderStroke(
+                width = 2.dp,
+                color = Color.White,
+            ),
+            color = Color.Transparent,
+        ) {
+            Surface(
+                modifier = Modifier.padding(6.dp),
+                shape = CircleShape,
+            ) {}
+        }
+        // surfaceを真ん中にするためにアイコンと同じ大きさを用意
+        Spacer(
+            modifier = Modifier.aspectRatio(1f/1f),
         )
     }
 }
 
 @Preview
 @Composable
-fun CameraPreview() {
+fun CameraScreenPreview() {
     CameraBottomBar(
         onTakePicClick = { },
         onCancelClick = { },
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(150.dp)
     )
+}
+
+private fun captureImage(
+    imageCapture: ImageCapture,
+    context: Context,
+    onImageCaptured: (ImageProxy?) -> Unit
+    ) {
+    imageCapture.takePicture(
+        ContextCompat.getMainExecutor(context), object : ImageCapture.OnImageCapturedCallback() {
+            override fun onError(exception: ImageCaptureException) {
+                Log.e("error", "キャプチャに失敗しました. ${exception.message}")
+                onImageCaptured(null)
+            }
+
+            override fun onCaptureSuccess(image: ImageProxy) {
+                onImageCaptured(image)
+            }
+        }
+    )
+}
+
+private suspend fun Context.getCameraProvider(): ProcessCameraProvider = suspendCoroutine {  continuation ->
+    ProcessCameraProvider.getInstance(this).also { cameraProvider ->
+        cameraProvider.addListener({
+            continuation.resume(cameraProvider.get())
+        }, ContextCompat.getMainExecutor(this))
+    }
 }

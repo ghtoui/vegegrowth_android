@@ -13,9 +13,9 @@ import com.moritoui.vegegrowthapp.model.VegetableRepositoryFileManager
 import com.moritoui.vegegrowthapp.model.toVegeTableEntity
 import com.moritoui.vegegrowthapp.repository.VegeItemDetailRepositoryImpl
 import com.moritoui.vegegrowthapp.repository.VegeItemListRepositoryImpl
+import com.moritoui.vegegrowthapp.usecases.GetOldSelectVegeItemUseCase
 import com.moritoui.vegegrowthapp.usecases.GetOldTakePictureFilePathListUseCase
 import com.moritoui.vegegrowthapp.usecases.GetOldVegeItemDetailListUseCase
-import com.moritoui.vegegrowthapp.usecases.GetSelectVegeItemUseCase
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
@@ -55,7 +55,7 @@ class DataMigrationRepositoryImpl @Inject constructor(
         vegeItemList = vegetableDao.getVegetables().map { it.toVegeItem() }.toMutableList()
         vegeItemList.forEachIndexed { itemIndex, item ->
             vegeItemListRepository.selectIndex = itemIndex
-            val getSelectedIndexUseCase = GetSelectVegeItemUseCase(vegeItemListRepository)
+            val getSelectedIndexUseCase = GetOldSelectVegeItemUseCase(vegeItemListRepository)
             val vegeItemDetailRepository = VegeItemDetailRepositoryImpl(
                 VegetableRepositoryFileManager(context, getSelectedIndexUseCase)
             )

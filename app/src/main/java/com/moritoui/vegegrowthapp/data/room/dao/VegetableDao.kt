@@ -26,6 +26,12 @@ interface VegetableDao {
     suspend fun getVegetables(): List<VegetableEntity>
 
     /**
+     * 選択された野菜のみ取得する
+     */
+    @Query("SELECT * FROM vegetable_resources WHERE id = :id")
+    suspend fun getSelectedVegetable(id: Int): VegetableEntity
+
+    /**
      * 選択された野菜を削除する
      * 野菜の情報にCASCADEを設定しているため，野菜を削除するとその情報も削除される
      */
