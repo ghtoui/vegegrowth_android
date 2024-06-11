@@ -1,11 +1,9 @@
 package com.moritoui.vegegrowthapp.di
 
 import android.graphics.Bitmap
-import androidx.compose.foundation.ExperimentalFoundationApi
 import com.moritoui.vegegrowthapp.model.VegeItemDetail
 import kotlinx.coroutines.flow.StateFlow
 
-@OptIn(ExperimentalFoundationApi::class)
 data class ManageUiState(
     val pagerCount: Int = 0,
     val vegeRepositoryList: List<VegeItemDetail> = listOf(),

@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.moritoui.vegegrowthapp.di.ManageUiState
 import com.moritoui.vegegrowthapp.model.VegeItemDetail
+import com.moritoui.vegegrowthapp.repository.vegetabledetail.VegetableDetailRepository
 import com.moritoui.vegegrowthapp.usecases.GetImagePathListUseCase
 import com.moritoui.vegegrowthapp.usecases.GetVegetableDetailsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,8 +19,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ManageScreenViewModel @Inject constructor(
     getVegetableDetailsUseCase: GetVegetableDetailsUseCase,
-//    private val saveVegeDetailMemoUseCase: SaveVegeDetailMemoUseCase,
     getImagePathListUseCase: GetImagePathListUseCase,
+    private val detailRepository: VegetableDetailRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     private val args = checkNotNull(savedStateHandle.get<Int>("vegetableId"))
@@ -76,8 +77,13 @@ class ManageScreenViewModel @Inject constructor(
         updateState(inputMemoText = inputText)
     }
 
-    fun saveEditMemo(index: Int) {
-//        saveVegeDetailMemoUseCase(index = index, memo = _uiState.value.inputMemoText)
+    fun saveEditMemo(vegeItemDetail: VegeItemDetail) {
+        viewModelScope.launch {
+            detailRepository.editMemo(
+                memo = _uiState.value.inputMemoText,
+                vegeItemDetail = vegeItemDetail
+            )
+        }
         updateState(
             inputMemoText = "",
             isOpenMemoEditorBottomSheet = false

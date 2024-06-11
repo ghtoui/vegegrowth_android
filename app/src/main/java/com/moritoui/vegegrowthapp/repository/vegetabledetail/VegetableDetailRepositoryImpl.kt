@@ -23,6 +23,7 @@ class VegetableDetailRepositoryImpl @Inject constructor(
     }
 
     override suspend fun editMemo(memo: String, vegeItemDetail: VegeItemDetail) {
+        vegeItemDetail.memo = memo
         vegetableDetailDao.upsertVegetableDetail(vegeItemDetail.toVegetableEntity())
     }
 

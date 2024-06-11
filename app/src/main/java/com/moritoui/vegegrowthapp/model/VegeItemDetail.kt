@@ -25,6 +25,7 @@ data class VegeItemDetail(
 }
 
 fun VegeItemDetail.toVegetableEntity(): VegetableDetailEntity = VegetableDetailEntity(
+    id = id,
     note = memo,
     vegetableId = vegeItemId,
     size = size,

@@ -69,9 +69,19 @@ fun ManageScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    val pagerState = rememberPagerState { uiState.pagerCount }
+    if (uiState.vegeRepositoryList.isEmpty()) {
+        return
+    }
+
+    val pagerState = rememberPagerState(
+        initialPage = uiState.vegeRepositoryList.lastIndex,
+        pageCount = { uiState.pagerCount }
+    )
 
     val scope = rememberCoroutineScope()
+
+    val selectedVegeItemDetail = uiState.vegeRepositoryList[pagerState.currentPage]
+
 
     Scaffold(
         topBar = {
@@ -82,9 +92,6 @@ fun ManageScreen(
             }
         }
     ) { it ->
-        if (uiState.vegeRepositoryList.isEmpty()) {
-            return@Scaffold
-        }
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -154,7 +161,7 @@ fun ManageScreen(
             inputText = uiState.inputMemoText,
             onValueChange = { viewModel.changeMemoText(it) },
             onCancelButtonClick = { viewModel.cancelEditMemo() },
-            onSaveButtonClick = { viewModel.saveEditMemo(pagerState.currentPage) },
+            onSaveButtonClick = { viewModel.saveEditMemo(selectedVegeItemDetail) },
             modifier = Modifier.fillMaxWidth()
         )
     }
