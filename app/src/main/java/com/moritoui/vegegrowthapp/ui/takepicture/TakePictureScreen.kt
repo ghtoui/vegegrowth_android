@@ -1,5 +1,6 @@
 package com.moritoui.vegegrowthapp.ui.takepicture
 
+import androidx.camera.core.ImageProxy
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -25,9 +26,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,7 +35,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -45,7 +43,9 @@ import com.moritoui.vegegrowthapp.R
 import com.moritoui.vegegrowthapp.navigation.NavigateItem
 import com.moritoui.vegegrowthapp.navigation.NavigationAppTopBar
 import com.moritoui.vegegrowthapp.ui.manage.navigateToManage
+import com.moritoui.vegegrowthapp.ui.takepicture.model.TakePictureScreenUiState
 import com.moritoui.vegegrowthapp.ui.takepicture.view.CameraScreen
+import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 
 @Composable
 fun TakePictureScreen(
@@ -53,17 +53,47 @@ fun TakePictureScreen(
     viewModel: TakePictureScreenViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    TakePictureScreen(
+        uiState = uiState,
+        onGoToManageClick = { navController.navigateToManage(viewModel.args) },
+        onNavigationIconClick = { navController.navigateUp() },
+        goToCameraButtonClick = { viewModel.changeCameraOpenState() },
+        onRegisterButtonClick = { viewModel.openRegisterDialog() },
+        onCloseCameraClick = { viewModel.changeCameraOpenState() },
+        onTakePictureButtonClick = {
+                viewModel.onTakePicture(it)
+                viewModel.changeCameraOpenState()
+            },
+        onSizeTextChange = { viewModel.changeInputText(it) },
+        onConfirmClick = { viewModel.registerVegeData() },
+        onDismissClick = { viewModel.closeRegisterDialog() }
+    )
+}
+
+@Composable
+private fun TakePictureScreen(
+    uiState: TakePictureScreenUiState,
+    onGoToManageClick: () -> Unit,
+    onNavigationIconClick: () -> Unit,
+    goToCameraButtonClick: () -> Unit,
+    onRegisterButtonClick: () -> Unit,
+    onCloseCameraClick: () -> Unit,
+    onTakePictureButtonClick: (ImageProxy?) -> Unit,
+    onSizeTextChange: (String) -> Unit,
+    onConfirmClick: () -> Unit,
+    onDismissClick: () -> Unit,
+) {
 
     Scaffold(
         topBar = {
             NavigationAppTopBar(
-                navController = navController,
+                 onNavigationIconClick =  onNavigationIconClick,
                 title = uiState.vegeName,
                 isVisibleNavigationButton = uiState.isVisibleNavigateButton
             ) {
-                NavigateItem {
-                    navController.navigateToManage(viewModel.args)
-                }
+                NavigateItem(
+                    onNavigateClick = onGoToManageClick
+                )
             }
         }
     ) { it ->
@@ -76,20 +106,17 @@ fun TakePictureScreen(
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
             PictureView(image = uiState.takePicImage?.asImageBitmap())
-            TakeButton(onClick = { viewModel.changeCameraOpenState() })
+            TakeButton(onClick = goToCameraButtonClick)
             if (uiState.takePicImage != null) {
-                RecordButton(onClick = { viewModel.openRegisterDialog() })
+                RegisterButton(onClick = onRegisterButtonClick)
             }
         }
     }
 
     if (uiState.isCameraOpen) {
         CameraScreen(
-            onCloseCamera = { viewModel.changeCameraOpenState() },
-            onTakePicClick = {
-                viewModel.onTakePicture(it)
-                viewModel.changeCameraOpenState()
-            }
+            onCloseCamera = onCloseCameraClick,
+            onTakePicClick = onTakePictureButtonClick
         )
     }
 
@@ -99,9 +126,9 @@ fun TakePictureScreen(
         lastSavedSize = uiState.lastSavedSize,
         isSuccessInputText = uiState.isSuccessInputText,
         isBeforeInputText = uiState.isBeforeInputText,
-        onValueChange = { viewModel.changeInputText(it) },
-        onConfirmClick = { viewModel.registerVegeData() },
-        onDismissClick = { viewModel.closeRegisterDialog() }
+        onValueChange = onSizeTextChange,
+        onConfirmClick = onConfirmClick,
+        onDismissClick = onDismissClick
     )
 }
 
@@ -146,7 +173,7 @@ fun TakeButton(
 }
 
 @Composable
-fun RecordButton(
+fun RegisterButton(
     onClick: () -> Unit
 ) {
     Button(
@@ -251,35 +278,21 @@ fun RegisterAlertWindow(
     }
 }
 
-@Preview
+@PreviewLightDark
 @Composable
 fun TakePicPreview() {
-    var isOpenDialog by rememberSaveable { mutableStateOf(true) }
-    var inputText by rememberSaveable { mutableStateOf("") }
-    var isSuccessInputText by rememberSaveable { mutableStateOf(false) }
-    var isBeforeInputText by rememberSaveable { mutableStateOf(true) }
-
-//    TakePicScreen(
-//        index = 1,
-//        sortText = "All",
-//        navController = rememberNavController(),
-//        viewModel = Take
-//    )
-
-//    RegisterAlertWindow(
-//        isOpenDialog = isOpenDialog,
-//        inputText = inputText,
-//        isSuccessInputText = isSuccessInputText,
-//        isBeforeInputText = isBeforeInputText,
-//        onValueChange = {
-//            inputText = it
-//            isSuccessInputText = when (inputText.toDoubleOrNull()) {
-//                null -> false
-//                else -> true
-//            }
-//            isBeforeInputText = false
-//        },
-//        onConfirmClick = { isOpenDialog = false },
-//        onDismissClick = { isOpenDialog = false }
-//    )
+    VegegrowthAppTheme {
+        TakePictureScreen(
+            uiState = TakePictureScreenUiState.initialState(),
+            onSizeTextChange = {},
+            onConfirmClick = {},
+            onRegisterButtonClick = {},
+            onDismissClick = {},
+            onCloseCameraClick = {},
+            onTakePictureButtonClick = {},
+            onNavigationIconClick = {},
+            goToCameraButtonClick = {},
+            onGoToManageClick = {},
+        )
+    }
 }

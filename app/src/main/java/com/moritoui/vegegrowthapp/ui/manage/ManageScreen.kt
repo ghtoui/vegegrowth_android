@@ -86,10 +86,9 @@ fun ManageScreen(
     Scaffold(
         topBar = {
             NavigationAppTopBar(
-                navController = navController,
-                title = "管理画面"
-            ) {
-            }
+                title = "管理画面",
+                onNavigationIconClick = {},
+            )
         }
     ) { it ->
         Column(
