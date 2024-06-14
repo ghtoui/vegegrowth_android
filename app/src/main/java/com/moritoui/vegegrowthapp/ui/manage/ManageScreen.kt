@@ -107,7 +107,6 @@ private fun ManageScreen(
 
     val selectedVegeItemDetail = uiState.vegeRepositoryList[pagerState.currentPage]
 
-
     Scaffold(
         topBar = {
             NavigationAppTopBar(
@@ -357,7 +356,7 @@ fun ManageScreenPreview(
             onMemoTextChange = {},
             onCancelButtonClick = {},
             onSaveButtonClick = {}
-            )
+        )
     }
 }
 class ManageScreenPreviewParameterProvider : PreviewParameterProvider<ManageScreenPreviewParameterProvider.Params> {
