@@ -116,7 +116,7 @@ object ManageScreenDummy {
                 imagePath = "",
                 vegeItemId = 9,
                 id = 9,
-            )
+            ),
         )
     }
 

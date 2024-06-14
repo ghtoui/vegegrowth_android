@@ -34,22 +34,24 @@ fun DrawLineChart(
     currentIndex: Int,
 ) {
     Box(
-        modifier = modifier
-            .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp)
-            .background(MaterialTheme.colorScheme.primaryContainer.copy(0.1f))
-            .border(
-                width = 4.dp,
-                color = MaterialTheme.colorScheme.onSurface.copy(0.05f)
-            )
+        modifier =
+            modifier
+                .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp)
+                .background(MaterialTheme.colorScheme.primaryContainer.copy(0.1f))
+                .border(
+                    width = 4.dp,
+                    color = MaterialTheme.colorScheme.onSurface.copy(0.05f),
+                ),
     ) {
         val chartColor = MaterialTheme.colorScheme.onBackground
         val textColor = MaterialTheme.colorScheme.onBackground
         val formatter by remember { mutableStateOf(DateFormatter()) }
         val textMeasurer = rememberTextMeasurer()
         Canvas(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
         ) {
             var pointX: Float? = null
             var pointY: Float? = null
@@ -87,7 +89,7 @@ fun DrawLineChart(
             drawPath(
                 path = path,
                 color = chartColor,
-                style = Stroke(width = 4f)
+                style = Stroke(width = 4f),
             )
 
             if (pointX != null) {
@@ -122,14 +124,14 @@ fun DrawLineChart(
                 drawCircle(
                     color = Color.Red,
                     radius = 16f,
-                    center = Offset(pointX!!, pointY!!)
+                    center = Offset(pointX!!, pointY!!),
                 )
                 try {
                     drawText(
                         textMeasurer = textMeasurer,
                         text = detailData,
                         topLeft = Offset(x = pointTextX, y = pointTextY),
-                        style = TextStyle.Default.copy(color = textColor)
+                        style = TextStyle.Default.copy(color = textColor),
                     )
                 } catch (e: Exception) {
                     Log.e("error", e.toString())

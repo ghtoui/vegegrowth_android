@@ -9,11 +9,13 @@ data class VegeItem(
     val name: String,
     val category: VegeCategory,
     val uuid: String = "",
-    var status: VegeStatus
+    var status: VegeStatus,
 )
-fun VegeItem.toVegeTableEntity(): VegetableEntity = VegetableEntity(
-    id = id,
-    vegetableState = status,
-    vegetableName = name,
-    vegetableCategory = category,
-)
+
+fun VegeItem.toVegeTableEntity(): VegetableEntity =
+    VegetableEntity(
+        id = id,
+        vegetableState = status,
+        vegetableName = name,
+        vegetableCategory = category,
+    )
