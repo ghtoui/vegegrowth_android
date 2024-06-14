@@ -75,35 +75,35 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
     // CameraX
-    val camerax_version = "1.3.3"
-    implementation("androidx.camera:camera-core:$camerax_version")
-    implementation("androidx.camera:camera-camera2:$camerax_version")
-    implementation("androidx.camera:camera-lifecycle:$camerax_version")
-    implementation("androidx.camera:camera-view:$camerax_version")
-    implementation("androidx.camera:camera-extensions:$camerax_version")
+    val cameraxVersion = "1.3.3"
+    implementation("androidx.camera:camera-core:$cameraxVersion")
+    implementation("androidx.camera:camera-camera2:$cameraxVersion")
+    implementation("androidx.camera:camera-lifecycle:$cameraxVersion")
+    implementation("androidx.camera:camera-view:$cameraxVersion")
+    implementation("androidx.camera:camera-extensions:$cameraxVersion")
 
-    val accompanist_version = "0.34.0"
-    implementation("com.google.accompanist:accompanist-permissions:$accompanist_version")
+    val accompanistVersion = "0.34.0"
+    implementation("com.google.accompanist:accompanist-permissions:$accompanistVersion")
 
     // Test
     implementation("com.google.truth:truth:1.1.5")
 
     // hilt
-    val hilt_version = "2.51"
-    implementation("com.google.dagger:hilt-android:$hilt_version")
-    kapt("com.google.dagger:hilt-android-compiler:$hilt_version")
+    val hiltVersion = "2.51"
+    implementation("com.google.dagger:hilt-android:$hiltVersion")
+    kapt("com.google.dagger:hilt-android-compiler:$hiltVersion")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
     // coil
-    val coil_version = "2.6.0"
-    implementation("io.coil-kt:coil:$coil_version")
-    implementation("io.coil-kt:coil-compose:$coil_version")
+    val coilVersion = "2.6.0"
+    implementation("io.coil-kt:coil:$coilVersion")
+    implementation("io.coil-kt:coil-compose:$coilVersion")
 
     // room
-    val room_version = "2.6.1"
-    implementation("androidx.room:room-runtime:$room_version")
-    kapt("androidx.room:room-compiler:$room_version")
-    implementation("androidx.room:room-ktx:$room_version")
+    val roomVersion = "2.6.1"
+    implementation("androidx.room:room-runtime:$roomVersion")
+    kapt("androidx.room:room-compiler:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
 
     // preferences datastore
     implementation("androidx.datastore:datastore-preferences:1.1.1")
