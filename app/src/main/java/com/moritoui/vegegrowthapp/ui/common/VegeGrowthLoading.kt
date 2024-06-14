@@ -1,8 +1,11 @@
 package com.moritoui.vegegrowthapp.ui.common
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -20,11 +23,17 @@ fun VegeGrowthLoading(
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.vegetable_loading))
     when (isLoading) {
         true -> {
-            LottieAnimation(
-                modifier = modifier.size(40.dp),
-                composition = composition,
-                iterations = LottieConstants.IterateForever
-            )
+            Box(
+                modifier = modifier
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                LottieAnimation(
+                    modifier = Modifier.size(100.dp),
+                    composition = composition,
+                    iterations = LottieConstants.IterateForever
+                )
+            }
         }
         false -> return
     }
