@@ -88,7 +88,7 @@ private fun TakePictureScreen(
     Scaffold(
         topBar = {
             NavigationAppTopBar(
-                 onNavigationIconClick =  onNavigationIconClick,
+                 onBackNavigationButtonClick =  onNavigationIconClick,
                 title = uiState.vegeName,
                 isVisibleNavigationButton = uiState.isVisibleNavigateButton
             ) {

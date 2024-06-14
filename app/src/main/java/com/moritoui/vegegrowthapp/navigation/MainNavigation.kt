@@ -47,7 +47,7 @@ fun MainNavigation(
 @Composable
 fun NavigationAppTopBar(
     isVisibleNavigationButton: Boolean = true,
-    onNavigationIconClick: () -> Unit,
+    onBackNavigationButtonClick: () -> Unit,
     title: String,
     actions: @Composable () -> Unit = { }
 ) {
@@ -60,7 +60,7 @@ fun NavigationAppTopBar(
                 )
             },
             navigationIcon = {
-                IconButton(onClick = onNavigationIconClick) {
+                IconButton(onClick = onBackNavigationButtonClick) {
                     Icon(
                         Icons.Filled.ArrowBack,
                         contentDescription = "戻る"
@@ -107,6 +107,6 @@ fun NavigationAppTopBarPreview() {
     NavigationAppTopBar(
         title = "preview",
         isVisibleNavigationButton = true,
-        onNavigationIconClick = {}
+        onBackNavigationButtonClick = {}
     )
 }
