@@ -19,7 +19,7 @@ fun AddItem(onAddClick: () -> Unit) {
     IconButton(onClick = { onAddClick() }) {
         Icon(
             Icons.Filled.Add,
-            contentDescription = "追加"
+            contentDescription = "追加",
         )
     }
 }
@@ -27,11 +27,12 @@ fun AddItem(onAddClick: () -> Unit) {
 @Composable
 fun NavigateItem(onNavigateClick: () -> Unit) {
     Box(
-        modifier = Modifier
-            .fillMaxHeight()
-            .padding(top = 4.dp, end = 12.dp)
-            .clickable(onClick = { onNavigateClick() }),
-        contentAlignment = Alignment.Center
+        modifier =
+            Modifier
+                .fillMaxHeight()
+                .padding(top = 4.dp, end = 12.dp)
+                .clickable(onClick = { onNavigateClick() }),
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             text = "管理画面",

@@ -10,13 +10,14 @@ import com.moritoui.vegegrowthapp.data.room.model.VegetableEntity
 @Database(
     entities = [
         VegetableEntity::class,
-        VegetableDetailEntity::class
+        VegetableDetailEntity::class,
     ],
     version = 1,
     autoMigrations = [],
-    exportSchema = false
+    exportSchema = false,
 )
 abstract class VegetableDatabase : RoomDatabase() {
     abstract fun vegetableDao(): VegetableDao
+
     abstract fun vegetableDetailDao(): VegetableDetailDao
 }

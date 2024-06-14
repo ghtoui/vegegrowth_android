@@ -10,12 +10,13 @@ data class ManageScreenUiState(
     val isOpenMemoEditorBottomSheet: Boolean = false,
 ) {
     companion object {
-        fun initialState(): ManageScreenUiState = ManageScreenUiState(
-            pagerCount = 0,
-            vegeRepositoryList = listOf(),
-            isOpenImageBottomSheet = false,
-            inputMemoText = "",
-            isOpenMemoEditorBottomSheet = false,
-        )
+        fun initialState(): ManageScreenUiState =
+            ManageScreenUiState(
+                pagerCount = 0,
+                vegeRepositoryList = listOf(),
+                isOpenImageBottomSheet = false,
+                inputMemoText = "",
+                isOpenMemoEditorBottomSheet = false,
+            )
     }
 }

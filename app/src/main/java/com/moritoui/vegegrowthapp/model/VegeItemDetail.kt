@@ -24,13 +24,14 @@ data class VegeItemDetail(
     }
 }
 
-fun VegeItemDetail.toVegetableEntity(): VegetableDetailEntity = VegetableDetailEntity(
-    id = id,
-    note = memo,
-    vegetableId = vegeItemId,
-    size = size,
-    name = name,
-    imagePath = imagePath,
-    date = date,
-    uuid = uuid
-)
+fun VegeItemDetail.toVegetableEntity(): VegetableDetailEntity =
+    VegetableDetailEntity(
+        id = id,
+        note = memo,
+        vegetableId = vegeItemId,
+        size = size,
+        name = name,
+        imagePath = imagePath,
+        date = date,
+        uuid = uuid,
+    )
