@@ -1,6 +1,7 @@
 package com.moritoui.vegegrowthapp.di
 
 import android.content.Context
+import com.moritoui.vegegrowthapp.data.room.dao.VegetableDao
 import com.moritoui.vegegrowthapp.model.DateFormatter
 import com.moritoui.vegegrowthapp.model.FileManager
 import com.moritoui.vegegrowthapp.model.FileManagerImpl
@@ -21,24 +22,22 @@ import javax.inject.Singleton
 object Modules {
     @Provides
     @Singleton
-    fun provideFileManager(@ApplicationContext context: Context): FileManager {
-        return FileManagerImpl(context)
-    }
+    fun provideFileManager(
+        @ApplicationContext context: Context,
+    ): FileManager = FileManagerImpl(context)
 
     @Provides
     @Singleton
-    fun provideVegeItemRepository(fileManger: FileManager): VegeItemListRepository {
-        return VegeItemListRepositoryImpl(fileManger)
-    }
+    fun provideVegeItemRepository(
+        fileManger: FileManager,
+        vegetableDao: VegetableDao,
+    ): VegeItemListRepository = VegeItemListRepositoryImpl(fileManger, vegetableDao)
 
     @Provides
     @Singleton
-    fun provideDateFormatter(): DateFormatter {
-        return DateFormatter()
-    }
+    fun provideDateFormatter(): DateFormatter = DateFormatter()
 
     @Provides
-    fun provideVegeDetailRepository(fileManger: VegetableRepositoryFileManager): VegeItemDetailRepository {
-        return VegeItemDetailRepositoryImpl(fileManger)
-    }
+    fun provideVegeDetailRepository(fileManger: VegetableRepositoryFileManager): VegeItemDetailRepository =
+        VegeItemDetailRepositoryImpl(fileManger)
 }

@@ -13,6 +13,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -32,6 +33,8 @@ import com.moritoui.vegegrowthapp.R
 import com.moritoui.vegegrowthapp.model.VegeCategory
 import com.moritoui.vegegrowthapp.model.VegeStatus
 import com.moritoui.vegegrowthapp.model.VegeStatusMethod
+import com.moritoui.vegegrowthapp.ui.home.CategoryDropMenu
+import com.moritoui.vegegrowthapp.ui.home.ItemListDropDownMenuItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,7 +46,7 @@ fun AddAlertWindow(
     onValueChange: (String) -> Unit,
     onConfirmClick: () -> Unit,
     onDismissClick: () -> Unit,
-    onDropDownMenuClick: (VegeCategory) -> Unit
+    onSelectVegeCategory: (VegeCategory) -> Unit,
 ) {
     if (isOpenDialog) {
         AlertDialog(
@@ -57,26 +60,27 @@ fun AddAlertWindow(
                     TextField(
                         value = inputText,
                         onValueChange = { onValueChange(it) },
-                        singleLine = true
+                        singleLine = true,
                     )
                     CategoryDropMenu(
                         selectCategory = selectCategory,
-                        onDropDownMenuClick = onDropDownMenuClick,
-                        modifier = Modifier
-                            .padding(top = 4.dp)
+                        onDropDownMenuClick = onSelectVegeCategory,
+                        modifier =
+                            Modifier
+                                .padding(top = 4.dp),
                     )
                 }
             },
             confirmButton = {
                 if (isAddAble) {
                     TextButton(
-                        onClick = { onConfirmClick() }
+                        onClick = { onConfirmClick() },
                     ) {
                         Text(stringResource(R.string.add_text))
                     }
                 } else {
                     TextButton(
-                        onClick = { }
+                        onClick = { },
                     ) {
                         Text(stringResource(id = R.string.add_text), color = Color.LightGray)
                     }
@@ -84,11 +88,11 @@ fun AddAlertWindow(
             },
             dismissButton = {
                 TextButton(
-                    onClick = { onDismissClick() }
+                    onClick = { onDismissClick() },
                 ) {
                     Text(stringResource(R.string.cancel_text))
                 }
-            }
+            },
         )
     }
 }
@@ -99,7 +103,7 @@ fun EditAlertWindow(
     isOpenDialog: Boolean,
     onMenuItemIconClick: (VegeStatus) -> Unit,
     onConfirmClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
 
@@ -116,30 +120,35 @@ fun EditAlertWindow(
             },
             text = {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     IconButton(
                         onClick = {
                             expanded = true
-                        }
+                        },
                     ) {
                         Icon(
                             Icons.Filled.MoreVert,
-                            contentDescription = stringResource(R.string.drop_down_menu_button)
+                            contentDescription = stringResource(R.string.drop_down_menu_button),
                         )
                     }
-                    Icon(selectIcon, tint = selectIconTint, contentDescription = null)
+                    Icon(
+                        selectIcon,
+                        tint = selectIconTint ?: LocalContentColor.current,
+                        contentDescription = null,
+                    )
                     Text(
-                        text = stringResource(id = selectText)
+                        text = stringResource(id = selectText),
                     )
                     DropdownMenu(
                         expanded = expanded,
                         onDismissRequest = {
                             expanded = false
-                        }
+                        },
                     ) {
                         VegeStatus.values().forEach { status ->
                             ItemListDropDownMenuItem(
@@ -148,7 +157,7 @@ fun EditAlertWindow(
                                 onClick = {
                                     onMenuItemIconClick(status)
                                     expanded = false
-                                }
+                                },
                             )
                         }
                     }
@@ -156,11 +165,11 @@ fun EditAlertWindow(
             },
             confirmButton = {
                 TextButton(
-                    onClick = { onConfirmClick() }
+                    onClick = { onConfirmClick() },
                 ) {
                     Text(stringResource(id = R.string.save_text))
                 }
-            }
+            },
         )
     }
 }
@@ -173,7 +182,7 @@ fun AlertPreview() {
             selectStatus = VegeStatus.Favorite,
             isOpenDialog = true,
             onMenuItemIconClick = {},
-            onConfirmClick = { }
+            onConfirmClick = { },
         )
     }
 }
