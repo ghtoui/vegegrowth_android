@@ -50,6 +50,7 @@ import com.moritoui.vegegrowthapp.R
 import com.moritoui.vegegrowthapp.dummies.ManageScreenDummy
 import com.moritoui.vegegrowthapp.model.VegeItemDetail
 import com.moritoui.vegegrowthapp.navigation.NavigationAppTopBar
+import com.moritoui.vegegrowthapp.ui.common.VegeGrowthLoading
 import com.moritoui.vegegrowthapp.ui.manage.model.ManageScreenUiState
 import com.moritoui.vegegrowthapp.ui.manage.view.DrawLineChart
 import com.moritoui.vegegrowthapp.ui.manage.view.ImageBottomSheet
@@ -90,6 +91,10 @@ private fun ManageScreen(
     onSaveButtonClick: (VegeItemDetail) -> Unit,
 ) {
     if (uiState.vegeRepositoryList.isEmpty()) {
+        VegeGrowthLoading(
+            modifier = Modifier.fillMaxSize(),
+            isLoading = uiState.vegeRepositoryList.isEmpty(),
+        )
         return
     }
 
