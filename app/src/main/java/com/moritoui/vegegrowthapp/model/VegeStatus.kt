@@ -23,11 +23,11 @@ object VegeStatusMethod {
         }
     }
 
-    fun getIconTint(vegeStatus: VegeStatus): Color {
+    fun getIconTint(vegeStatus: VegeStatus): Color? {
         return when (vegeStatus) {
             VegeStatus.Default -> Color.Transparent
             VegeStatus.Favorite -> Color.Red
-            else -> Color.Black
+            else -> null
         }
     }
 

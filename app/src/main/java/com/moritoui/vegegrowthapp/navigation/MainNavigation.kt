@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
@@ -48,7 +47,7 @@ fun MainNavigation(
 @Composable
 fun NavigationAppTopBar(
     isVisibleNavigationButton: Boolean = true,
-    navController: NavController,
+    onBackNavigationButtonClick: () -> Unit,
     title: String,
     actions: @Composable () -> Unit = { }
 ) {
@@ -61,7 +60,7 @@ fun NavigationAppTopBar(
                 )
             },
             navigationIcon = {
-                IconButton(onClick = { navController.navigateUp() }) {
+                IconButton(onClick = onBackNavigationButtonClick) {
                     Icon(
                         Icons.Filled.ArrowBack,
                         contentDescription = "戻る"
@@ -106,8 +105,8 @@ fun FirstNavigationAppTopBar(
 @Composable
 fun NavigationAppTopBarPreview() {
     NavigationAppTopBar(
-        navController = rememberNavController(),
         title = "preview",
-        isVisibleNavigationButton = true
+        isVisibleNavigationButton = true,
+        onBackNavigationButtonClick = {}
     )
 }

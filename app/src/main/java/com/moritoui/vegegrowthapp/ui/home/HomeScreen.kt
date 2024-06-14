@@ -27,6 +27,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -43,11 +44,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.moritoui.vegegrowthapp.R
+import com.moritoui.vegegrowthapp.dummies.HomeScreenDummy
 import com.moritoui.vegegrowthapp.model.FilterStatus
 import com.moritoui.vegegrowthapp.model.SelectMenu
 import com.moritoui.vegegrowthapp.model.SelectMenuMethod
@@ -60,9 +63,11 @@ import com.moritoui.vegegrowthapp.model.getText
 import com.moritoui.vegegrowthapp.model.getTint
 import com.moritoui.vegegrowthapp.navigation.AddItem
 import com.moritoui.vegegrowthapp.navigation.FirstNavigationAppTopBar
+import com.moritoui.vegegrowthapp.previews.DarkLightPreview
 import com.moritoui.vegegrowthapp.ui.AddAlertWindow
 import com.moritoui.vegegrowthapp.ui.home.model.HomeScreenUiState
 import com.moritoui.vegegrowthapp.ui.takepicture.navigateToTakePicture
+import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 
 @Composable
 fun HomeScreen(
@@ -180,10 +185,10 @@ fun VegeItemElement(
     var showStatus by rememberSaveable { mutableStateOf(item.status) }
     showStatus = item.status
 
-    val statusIcon = VegeStatusMethod.getIcon(showStatus)
-    val statusIconTint = VegeStatusMethod.getIconTint(vegeStatus = showStatus)
+    val statusIcon: ImageVector = VegeStatusMethod.getIcon(showStatus)
+    val statusIconTint: Color = VegeStatusMethod.getIconTint(vegeStatus = showStatus) ?: LocalContentColor.current
+    val iconTint: Color = item.category.getTint(otherColor = LocalContentColor.current)
     val categoryIcon = item.category.getIcon()
-    val iconTint = item.category.getTint()
 
     Row(
         modifier = modifier
@@ -241,10 +246,6 @@ fun VegeItemElement(
                             Icon(
                                 Icons.Filled.Edit,
                                 contentDescription = stringResource(id = R.string.delete_text),
-                                tint = when (isCheck) {
-                                    false -> Color.Black
-                                    true -> Color.Transparent
-                                },
                                 modifier = Modifier.aspectRatio(1f / 1f)
                             )
                         }
@@ -259,7 +260,7 @@ fun VegeItemElement(
                             ItemListDropDownMenuItem(
                                 icon = VegeStatusMethod.getIcon(status),
                                 text = stringResource(VegeStatusMethod.getText(status)),
-                                iconTint = VegeStatusMethod.getIconTint(status),
+                                iconTint = VegeStatusMethod.getIconTint(status) ?: LocalContentColor.current,
                                 onClick = {
                                     showStatus = status
                                     item.status = status
@@ -399,7 +400,7 @@ fun ItemListTopBar(
                 .fillMaxWidth()
                 .wrapContentSize(Alignment.TopEnd)
         ) {
-            Row() {
+            Row {
                 if (selectMenu == SelectMenu.Delete) {
                     IconButton(
                         onClick = { onCancelClick() }
@@ -422,7 +423,7 @@ fun ItemListTopBar(
                     Icon(
                         menuIcon,
                         contentDescription = stringResource(R.string.drop_down_menu_button),
-                        tint = menuIconTint
+                        tint = menuIconTint ?: LocalContentColor.current
                     )
                 }
             }
@@ -457,11 +458,11 @@ fun ItemListTopBar(
 
 @Composable
 fun ItemListDropDownMenuItem(
+    modifier: Modifier = Modifier,
     icon: ImageVector,
     text: String,
-    iconTint: Color = Color.Black,
+    iconTint: Color = LocalContentColor.current,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
 ) {
     DropdownMenuItem(
         text = {
@@ -478,32 +479,46 @@ fun ItemListDropDownMenuItem(
     )
 }
 
-@Preview
+@DarkLightPreview
 @Composable
-fun FirstScreenPreview() {
-    MaterialTheme {
-//    FirstScreen(navController = rememberNavController())
-
-//        VegeItemElement(
-//            onDeleteClick = { item, isDelete -> },
-//            onMenuItemIconClick = {},
-//            selectMenu = SelectMenu.Edit,
-//            item = VegeItem(
-//                name = "aiueo",
-//                category = VegeCategory.None,
-//                uuid = UUID.randomUUID().toString(),
-//                status = VegeStatus.Favorite
-//            ),
-//            onClick = {},
-//            modifier = Modifier.background(Color.White)
-//        )
-        ItemListTopBar(
-            selectMenu = SelectMenu.Edit,
-            onCancelClick = { /*TODO*/ },
-            onDeleteIconClick = { /*TODO*/ },
-            onEditIconClick = { /*TODO*/ },
-            onFilterItemClick = { },
-            modifier = Modifier.background(Color.White)
+fun HomeScreenPreview(
+    @PreviewParameter(HomePreviewParameterProvider::class) params: HomePreviewParameterProvider.Params
+) {
+    VegegrowthAppTheme {
+        HomeScreen(
+            uiState = params.uiState,
+            openAddVegeItemDialog = {},
+            onSelectVegeCategory = {},
+            onCancelMenuClick = {},
+            onDeleteIconClick = {},
+            onFilterItemClick = {},
+            onDismiss = {},
+            onSelectVegeStatus = {},
+            onItemDelete = {},
+            onConfirmClick = {},
+            changeInputText = {},
+            onEditIconClick = {},
+            onVegeItemClick = {}
         )
     }
+}
+
+class HomePreviewParameterProvider : PreviewParameterProvider<HomePreviewParameterProvider.Params> {
+    override val values: Sequence<HomePreviewParameterProvider.Params> = sequenceOf(
+        Params(
+            uiState = HomeScreenUiState.initialState().copy(
+                vegetables = HomeScreenDummy.vegeList()
+            )
+        ),
+        Params(
+            uiState = HomeScreenUiState.initialState().copy(
+                vegetables = HomeScreenDummy.vegeList(),
+                selectMenu = SelectMenu.Edit
+            )
+        )
+    )
+
+    data class Params(
+        val uiState: HomeScreenUiState
+    )
 }

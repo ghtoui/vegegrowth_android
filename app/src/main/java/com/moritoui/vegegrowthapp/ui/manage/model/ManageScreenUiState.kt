@@ -7,7 +7,7 @@ data class ManageScreenUiState(
     val vegeRepositoryList: List<VegeItemDetail> = listOf(),
     val isOpenImageBottomSheet: Boolean = false,
     val inputMemoText: String = "",
-    val isOpenMemoEditorBottomSheet: Boolean = false
+    val isOpenMemoEditorBottomSheet: Boolean = false,
 ) {
     companion object {
         fun initialState(): ManageScreenUiState = ManageScreenUiState(
@@ -15,7 +15,7 @@ data class ManageScreenUiState(
             vegeRepositoryList = listOf(),
             isOpenImageBottomSheet = false,
             inputMemoText = "",
-            isOpenMemoEditorBottomSheet = false
+            isOpenMemoEditorBottomSheet = false,
         )
     }
 }
