@@ -30,4 +30,5 @@
     <string name="take_picture_error_enter_collect_number">正しい数値を入力してください</string>
     <string name="take_picture_back">戻る</string>
     <string name="common_cm_unit">cm</string>
+    <string name="manage_screen_title">管理画面</string>
 </resources>
