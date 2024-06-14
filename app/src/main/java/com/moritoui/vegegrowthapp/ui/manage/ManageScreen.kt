@@ -93,7 +93,7 @@ private fun ManageScreen(
     if (uiState.vegeRepositoryList.isEmpty()) {
         VegeGrowthLoading(
             modifier = Modifier.fillMaxSize(),
-            isLoading = uiState.vegeRepositoryList.isEmpty()
+            isLoading = uiState.vegeRepositoryList.isEmpty(),
         )
         return
     }

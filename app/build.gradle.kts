@@ -109,8 +109,8 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.1.1")
 
     // lottie
-    val lottie_version = "6.4.1"
-    implementation("com.airbnb.android:lottie-compose:$lottie_version")
+    val lottieVersion = "6.4.1"
+    implementation("com.airbnb.android:lottie-compose:$lottieVersion")
 }
 
 // Allow references to generated code

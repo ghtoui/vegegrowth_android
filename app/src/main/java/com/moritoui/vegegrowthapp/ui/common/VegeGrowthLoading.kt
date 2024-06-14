@@ -24,14 +24,15 @@ fun VegeGrowthLoading(
     when (isLoading) {
         true -> {
             Box(
-                modifier = modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
+                modifier =
+                    modifier
+                        .fillMaxSize(),
+                contentAlignment = Alignment.Center,
             ) {
                 LottieAnimation(
                     modifier = Modifier.size(100.dp),
                     composition = composition,
-                    iterations = LottieConstants.IterateForever
+                    iterations = LottieConstants.IterateForever,
                 )
             }
         }
