@@ -48,66 +48,71 @@ fun ImageBottomSheet(
     modifier: Modifier = Modifier,
     currentImageBarModifier: Modifier = Modifier,
     imageFilePathList: List<String>,
-    onDismissRequest: (Int) -> Unit
+    onDismissRequest: (Int) -> Unit,
 ) {
-
     val skipPartiallyExpanded by remember { mutableStateOf(true) }
-    val bottomSheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = skipPartiallyExpanded
-    )
+    val bottomSheetState =
+        rememberModalBottomSheetState(
+            skipPartiallyExpanded = skipPartiallyExpanded,
+        )
 
     val pagerState = rememberPagerState(initialPage = index) { pagerCount }
     val scope = rememberCoroutineScope()
 
     ModalBottomSheet(
         onDismissRequest = { onDismissRequest(pagerState.currentPage) },
-        sheetState = bottomSheetState
+        sheetState = bottomSheetState,
     ) {
         Column(
-            modifier = modifier
+            modifier = modifier,
         ) {
             HorizontalPager(
                 state = pagerState,
                 contentPadding = PaddingValues(start = 24.dp, top = 12.dp, end = 24.dp),
-                pageSpacing = 8.dp
+                pageSpacing = 8.dp,
             ) { page ->
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.primaryContainer.copy(0.1f))
-                        .border(
-                            width = 4.dp,
-                            color = MaterialTheme.colorScheme.onSurface.copy(0.05f)
-                        ),
-                    contentAlignment = Alignment.Center
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.primaryContainer.copy(0.1f))
+                            .border(
+                                width = 4.dp,
+                                color = MaterialTheme.colorScheme.onSurface.copy(0.05f),
+                            ),
+                    contentAlignment = Alignment.Center,
                 ) {
                     AsyncImage(
                         model = imageFilePathList[page],
                         contentDescription = null,
-                        modifier = Modifier
-                            .aspectRatio(1f / 1f)
-                            .padding(8.dp),
-                        error = painterResource(id = R.drawable.no_image)
+                        modifier =
+                            Modifier
+                                .aspectRatio(1f / 1f)
+                                .padding(8.dp),
+                        error = painterResource(id = R.drawable.no_image),
                     )
                 }
             }
             Row(
-                modifier = currentImageBarModifier
-                    .height(currentImageBarHeight.dp),
-                horizontalArrangement = Arrangement.Center
+                modifier =
+                    currentImageBarModifier
+                        .height(currentImageBarHeight.dp),
+                horizontalArrangement = Arrangement.Center,
             ) {
                 repeat(pagerCount) {
-                    val backGroundColor = when (it) {
-                        pagerState.currentPage -> Color.Blue
-                        else -> Color.LightGray
-                    }
+                    val backGroundColor =
+                        when (it) {
+                            pagerState.currentPage -> Color.Blue
+                            else -> Color.LightGray
+                        }
                     Box(
                         // タップで画面遷移できるようにする
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(currentImageBarHeight.dp)
-                            .background(backGroundColor)
-                            .clickable(onClick = { scope.launch { pagerState.animateScrollToPage(it) } })
+                        modifier =
+                            Modifier
+                                .weight(1f)
+                                .height(currentImageBarHeight.dp)
+                                .background(backGroundColor)
+                                .clickable(onClick = { scope.launch { pagerState.animateScrollToPage(it) } }),
                     )
                 }
             }
@@ -121,7 +126,7 @@ fun MemoEditorBottomSheet(
     onValueChange: (String) -> Unit,
     onCancelButtonClick: () -> Unit,
     onSaveButtonClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     AlertDialog(
         modifier = modifier,
@@ -134,13 +139,13 @@ fun MemoEditorBottomSheet(
                 value = inputText,
                 onValueChange = { onValueChange(it) },
                 singleLine = false,
-                modifier = Modifier.height(96.dp)
+                modifier = Modifier.height(96.dp),
             )
         },
         confirmButton = {
             Button(
                 onClick = { onSaveButtonClick() },
-                modifier = Modifier.padding(top = 8.dp)
+                modifier = Modifier.padding(top = 8.dp),
             ) {
                 Text("保存")
             }
@@ -148,11 +153,11 @@ fun MemoEditorBottomSheet(
         dismissButton = {
             Button(
                 onClick = { onCancelButtonClick() },
-                modifier = Modifier.padding(top = 8.dp)
+                modifier = Modifier.padding(top = 8.dp),
             ) {
                 Text("キャンセル")
             }
-        }
+        },
     )
 }
 
@@ -161,9 +166,14 @@ fun MemoEditorBottomSheet(
 @Composable
 fun BottomSheetPreview() {
     val scope = rememberCoroutineScope()
-    val imageList = listOf<Bitmap?>(
-        null, null, null, null, null
-    )
+    val imageList =
+        listOf<Bitmap?>(
+            null,
+            null,
+            null,
+            null,
+            null,
+        )
 //    VegegrowthAppTheme {
 //        ImageBottomSheet(
 //            pagerCount = 5,

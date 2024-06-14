@@ -2,25 +2,27 @@ package com.moritoui.vegegrowthapp.model
 
 import android.content.Context
 import android.util.Log
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
 import java.io.IOException
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 
 interface FileManager {
     val applicationContext: Context
+
     fun readJsonData(fileName: String): String?
+
     fun saveVegeItemListData(vegeItemList: List<VegeItem>)
+
     fun getVegeItemList(): MutableList<VegeItem>
 }
 
 open class FileManagerImpl(
-    override val applicationContext: Context
+    override val applicationContext: Context,
 ) : FileManager {
-
     override fun readJsonData(fileName: String): String? {
         var json: String? = null
         val jsonFileName = "$fileName.json"
@@ -43,21 +45,17 @@ open class FileManagerImpl(
         }
     }
 
-    override fun getVegeItemList(): MutableList<VegeItem> {
-        return when (val vegeItemList = parseFromJson<List<VegeItem>>(readJsonData(fileName = "vegeItemList"))) {
+    override fun getVegeItemList(): MutableList<VegeItem> =
+        when (val vegeItemList = parseFromJson<List<VegeItem>>(readJsonData(fileName = "vegeItemList"))) {
             null -> mutableListOf()
             else -> vegeItemList.toMutableList()
         }
-    }
 
-    inline fun <reified T> parseFromJson(json: String?): T? {
-        return when (json) {
+    inline fun <reified T> parseFromJson(json: String?): T? =
+        when (json) {
             null -> null
             else -> Json.decodeFromString<T>(json)
         }
-    }
 
-    inline fun <reified T> parseToJson(targetData: T): String {
-        return Json.encodeToString(targetData)
-    }
+    inline fun <reified T> parseToJson(targetData: T): String = Json.encodeToString(targetData)
 }

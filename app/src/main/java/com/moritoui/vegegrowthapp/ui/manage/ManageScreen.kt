@@ -72,7 +72,7 @@ fun ManageScreen(
         onDismissRequest = viewModel::changeOpenImageBottomSheet,
         onMemoTextChange = viewModel::changeMemoText,
         onCancelButtonClick = viewModel::cancelEditMemo,
-        onSaveButtonClick = viewModel::saveEditMemo
+        onSaveButtonClick = viewModel::saveEditMemo,
     )
 }
 
@@ -89,20 +89,19 @@ private fun ManageScreen(
     onCancelButtonClick: () -> Unit,
     onSaveButtonClick: (VegeItemDetail) -> Unit,
 ) {
-
     if (uiState.vegeRepositoryList.isEmpty()) {
         return
     }
 
-    val pagerState = rememberPagerState(
-        initialPage = uiState.vegeRepositoryList.lastIndex,
-        pageCount = { uiState.pagerCount }
-    )
+    val pagerState =
+        rememberPagerState(
+            initialPage = uiState.vegeRepositoryList.lastIndex,
+            pageCount = { uiState.pagerCount },
+        )
 
     val scope = rememberCoroutineScope()
 
     val selectedVegeItemDetail = uiState.vegeRepositoryList[pagerState.currentPage]
-
 
     Scaffold(
         topBar = {
@@ -110,19 +109,21 @@ private fun ManageScreen(
                 title = stringResource(R.string.manage_screen_title),
                 onBackNavigationButtonClick = onBackNavigationButtonClick,
             )
-        }
+        },
     ) { it ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(it),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(it),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             DrawLineChart(
                 currentIndex = pagerState.currentPage,
                 data = uiState.vegeRepositoryList,
-                modifier = Modifier
-                    .weight(1f)
+                modifier =
+                    Modifier
+                        .weight(1f),
             )
 
             ImageCarousel(
@@ -133,15 +134,16 @@ private fun ManageScreen(
                 onImageClick = onImageClick,
                 // ボトムバークリックでも画像遷移できるように -> Coroutineが必要
                 onImageBottomBarClick = { scope.launch { pagerState.animateScrollToPage(it) } },
-                currentImageBarModifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 72.dp, top = 12.dp, end = 72.dp, bottom = 8.dp),
-                imagePathList = imagePathList
+                currentImageBarModifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(start = 72.dp, top = 12.dp, end = 72.dp, bottom = 8.dp),
+                imagePathList = imagePathList,
             )
             DetailData(
                 memoData = uiState.vegeRepositoryList[pagerState.currentPage].memo,
                 onEditClick = { onEditClick(pagerState.currentPage) },
-                modifier = Modifier.weight(0.7f)
+                modifier = Modifier.weight(0.7f),
             )
         }
     }
@@ -157,9 +159,10 @@ private fun ManageScreen(
                 onDismissRequest()
             },
             index = pagerState.currentPage,
-            currentImageBarModifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 72.dp, top = 12.dp, end = 72.dp, bottom = 12.dp)
+            currentImageBarModifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(start = 72.dp, top = 12.dp, end = 72.dp, bottom = 12.dp),
         )
     }
 
@@ -169,7 +172,7 @@ private fun ManageScreen(
             onValueChange = onMemoTextChange,
             onCancelButtonClick = onCancelButtonClick,
             onSaveButtonClick = { onSaveButtonClick(selectedVegeItemDetail) },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }
@@ -184,66 +187,73 @@ fun ImageCarousel(
     onImageClick: () -> Unit,
     onImageBottomBarClick: (Int) -> Unit,
     currentImageBarModifier: Modifier = Modifier,
-    imagePathList: List<String>
+    imagePathList: List<String>,
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.SpaceAround
+        verticalArrangement = Arrangement.SpaceAround,
     ) {
         HorizontalPager(
-            modifier = Modifier
-                .weight(1f),
+            modifier =
+                Modifier
+                    .weight(1f),
             state = pagerState,
             contentPadding = PaddingValues(start = 24.dp, top = 12.dp, end = 24.dp),
-            pageSpacing = 8.dp
+            pageSpacing = 8.dp,
         ) { page ->
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.primaryContainer.copy(0.1f))
-                    .border(
-                        width = 4.dp,
-                        color = MaterialTheme.colorScheme.onSurface.copy(0.05f)
-                    ),
-                contentAlignment = Alignment.Center
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.primaryContainer.copy(0.1f))
+                        .border(
+                            width = 4.dp,
+                            color = MaterialTheme.colorScheme.onSurface.copy(0.05f),
+                        ),
+                contentAlignment = Alignment.Center,
             ) {
                 AsyncImage(
                     model = imagePathList[page],
                     contentDescription = null,
-                    modifier = Modifier
-                        .aspectRatio(1f / 1f)
-                        .clickable { onImageClick() }
-                        .padding(8.dp),
+                    modifier =
+                        Modifier
+                            .aspectRatio(1f / 1f)
+                            .clickable { onImageClick() }
+                            .padding(8.dp),
                     error = painterResource(id = R.drawable.no_image),
                     // Previewで見えるようにするため
-                    placeholder = BrushPainter(
-                        Brush.linearGradient(
-                            listOf(
-                                MaterialTheme.colorScheme.primary,
-                                MaterialTheme.colorScheme.inversePrimary,
-                            )
-                        )
-                    ),
+                    placeholder =
+                        BrushPainter(
+                            Brush.linearGradient(
+                                listOf(
+                                    MaterialTheme.colorScheme.primary,
+                                    MaterialTheme.colorScheme.inversePrimary,
+                                ),
+                            ),
+                        ),
                 )
             }
         }
         Row(
-            modifier = currentImageBarModifier
-                .height(currentImageBarHeight.dp),
-            horizontalArrangement = Arrangement.Center
+            modifier =
+                currentImageBarModifier
+                    .height(currentImageBarHeight.dp),
+            horizontalArrangement = Arrangement.Center,
         ) {
             repeat(pagerCount) {
-                val backGroundColor = when (it) {
-                    pagerState.currentPage -> Color.Blue
-                    else -> Color.LightGray
-                }
+                val backGroundColor =
+                    when (it) {
+                        pagerState.currentPage -> Color.Blue
+                        else -> Color.LightGray
+                    }
                 Box(
                     // タップで画面遷移できるようにする
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(currentImageBarHeight.dp)
-                        .background(backGroundColor)
-                        .clickable(onClick = { onImageBottomBarClick(it) })
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .height(currentImageBarHeight.dp)
+                            .background(backGroundColor)
+                            .clickable(onClick = { onImageBottomBarClick(it) }),
                 )
             }
         }
@@ -254,18 +264,20 @@ fun ImageCarousel(
 fun DetailData(
     memoData: String,
     onEditClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier
-            .padding(start = 24.dp, end = 24.dp, bottom = 12.dp),
+        modifier =
+            modifier
+                .padding(start = 24.dp, end = 24.dp, bottom = 12.dp),
     ) {
         MemoData(
             memoData = memoData,
             onEditClick = onEditClick,
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.onSurface.copy(0.05f))
-                .padding(start = 12.dp, end = 12.dp)
+            modifier =
+                Modifier
+                    .background(MaterialTheme.colorScheme.onSurface.copy(0.05f))
+                    .padding(start = 12.dp, end = 12.dp),
         )
     }
 }
@@ -274,27 +286,29 @@ fun DetailData(
 fun MemoData(
     memoData: String,
     onEditClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Scaffold(
         topBar = {
             MemoTopBar(
                 modifier = modifier,
-                onEditClick = { onEditClick() }
+                onEditClick = { onEditClick() },
             )
-        }
+        },
     ) {
         LazyColumn(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(top = it.calculateTopPadding())
+            modifier =
+                modifier
+                    .fillMaxSize()
+                    .padding(top = it.calculateTopPadding()),
         ) {
             items(1) {
                 Text(
                     text = memoData,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = 4.dp)
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(top = 4.dp),
                 )
             }
         }
@@ -304,33 +318,33 @@ fun MemoData(
 @Composable
 fun MemoTopBar(
     modifier: Modifier = Modifier,
-    onEditClick: () -> Unit
+    onEditClick: () -> Unit,
 ) {
     Row(
         modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             text = "メモ",
-            fontSize = 24.sp
+            fontSize = 24.sp,
         )
         Spacer(Modifier.weight(1f))
         IconButton(
             modifier = Modifier.width(96.dp),
-            onClick = { onEditClick() }
+            onClick = { onEditClick() },
         ) {
             Row(
                 modifier = Modifier.padding(4.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 Icon(
                     Icons.Filled.Edit,
-                    contentDescription = "メモ編集"
+                    contentDescription = "メモ編集",
                 )
                 Text(
                     text = "編集",
-                    fontSize = 24.sp
+                    fontSize = 24.sp,
                 )
             }
         }
@@ -340,7 +354,7 @@ fun MemoTopBar(
 @Composable
 @PreviewLightDark
 fun ManageScreenPreview(
-    @PreviewParameter(ManageScreenPreviewParameterProvider::class) params: ManageScreenPreviewParameterProvider.Params
+    @PreviewParameter(ManageScreenPreviewParameterProvider::class) params: ManageScreenPreviewParameterProvider.Params,
 ) {
     VegegrowthAppTheme {
         ManageScreen(
@@ -352,20 +366,23 @@ fun ManageScreenPreview(
             onDismissRequest = {},
             onMemoTextChange = {},
             onCancelButtonClick = {},
-            onSaveButtonClick = {}
-            )
+            onSaveButtonClick = {},
+        )
     }
 }
+
 class ManageScreenPreviewParameterProvider : PreviewParameterProvider<ManageScreenPreviewParameterProvider.Params> {
-    override val values: Sequence<Params> = sequenceOf(
-        Params(
-            uiState = ManageScreenUiState.initialState().copy(
-                vegeRepositoryList = ManageScreenDummy.getVegetableDetailList(),
-                pagerCount = ManageScreenDummy.getImagePathList().size,
+    override val values: Sequence<Params> =
+        sequenceOf(
+            Params(
+                uiState =
+                    ManageScreenUiState.initialState().copy(
+                        vegeRepositoryList = ManageScreenDummy.getVegetableDetailList(),
+                        pagerCount = ManageScreenDummy.getImagePathList().size,
+                    ),
+                imagePathList = ManageScreenDummy.getImagePathList(),
             ),
-            imagePathList = ManageScreenDummy.getImagePathList()
-        ),
-    )
+        )
 
     data class Params(
         val uiState: ManageScreenUiState,

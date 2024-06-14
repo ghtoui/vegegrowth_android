@@ -8,10 +8,14 @@ interface VegetableDetailRepository {
      * 野菜の大きさと画像の登録
      */
     suspend fun addVegeItemDetail(vegeItemDetail: VegeItemDetail)
+
     /**
      * メモの編集
      */
-    suspend fun editMemo(memo: String, vegeItemDetail: VegeItemDetail)
+    suspend fun editMemo(
+        memo: String,
+        vegeItemDetail: VegeItemDetail,
+    )
 
     /**
      * 画像の保存

@@ -9,20 +9,21 @@ enum class FilterStatus {
     Default,
     Leaf,
     Flower,
-    Other
+    Other,
 }
 
-val filterStatusMap = mapOf(
-    FilterStatus.End to VegeStatus.End,
-    FilterStatus.Favorite to VegeStatus.Favorite,
-    FilterStatus.Default to VegeStatus.Default,
-    FilterStatus.Leaf to VegeCategory.Leaf,
-    FilterStatus.Flower to VegeCategory.Flower,
-    FilterStatus.Other to VegeCategory.Other
-)
+val filterStatusMap =
+    mapOf(
+        FilterStatus.End to VegeStatus.End,
+        FilterStatus.Favorite to VegeStatus.Favorite,
+        FilterStatus.Default to VegeStatus.Default,
+        FilterStatus.Leaf to VegeCategory.Leaf,
+        FilterStatus.Flower to VegeCategory.Flower,
+        FilterStatus.Other to VegeCategory.Other,
+    )
 
-fun FilterStatus.getText(): Int {
-    return when (this) {
+fun FilterStatus.getText(): Int =
+    when (this) {
         FilterStatus.All -> R.string.all_text
         FilterStatus.End -> R.string.growth_end_text
         FilterStatus.Favorite -> R.string.favorite_text
@@ -31,4 +32,3 @@ fun FilterStatus.getText(): Int {
         FilterStatus.Flower -> R.string.flower_text
         FilterStatus.Other -> R.string.other_category_text
     }
-}

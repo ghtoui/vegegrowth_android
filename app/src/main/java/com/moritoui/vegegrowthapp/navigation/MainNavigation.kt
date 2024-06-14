@@ -23,7 +23,9 @@ sealed class Screen(
     val route: String,
 ) {
     object HomeScreen : Screen("homeScreen")
+
     object TakePictureScreen : Screen("takePictureScreen")
+
     object ManageScreen : Screen("manageScreen")
 }
 
@@ -35,7 +37,7 @@ fun MainNavigation(
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = Screen.HomeScreen.route
+        startDestination = Screen.HomeScreen.route,
     ) {
         homeScreenRoute(navController)
         takePictureScreenRoute(navController)
@@ -49,21 +51,21 @@ fun NavigationAppTopBar(
     isVisibleNavigationButton: Boolean = true,
     onBackNavigationButtonClick: () -> Unit,
     title: String,
-    actions: @Composable () -> Unit = { }
+    actions: @Composable () -> Unit = { },
 ) {
     NavigationBar {
         CenterAlignedTopAppBar(
             title = {
                 Text(
                     text = title,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
                 )
             },
             navigationIcon = {
                 IconButton(onClick = onBackNavigationButtonClick) {
                     Icon(
                         Icons.Filled.ArrowBack,
-                        contentDescription = "戻る"
+                        contentDescription = "戻る",
                     )
                 }
             },
@@ -71,7 +73,7 @@ fun NavigationAppTopBar(
                 if (isVisibleNavigationButton) {
                     actions()
                 }
-            }
+            },
         )
     }
 }
@@ -81,14 +83,14 @@ fun NavigationAppTopBar(
 fun FirstNavigationAppTopBar(
     isVisibleNavigationButton: Boolean = true,
     title: String,
-    actions: @Composable () -> Unit = { }
+    actions: @Composable () -> Unit = { },
 ) {
     NavigationBar {
         CenterAlignedTopAppBar(
             title = {
                 Text(
                     text = title,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
                 )
             },
             navigationIcon = {
@@ -97,16 +99,17 @@ fun FirstNavigationAppTopBar(
                 if (isVisibleNavigationButton) {
                     actions()
                 }
-            }
+            },
         )
     }
 }
+
 @Preview
 @Composable
 fun NavigationAppTopBarPreview() {
     NavigationAppTopBar(
         title = "preview",
         isVisibleNavigationButton = true,
-        onBackNavigationButtonClick = {}
+        onBackNavigationButtonClick = {},
     )
 }

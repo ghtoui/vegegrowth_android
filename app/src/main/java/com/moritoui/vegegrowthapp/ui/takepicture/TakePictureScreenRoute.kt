@@ -7,15 +7,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.moritoui.vegegrowthapp.navigation.Screen
 
-fun NavGraphBuilder.takePictureScreenRoute(
-    navController: NavController,
-) {
+fun NavGraphBuilder.takePictureScreenRoute(navController: NavController) {
     composable(
-         "${Screen.TakePictureScreen.route}/{vegetableId}",
+        "${Screen.TakePictureScreen.route}/{vegetableId}",
         // Intで受け取るように
-        arguments = listOf(navArgument("vegetableId") { type = NavType.IntType })
+        arguments = listOf(navArgument("vegetableId") { type = NavType.IntType }),
     ) {
-
         it.arguments?.getString("vegetableId")
         TakePictureScreen(navController = navController)
     }

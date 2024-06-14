@@ -17,9 +17,10 @@ class MigrateModule {
     @Singleton
     @Provides
     fun provideMigratePreferencesDataStore(
-        @ApplicationContext context: Context
-    ): DataStore<MigratePreferences> = DataStoreFactory.create(
-        serializer = MigratePreferencesSerializer(),
-        produceFile = { context.preferencesDataStoreFile("migrate.pb") }
-    )
+        @ApplicationContext context: Context,
+    ): DataStore<MigratePreferences> =
+        DataStoreFactory.create(
+            serializer = MigratePreferencesSerializer(),
+            produceFile = { context.preferencesDataStoreFile("migrate.pb") },
+        )
 }
