@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
+import com.google.android.gms.ads.MobileAds
 import com.moritoui.vegegrowthapp.navigation.MainNavigation
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -16,6 +17,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        MobileAds.initialize(this)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             VegegrowthAppTheme {
