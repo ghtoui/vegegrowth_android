@@ -170,3 +170,4 @@ fun VegegrowthAppTheme(
         content = content
     )
 }
+

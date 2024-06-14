@@ -13,6 +13,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -133,7 +134,11 @@ fun EditAlertWindow(
                             contentDescription = stringResource(R.string.drop_down_menu_button)
                         )
                     }
-                    Icon(selectIcon, tint = selectIconTint, contentDescription = null)
+                    Icon(
+                        selectIcon,
+                        tint = selectIconTint ?: LocalContentColor.current,
+                        contentDescription = null
+                    )
                     Text(
                         text = stringResource(id = selectText)
                     )

@@ -22,10 +22,10 @@ object SelectMenuMethod {
         }
     }
 
-    fun getIconTint(selectMenu: SelectMenu): Color {
+    fun getIconTint(selectMenu: SelectMenu): Color? {
         return when (selectMenu) {
             SelectMenu.Delete -> Color.Red
-            else -> Color.Black
+            else -> null
         }
     }
 }

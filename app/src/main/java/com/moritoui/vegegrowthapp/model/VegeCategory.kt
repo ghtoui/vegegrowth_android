@@ -28,11 +28,11 @@ fun VegeCategory.getText(): Int {
     }
 }
 
-fun VegeCategory.getTint(): Color {
+fun VegeCategory.getTint(otherColor: Color): Color {
     return when (this) {
         VegeCategory.None -> Color.White
         VegeCategory.Flower -> Color.Magenta
         VegeCategory.Leaf -> Color.Green
-        VegeCategory.Other -> Color.DarkGray
+        VegeCategory.Other -> otherColor
     }
 }
