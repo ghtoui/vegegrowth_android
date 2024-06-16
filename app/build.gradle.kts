@@ -40,14 +40,14 @@ android {
             buildConfigField(
                 "String",
                 "AD_BANNER_UNIT_ID",
-                "${properties["RELEASE_AD_BANNER_UNIT_ID"]}"
+                "${properties["RELEASE_AD_BANNER_UNIT_ID"]}",
             )
         }
         debug {
             buildConfigField(
                 "String",
                 "AD_BANNER_UNIT_ID",
-                "${properties["DEBUG_AD_BANNER_UNIT_ID"]}"
+                "${properties["DEBUG_AD_BANNER_UNIT_ID"]}",
             )
         }
     }
