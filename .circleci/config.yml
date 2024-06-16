@@ -11,10 +11,9 @@ jobs:
       # これがないとprivate.propertiesが無くてエラーが出る
       - run:
           name: Create private.properties
-          command: cat \<<EOF > private.properties
-            RELEASE_AD_BANNER_UNIT_ID=""
-            DEBUG_AD_BANNER_UNIT_ID=""
-            EOF
+          command: |
+            echo "RELEASE_AD_BANNER_UNIT_ID=\"\"" > private.properties
+            echo "DEBUG_AD_BANNER_UNIT_ID=\"\"" >> private.properties
       - run: ./gradlew androidDependencies
       - save_cache:
           paths:
