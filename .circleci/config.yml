@@ -8,7 +8,11 @@ jobs:
       - checkout
       - restore_cache:
           key: jars-{{ checksum "build.gradle.kts" }}-{{ checksum  "app/build.gradle.kts" }}
-      - run: ./gradlew androidDependencies
+      - run: cat <<EOF > ~/private.properties
+        RELEASE_AD_BANNER_UNIT_ID
+        DEBUG_AD_BANNER_UNIT_ID
+        EOF
+        && ./gradlew androidDependencies
       - save_cache:
           paths:
             - ~/.gradle
