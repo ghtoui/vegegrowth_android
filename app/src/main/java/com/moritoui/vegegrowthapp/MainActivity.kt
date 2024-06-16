@@ -29,6 +29,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private lateinit var firebaseAnalytics: FirebaseAnalytics
+
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
@@ -53,7 +54,7 @@ class MainActivity : ComponentActivity() {
                     Column {
                         MainNavigation(
                             modifier = Modifier.weight(1f),
-                            firebaseAnalytics
+                            firebaseAnalytics,
                         )
                         AdmobBanner(
                             modifier = Modifier.padding(bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()),

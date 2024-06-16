@@ -127,7 +127,10 @@ fun NavigationAppTopBarPreview() {
     )
 }
 
-private fun firebaseEventSend(firebaseAnalytics: FirebaseAnalytics, screenName: String) {
+private fun firebaseEventSend(
+    firebaseAnalytics: FirebaseAnalytics,
+    screenName: String,
+) {
     // ユーザが画面遷移をしたときにログを取る
     firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
         Bundle().apply {
