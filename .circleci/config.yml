@@ -11,8 +11,7 @@ jobs:
       # これがないとprivate.propertiesが無くてエラーが出る
       - run:
           name: Create private.properties
-          command: |
-            cat <<EOF > private.properties
+          command: cat \<<EOF > private.properties
             RELEASE_AD_BANNER_UNIT_ID=""
             DEBUG_AD_BANNER_UNIT_ID=""
             EOF
