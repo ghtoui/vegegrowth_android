@@ -322,6 +322,21 @@ obj/
 
 !/gradle/wrapper/gradle-wrapper.jar
 
-# End of https://www.toptal.com/developers/gitignore/api/kotlin,androidstudio,android,macos,intellij
+### Firebase ###
+.idea
+**/node_modules/*
+**/.firebaserc
+
+### Firebase Patch ###
+.runtimeconfig.json
+.firebase/
+
+# End of https://www.toptal.com/developers/gitignore/api/firebase
 
 .ignore
+
+# firebase
+public/app-ads.txt
+
+# private property
+private.properties

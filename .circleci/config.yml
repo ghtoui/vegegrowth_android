@@ -7,26 +7,33 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: jars-{{ checksum "build.gradle.kts" }}-{{ checksum  "app/build.gradle.kts" }}
+          key: jars-{{ checksum "build.gradle.kts" }}-{{ checksum "app/build.gradle.kts" }}
+      # これがないとprivate.propertiesが無くてエラーが出る
+      - run:
+          name: Create private.properties
+          command: |
+            echo "RELEASE_AD_BANNER_UNIT_ID=\"\"" > private.properties
+            echo "DEBUG_AD_BANNER_UNIT_ID=\"\"" >> private.properties
       - run: ./gradlew androidDependencies
       - save_cache:
           paths:
             - ~/.gradle
-          key: jars-{{ checksum "build.gradle.kts" }}-{{ checksum  "app/build.gradle.kts" }}
-
+          key: jars-{{ checksum "build.gradle.kts" }}-{{ checksum "app/build.gradle.kts" }}
       - run:
+          name: Install Bundler
           command: sudo gem install bundler:2.4.12
       - run:
           name: ktlint Check
           command: ./gradlew --continue ktlintCheck
       - run:
-          name: test
+          name: Test
           command: ./gradlew testDebug --stacktrace
       - run:
-          name: unitTest
+          name: Unit Test
           command: ./gradlew testDebugUnitTest
 
 workflows:
+  version: 2
   test:
     jobs:
       - build-and-test

@@ -1,0 +1,17 @@
+{
+  "hosting": {
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  },
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "https://vegegrowthproject.web.app/public/app-ads.txt",
+      "type": 301
+    }
+  ]
+}
