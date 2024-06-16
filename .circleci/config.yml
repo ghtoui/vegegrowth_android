@@ -15,10 +15,11 @@ jobs:
             echo "RELEASE_AD_BANNER_UNIT_ID=\"\"" > private.properties
             echo "DEBUG_AD_BANNER_UNIT_ID=\"\"" >> private.properties
       # これがないとgoogle-services.jsonが無くてエラーが出る
+      # 既にgoogle-services.jsonをBase64にしたものを登録しているので，encodeしてあげる
       - run:
-          name: Create google-service.json
-          command: |
-            echo "\"\"" > app/google-services.json
+          name: encode google-service.json
+          command: echo $GOOGLE_SERVICE_JSON | base64 --decode --ignore-garbage > ./app/google-services.json
+
       - run: ./gradlew androidDependencies
       - save_cache:
           paths:
