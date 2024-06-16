@@ -339,4 +339,4 @@ obj/
 public/app-ads.txt
 
 # private property
-gradle.properties
+private.properties

@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -15,7 +18,7 @@ android {
         minSdk = 28
         targetSdk = 34
         versionCode = 9
-        versionName = versionCode.toString()
+        versionName = "2.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -24,11 +27,27 @@ android {
     }
 
     buildTypes {
+        val propertiesFile = project.rootProject.file("private.properties")
+        val properties = Properties()
+        properties.load(FileInputStream(propertiesFile))
+
         release {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
+            )
+            buildConfigField(
+                "String",
+                "AD_BANNER_UNIT_ID",
+                "${properties["RELEASE_AD_BANNER_UNIT_ID"]}"
+            )
+        }
+        debug {
+            buildConfigField(
+                "String",
+                "AD_BANNER_UNIT_ID",
+                "${properties["DEBUG_AD_BANNER_UNIT_ID"]}"
             )
         }
     }
@@ -41,6 +60,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.3"
