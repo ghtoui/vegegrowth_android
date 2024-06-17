@@ -1,5 +1,6 @@
 package com.moritoui.vegegrowthapp.ui.takepicture
 
+import android.util.Log
 import androidx.camera.core.ImageProxy
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -84,6 +86,9 @@ private fun TakePictureScreen(
     onConfirmClick: () -> Unit,
     onDismissClick: () -> Unit,
 ) {
+    SideEffect {
+        Log.d("test", "$uiState")
+    }
     Scaffold(
         topBar = {
             NavigationAppTopBar(
