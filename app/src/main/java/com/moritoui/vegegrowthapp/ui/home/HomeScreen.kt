@@ -61,8 +61,8 @@ import com.moritoui.vegegrowthapp.model.VegeStatusMethod
 import com.moritoui.vegegrowthapp.model.getIcon
 import com.moritoui.vegegrowthapp.model.getText
 import com.moritoui.vegegrowthapp.model.getTint
-import com.moritoui.vegegrowthapp.navigation.AddItem
-import com.moritoui.vegegrowthapp.navigation.FirstNavigationAppTopBar
+import com.moritoui.vegegrowthapp.navigation.HomeAddItem
+import com.moritoui.vegegrowthapp.navigation.NavigationAppTopBar
 import com.moritoui.vegegrowthapp.previews.DarkLightPreview
 import com.moritoui.vegegrowthapp.ui.AddAlertWindow
 import com.moritoui.vegegrowthapp.ui.home.model.HomeScreenUiState
@@ -112,11 +112,11 @@ private fun HomeScreen(
 ) {
     Scaffold(
         topBar = {
-            FirstNavigationAppTopBar(
+            NavigationAppTopBar(
                 title = stringResource(R.string.first_screen_title),
-            ) {
-                AddItem(onAddClick = openAddVegeItemDialog)
-            }
+                actions = { HomeAddItem(onAddClick = openAddVegeItemDialog) },
+                isVisibleBackButton = false,
+            )
         },
     ) { it ->
         Box(modifier = Modifier.padding(it)) {

@@ -33,9 +33,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.BrushPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -54,7 +52,7 @@ import com.moritoui.vegegrowthapp.ui.common.VegeGrowthLoading
 import com.moritoui.vegegrowthapp.ui.manage.model.ManageScreenUiState
 import com.moritoui.vegegrowthapp.ui.manage.view.DrawLineChart
 import com.moritoui.vegegrowthapp.ui.manage.view.ImageBottomSheet
-import com.moritoui.vegegrowthapp.ui.manage.view.MemoEditorBottomSheet
+import com.moritoui.vegegrowthapp.ui.manage.view.MemoEditorDialog
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 import kotlinx.coroutines.launch
 
@@ -156,23 +154,17 @@ private fun ManageScreen(
     if (uiState.isOpenImageBottomSheet) {
         ImageBottomSheet(
             pagerCount = uiState.pagerCount,
-            currentImageBarHeight = 5,
-            modifier = Modifier.padding(top = 16.dp, bottom = 48.dp),
             imageFilePathList = imagePathList,
             onDismissRequest = {
                 scope.launch { pagerState.animateScrollToPage(it) }
                 onDismissRequest()
             },
             index = pagerState.currentPage,
-            currentImageBarModifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(start = 72.dp, top = 12.dp, end = 72.dp, bottom = 12.dp),
         )
     }
 
     if (uiState.isOpenMemoEditorBottomSheet) {
-        MemoEditorBottomSheet(
+        MemoEditorDialog(
             inputText = uiState.inputMemoText,
             onValueChange = onMemoTextChange,
             onCancelButtonClick = onCancelButtonClick,
@@ -227,15 +219,7 @@ fun ImageCarousel(
                             .padding(8.dp),
                     error = painterResource(id = R.drawable.no_image),
                     // Previewで見えるようにするため
-                    placeholder =
-                        BrushPainter(
-                            Brush.linearGradient(
-                                listOf(
-                                    MaterialTheme.colorScheme.primary,
-                                    MaterialTheme.colorScheme.inversePrimary,
-                                ),
-                            ),
-                        ),
+                    placeholder = painterResource(R.drawable.loading_image),
                 )
             }
         }

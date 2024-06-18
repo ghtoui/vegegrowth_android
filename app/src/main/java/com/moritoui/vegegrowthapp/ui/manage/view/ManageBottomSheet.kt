@@ -10,9 +10,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -42,14 +45,13 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ImageBottomSheet(
+    modifier: Modifier = Modifier,
     index: Int,
     pagerCount: Int,
-    currentImageBarHeight: Int,
-    modifier: Modifier = Modifier,
-    currentImageBarModifier: Modifier = Modifier,
     imageFilePathList: List<String>,
     onDismissRequest: (Int) -> Unit,
 ) {
+    val currentImageBarHeight = 5.dp
     val skipPartiallyExpanded by remember { mutableStateOf(true) }
     val bottomSheetState =
         rememberModalBottomSheetState(
@@ -60,11 +62,16 @@ fun ImageBottomSheet(
     val scope = rememberCoroutineScope()
 
     ModalBottomSheet(
+        modifier =
+            modifier
+                .padding(bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()),
         onDismissRequest = { onDismissRequest(pagerState.currentPage) },
         sheetState = bottomSheetState,
     ) {
         Column(
-            modifier = modifier,
+            modifier =
+                Modifier
+                    .padding(top = 16.dp, bottom = 48.dp),
         ) {
             HorizontalPager(
                 state = pagerState,
@@ -95,8 +102,10 @@ fun ImageBottomSheet(
             }
             Row(
                 modifier =
-                    currentImageBarModifier
-                        .height(currentImageBarHeight.dp),
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(start = 72.dp, top = 12.dp, end = 72.dp, bottom = 12.dp)
+                        .height(currentImageBarHeight),
                 horizontalArrangement = Arrangement.Center,
             ) {
                 repeat(pagerCount) {
@@ -110,7 +119,7 @@ fun ImageBottomSheet(
                         modifier =
                             Modifier
                                 .weight(1f)
-                                .height(currentImageBarHeight.dp)
+                                .height(currentImageBarHeight)
                                 .background(backGroundColor)
                                 .clickable(onClick = { scope.launch { pagerState.animateScrollToPage(it) } }),
                     )
@@ -121,7 +130,7 @@ fun ImageBottomSheet(
 }
 
 @Composable
-fun MemoEditorBottomSheet(
+fun MemoEditorDialog(
     inputText: String,
     onValueChange: (String) -> Unit,
     onCancelButtonClick: () -> Unit,

@@ -36,7 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
@@ -166,6 +166,7 @@ private fun CameraBottomBar(
             Surface(
                 modifier = Modifier.padding(6.dp),
                 shape = CircleShape,
+                color = Color.White,
             ) {}
         }
         // surfaceを真ん中にするためにアイコンと同じ大きさを用意
@@ -175,7 +176,7 @@ private fun CameraBottomBar(
     }
 }
 
-@Preview
+@PreviewLightDark
 @Composable
 fun CameraScreenPreview() {
     CameraBottomBar(
