@@ -115,7 +115,7 @@ private fun HomeScreen(
             NavigationAppTopBar(
                 title = stringResource(R.string.first_screen_title),
                 actions = { HomeAddItem(onAddClick = openAddVegeItemDialog) },
-                isVisibleBackButton = false
+                isVisibleBackButton = false,
             )
         },
     ) { it ->
@@ -129,17 +129,17 @@ private fun HomeScreen(
                         onFilterItemClick = onFilterItemClick,
                         selectMenu = uiState.selectMenu,
                         modifier =
-                        Modifier
-                            .padding(start = 24.dp, top = 16.dp, end = 8.dp),
+                            Modifier
+                                .padding(start = 24.dp, top = 16.dp, end = 8.dp),
                     )
                 },
             ) { it ->
                 LazyColumn(
                     modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(it)
-                        .padding(start = 32.dp, end = 24.dp),
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(it)
+                            .padding(start = 32.dp, end = 24.dp),
                 ) {
                     itemsIndexed(uiState.vegetables) { index, item ->
                         VegeItemElement(
@@ -196,10 +196,10 @@ fun VegeItemElement(
 
     Row(
         modifier =
-        modifier
-            .fillMaxWidth()
-            .height(48.dp)
-            .clickable(onClick = { onVegeItemClick(item) }),
+            modifier
+                .fillMaxWidth()
+                .height(48.dp)
+                .clickable(onClick = { onVegeItemClick(item) }),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (categoryIcon != null) {
@@ -219,8 +219,8 @@ fun VegeItemElement(
         Text(
             text = item.name,
             modifier =
-            Modifier
-                .padding(start = 16.dp, end = 24.dp),
+                Modifier
+                    .padding(start = 16.dp, end = 24.dp),
         )
         Icon(
             statusIcon,
@@ -230,8 +230,8 @@ fun VegeItemElement(
         if (selectMenu != SelectMenu.None) {
             Box(
                 modifier =
-                Modifier
-                    .fillMaxWidth(),
+                    Modifier
+                        .fillMaxWidth(),
                 contentAlignment = Alignment.BottomEnd,
             ) {
                 IconButton(onClick = {
@@ -243,10 +243,10 @@ fun VegeItemElement(
                             Icons.Filled.Delete,
                             contentDescription = stringResource(id = R.string.delete_text),
                             tint =
-                            when (isCheck) {
-                                false -> Color.Red
-                                true -> Color.Transparent
-                            },
+                                when (isCheck) {
+                                    false -> Color.Red
+                                    true -> Color.Transparent
+                                },
                             modifier = Modifier.aspectRatio(1f / 1f),
                         )
                     } else {
@@ -282,10 +282,10 @@ fun VegeItemElement(
                         Icons.Filled.Check,
                         contentDescription = stringResource(R.string.done_text),
                         tint =
-                        when (isCheck) {
-                            false -> Color.Transparent
-                            true -> Color.Black
-                        },
+                            when (isCheck) {
+                                false -> Color.Transparent
+                                true -> Color.Black
+                            },
                         modifier = Modifier.aspectRatio(1f / 1f),
                     )
                 }
@@ -296,10 +296,10 @@ fun VegeItemElement(
     }
     Box(
         modifier =
-        Modifier
-            .fillMaxWidth()
-            .background(Color.LightGray)
-            .height(0.5.dp),
+            Modifier
+                .fillMaxWidth()
+                .background(Color.LightGray)
+                .height(0.5.dp),
     )
 }
 
@@ -331,9 +331,9 @@ fun CategoryDropMenu(
         Text(text = stringResource(id = selectCategory.getText()))
         DropdownMenu(
             modifier =
-            Modifier
-                // タップされた時の背景を円にする
-                .clip(RoundedCornerShape(16.dp)),
+                Modifier
+                    // タップされた時の背景を円にする
+                    .clip(RoundedCornerShape(16.dp)),
             expanded = expanded,
             // メニューの外がタップされた時に閉じる
             onDismissRequest = { expanded = false },
@@ -370,16 +370,16 @@ fun ItemListTopBar(
 
     Row(
         modifier =
-        modifier
-            .wrapContentSize(Alignment.TopStart),
+            modifier
+                .wrapContentSize(Alignment.TopStart),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Row(
             modifier =
-            Modifier
-                .clickable {
-                    sortMenuExpanded = true
-                },
+                Modifier
+                    .clickable {
+                        sortMenuExpanded = true
+                    },
         ) {
             Icon(
                 Icons.Filled.List,
@@ -410,9 +410,9 @@ fun ItemListTopBar(
         }
         Box(
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .wrapContentSize(Alignment.TopEnd),
+                Modifier
+                    .fillMaxWidth()
+                    .wrapContentSize(Alignment.TopEnd),
         ) {
             Row {
                 if (selectMenu == SelectMenu.Delete) {
@@ -522,16 +522,16 @@ class HomePreviewParameterProvider : PreviewParameterProvider<HomePreviewParamet
         sequenceOf(
             Params(
                 uiState =
-                HomeScreenUiState.initialState().copy(
-                    vegetables = HomeScreenDummy.vegeList(),
-                ),
+                    HomeScreenUiState.initialState().copy(
+                        vegetables = HomeScreenDummy.vegeList(),
+                    ),
             ),
             Params(
                 uiState =
-                HomeScreenUiState.initialState().copy(
-                    vegetables = HomeScreenDummy.vegeList(),
-                    selectMenu = SelectMenu.Edit,
-                ),
+                    HomeScreenUiState.initialState().copy(
+                        vegetables = HomeScreenDummy.vegeList(),
+                        selectMenu = SelectMenu.Edit,
+                    ),
             ),
         )
 

@@ -219,7 +219,7 @@ fun ImageCarousel(
                             .padding(8.dp),
                     error = painterResource(id = R.drawable.no_image),
                     // Previewで見えるようにするため
-                    placeholder = painterResource(R.drawable.loading_image)
+                    placeholder = painterResource(R.drawable.loading_image),
                 )
             }
         }

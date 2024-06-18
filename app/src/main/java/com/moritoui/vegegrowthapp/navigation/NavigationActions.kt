@@ -21,7 +21,7 @@ fun HomeAddItem(onAddClick: () -> Unit) {
 @Composable
 fun GoToManageItem(onNavigateClick: () -> Unit) {
     TextButton(
-        onClick = onNavigateClick
+        onClick = onNavigateClick,
     ) {
         Text(
             text = "管理画面",

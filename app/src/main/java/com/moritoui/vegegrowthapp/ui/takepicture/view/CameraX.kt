@@ -166,7 +166,7 @@ private fun CameraBottomBar(
             Surface(
                 modifier = Modifier.padding(6.dp),
                 shape = CircleShape,
-                color = Color.White
+                color = Color.White,
             ) {}
         }
         // surfaceを真ん中にするためにアイコンと同じ大きさを用意

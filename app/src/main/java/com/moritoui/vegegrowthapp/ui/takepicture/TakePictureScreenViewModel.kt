@@ -49,22 +49,23 @@ class TakePictureScreenViewModel
         val uiState: StateFlow<TakePictureScreenUiState> = _uiState.asStateFlow()
 
         init {
-            _uiState.onEach {
-                _uiState.update {
-                    it.copy(
-                        isLoading = true,
-                    )
-                }
-                val vegetableDetails = getVegetableDetailsUseCase(args)
-                _uiState.update {
-                    it.copy(
-                        isVisibleNavigateButton = vegetableDetails.isNotEmpty(),
-                        lastSavedSize = vegetableDetails.lastOrNull()?.size,
-                        isLoading = false,
-                        vegeName = selectedVegeItem.await().name
-                    )
-                }
-            }.launchIn(viewModelScope)
+            _uiState
+                .onEach {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = true,
+                        )
+                    }
+                    val vegetableDetails = getVegetableDetailsUseCase(args)
+                    _uiState.update {
+                        it.copy(
+                            isVisibleNavigateButton = vegetableDetails.isNotEmpty(),
+                            lastSavedSize = vegetableDetails.lastOrNull()?.size,
+                            isLoading = false,
+                            vegeName = selectedVegeItem.await().name,
+                        )
+                    }
+                }.launchIn(viewModelScope)
         }
 
         private fun updateState(

@@ -18,12 +18,15 @@ jobs:
       # 既にgoogle-services.jsonをBase64にしたものを登録しているので，encodeしてあげる
       - run:
           name: encode google-service.json
-          command: echo $GOOGLE_SERVICE_JSON | base64 --d > app/google-services.json
+          command: echo $GOOGLE_SERVICE_JSON | base64 --decode > app/google-services.json
+
       - run:
-          name: cat google-service.json
-          command: cat app/google-services.json
-          command: echo "this is test"
-          command: ls -a
+          name: verify google-service.json
+          command: |
+            echo "Contents of google-services.json"
+            cat app/google-services.json
+            echo "this is test"
+            ls -a
 
       - run: ./gradlew androidDependencies
       - save_cache:

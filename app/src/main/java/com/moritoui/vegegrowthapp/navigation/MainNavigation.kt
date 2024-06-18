@@ -91,7 +91,7 @@ fun NavigationAppTopBar(
             actions = {
                 actions()
             },
-            scrollBehavior = scrollBehavior
+            scrollBehavior = scrollBehavior,
         )
     }
 }

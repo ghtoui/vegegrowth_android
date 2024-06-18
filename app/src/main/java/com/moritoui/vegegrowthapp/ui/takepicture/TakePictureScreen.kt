@@ -101,10 +101,10 @@ private fun TakePictureScreen(
     ) { it ->
         Column(
             modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(it)
-                .padding(start = 24.dp, top = 24.dp, end = 24.dp),
+                Modifier
+                    .fillMaxSize()
+                    .padding(it)
+                    .padding(start = 24.dp, top = 24.dp, end = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly,
         ) {
@@ -282,7 +282,7 @@ fun RegisterAlertWindow(
 @PreviewLightDark
 @Composable
 fun TakePicPreview(
-    @PreviewParameter(TakePictureScreenPreviewParameterProvider::class) params: TakePictureScreenPreviewParameterProvider.Params
+    @PreviewParameter(TakePictureScreenPreviewParameterProvider::class) params: TakePictureScreenPreviewParameterProvider.Params,
 ) {
     VegegrowthAppTheme {
         TakePictureScreen(
@@ -301,18 +301,20 @@ fun TakePicPreview(
 }
 
 class TakePictureScreenPreviewParameterProvider : PreviewParameterProvider<TakePictureScreenPreviewParameterProvider.Params> {
-    override val values = sequenceOf(
-        Params(
-            uiState = TakePictureScreenUiState.initialState()
-        ),
-        Params(
-            uiState = TakePictureScreenUiState.initialState().copy(
-                isVisibleNavigateButton = true
-            )
-        ),
-    )
-    
+    override val values =
+        sequenceOf(
+            Params(
+                uiState = TakePictureScreenUiState.initialState(),
+            ),
+            Params(
+                uiState =
+                    TakePictureScreenUiState.initialState().copy(
+                        isVisibleNavigateButton = true,
+                    ),
+            ),
+        )
+
     data class Params(
-        val uiState: TakePictureScreenUiState
+        val uiState: TakePictureScreenUiState,
     )
 }
