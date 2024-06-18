@@ -61,6 +61,7 @@ class TakePictureScreenViewModel
                         isVisibleNavigateButton = vegetableDetails.isNotEmpty(),
                         lastSavedSize = vegetableDetails.lastOrNull()?.size,
                         isLoading = false,
+                        vegeName = selectedVegeItem.await().name
                     )
                 }
             }.launchIn(viewModelScope)

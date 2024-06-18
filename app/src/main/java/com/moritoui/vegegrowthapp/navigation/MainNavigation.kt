@@ -2,13 +2,16 @@ package com.moritoui.vegegrowthapp.navigation
 
 import android.os.Bundle
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -61,32 +64,34 @@ fun MainNavigation(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavigationAppTopBar(
-    isVisibleNavigationButton: Boolean = true,
-    onBackNavigationButtonClick: () -> Unit,
+    isVisibleBackButton: Boolean = true,
+    onBackNavigationButtonClick: () -> Unit = {},
     title: String,
     actions: @Composable () -> Unit = { },
 ) {
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+
     NavigationBar {
-        CenterAlignedTopAppBar(
+        TopAppBar(
             title = {
                 Text(
                     text = title,
-                    textAlign = TextAlign.Center,
                 )
             },
             navigationIcon = {
-                IconButton(onClick = onBackNavigationButtonClick) {
-                    Icon(
-                        Icons.Filled.ArrowBack,
-                        contentDescription = "戻る",
-                    )
+                if (isVisibleBackButton) {
+                    IconButton(onClick = onBackNavigationButtonClick) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "戻る",
+                        )
+                    }
                 }
             },
             actions = {
-                if (isVisibleNavigationButton) {
-                    actions()
-                }
+                actions()
             },
+            scrollBehavior = scrollBehavior
         )
     }
 }
@@ -122,7 +127,7 @@ fun FirstNavigationAppTopBar(
 fun NavigationAppTopBarPreview() {
     NavigationAppTopBar(
         title = "preview",
-        isVisibleNavigationButton = true,
+        isVisibleBackButton = true,
         onBackNavigationButtonClick = {},
     )
 }
