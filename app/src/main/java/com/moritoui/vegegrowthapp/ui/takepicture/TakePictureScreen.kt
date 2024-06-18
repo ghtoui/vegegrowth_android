@@ -37,11 +37,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.moritoui.vegegrowthapp.R
-import com.moritoui.vegegrowthapp.navigation.NavigateItem
+import com.moritoui.vegegrowthapp.navigation.GoToManageItem
 import com.moritoui.vegegrowthapp.navigation.NavigationAppTopBar
 import com.moritoui.vegegrowthapp.ui.manage.navigateToManage
 import com.moritoui.vegegrowthapp.ui.takepicture.model.TakePictureScreenUiState
@@ -89,9 +91,9 @@ private fun TakePictureScreen(
             NavigationAppTopBar(
                 onBackNavigationButtonClick = onNavigationIconClick,
                 title = uiState.vegeName,
-                isVisibleNavigationButton = uiState.isVisibleNavigateButton,
+                isVisibleBackButton = uiState.isVisibleNavigateButton,
             ) {
-                NavigateItem(
+                GoToManageItem(
                     onNavigateClick = onGoToManageClick,
                 )
             }
@@ -279,10 +281,12 @@ fun RegisterAlertWindow(
 
 @PreviewLightDark
 @Composable
-fun TakePicPreview() {
+fun TakePicPreview(
+    @PreviewParameter(TakePictureScreenPreviewParameterProvider::class) params: TakePictureScreenPreviewParameterProvider.Params,
+) {
     VegegrowthAppTheme {
         TakePictureScreen(
-            uiState = TakePictureScreenUiState.initialState(),
+            uiState = params.uiState,
             onSizeTextChange = {},
             onConfirmClick = {},
             onRegisterButtonClick = {},
@@ -294,4 +298,23 @@ fun TakePicPreview() {
             onGoToManageClick = {},
         )
     }
+}
+
+class TakePictureScreenPreviewParameterProvider : PreviewParameterProvider<TakePictureScreenPreviewParameterProvider.Params> {
+    override val values =
+        sequenceOf(
+            Params(
+                uiState = TakePictureScreenUiState.initialState(),
+            ),
+            Params(
+                uiState =
+                    TakePictureScreenUiState.initialState().copy(
+                        isVisibleNavigateButton = true,
+                    ),
+            ),
+        )
+
+    data class Params(
+        val uiState: TakePictureScreenUiState,
+    )
 }

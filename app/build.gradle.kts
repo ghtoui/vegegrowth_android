@@ -7,6 +7,7 @@ plugins {
     id("kotlinx-serialization")
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -17,7 +18,7 @@ android {
         applicationId = "com.moritoui.vegegrowthapp"
         minSdk = 28
         targetSdk = 34
-        versionCode = 9
+        versionCode = 10
         versionName = "2.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -182,4 +183,9 @@ dependencies {
     // admob
     val admobVersion = "23.1.0"
     implementation("com.google.android.gms:play-services-ads:$admobVersion")
+
+    // firebase
+    val firebaseVersion = "33.1.0"
+    implementation(platform("com.google.firebase:firebase-bom:$firebaseVersion"))
+    implementation("com.google.firebase:firebase-analytics-ktx")
 }

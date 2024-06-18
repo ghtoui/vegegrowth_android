@@ -2,25 +2,32 @@ package com.moritoui.vegegrowthapp.ui.takepicture
 
 import android.graphics.Bitmap
 import android.graphics.Matrix
+import android.os.Bundle
 import androidx.camera.core.ImageProxy
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.analytics.logEvent
+import com.google.firebase.ktx.Firebase
 import com.moritoui.vegegrowthapp.model.DateFormatter
-import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegeItemDetail
 import com.moritoui.vegegrowthapp.repository.vegetabledetail.VegetableDetailRepository
 import com.moritoui.vegegrowthapp.ui.takepicture.model.TakePictureScreenUiState
 import com.moritoui.vegegrowthapp.usecases.GetSelectedVegeItemUseCase
 import com.moritoui.vegegrowthapp.usecases.GetVegetableDetailsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.LocalDateTime
+import java.util.UUID
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
-import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -35,26 +42,30 @@ class TakePictureScreenViewModel
     ) : ViewModel() {
         val args = checkNotNull(savedStateHandle.get<Int>("vegetableId"))
 
-        private lateinit var selectedVegeItem: VegeItem
-        private lateinit var vegetableDetails: List<VegeItemDetail>
+        private val firebaseAnalytics = Firebase.analytics
+        private val selectedVegeItem = viewModelScope.async { getSelectedVegeItemUseCase(args) }
 
         private val _uiState = MutableStateFlow(TakePictureScreenUiState.initialState())
         val uiState: StateFlow<TakePictureScreenUiState> = _uiState.asStateFlow()
 
         init {
-            viewModelScope.launch {
-                selectedVegeItem = getSelectedVegeItemUseCase(args)
-
-                _uiState.collect {
-                    vegetableDetails = getVegetableDetailsUseCase(args)
+            _uiState
+                .onEach {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = true,
+                        )
+                    }
+                    val vegetableDetails = getVegetableDetailsUseCase(args)
                     _uiState.update {
                         it.copy(
                             isVisibleNavigateButton = vegetableDetails.isNotEmpty(),
                             lastSavedSize = vegetableDetails.lastOrNull()?.size,
+                            isLoading = false,
+                            vegeName = selectedVegeItem.await().name,
                         )
                     }
-                }
-            }
+                }.launchIn(viewModelScope)
         }
 
         private fun updateState(
@@ -107,20 +118,22 @@ class TakePictureScreenViewModel
             val takePicImage = _uiState.value.takePicImage ?: return
             val imagePath = vegetableDetailRepository.saveTookPicture(takePicImage)
 
-            val registerVegeItemDetail =
-                VegeItemDetail(
-                    vegeItemId = selectedVegeItem.id,
-                    uuid = UUID.randomUUID().toString(),
-                    name = selectedVegeItem.name,
-                    size = _uiState.value.inputText.toDouble(),
-                    memo = "",
-                    date = datetime,
-                    imagePath = imagePath,
-                )
             viewModelScope.launch {
+                val selectedVegeItem = selectedVegeItem.await()
+                val registerVegeItemDetail =
+                    VegeItemDetail(
+                        vegeItemId = selectedVegeItem.id,
+                        uuid = UUID.randomUUID().toString(),
+                        name = selectedVegeItem.name,
+                        size = _uiState.value.inputText.toDouble(),
+                        memo = "",
+                        date = datetime,
+                        imagePath = imagePath,
+                    )
                 vegetableDetailRepository.addVegeItemDetail(registerVegeItemDetail)
             }
             resetState()
+            firebaseEventSend()
         }
 
         fun onTakePicture(takePicture: ImageProxy?) {
@@ -154,6 +167,21 @@ class TakePictureScreenViewModel
         }
 
         fun changeCameraOpenState() {
-            updateState(isCameraOpen = !_uiState.value.isCameraOpen)
+            _uiState.update {
+                it.copy(
+                    isCameraOpen = !it.isCameraOpen,
+                )
+            }
+        }
+
+        private fun firebaseEventSend() {
+            // ユーザが野菜の情報を登録したときのログを取る
+            firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_ITEM) {
+                Bundle().apply {
+                    param(FirebaseAnalytics.Param.ITEM_ID, "register_detail")
+                    param(FirebaseAnalytics.Param.ITEM_NAME, "registerDetail")
+                    param(FirebaseAnalytics.Param.CONTENT_TYPE, "data")
+                }
+            }
         }
     }
