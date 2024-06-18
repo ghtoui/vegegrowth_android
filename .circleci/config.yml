@@ -26,7 +26,7 @@ jobs:
             echo "Contents of google-services.json"
             cat app/google-services.json
             echo "this is test"
-            ls -a
+            ls app
 
       - run: ./gradlew androidDependencies
       - save_cache:
