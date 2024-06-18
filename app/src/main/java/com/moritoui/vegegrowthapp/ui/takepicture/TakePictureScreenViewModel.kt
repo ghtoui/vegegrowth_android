@@ -24,6 +24,8 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -42,19 +44,18 @@ class TakePictureScreenViewModel
 
         private val firebaseAnalytics = Firebase.analytics
         private val selectedVegeItem = viewModelScope.async { getSelectedVegeItemUseCase(args) }
-        private val vegetableDetails = viewModelScope.async { getVegetableDetailsUseCase(args) }
 
         private val _uiState = MutableStateFlow(TakePictureScreenUiState.initialState())
         val uiState: StateFlow<TakePictureScreenUiState> = _uiState.asStateFlow()
 
         init {
-            viewModelScope.launch {
+            _uiState.onEach {
                 _uiState.update {
                     it.copy(
                         isLoading = true,
                     )
                 }
-                val vegetableDetails = vegetableDetails.await()
+                val vegetableDetails = getVegetableDetailsUseCase(args)
                 _uiState.update {
                     it.copy(
                         isVisibleNavigateButton = vegetableDetails.isNotEmpty(),
@@ -62,7 +63,7 @@ class TakePictureScreenViewModel
                         isLoading = false,
                     )
                 }
-            }
+            }.launchIn(viewModelScope)
         }
 
         private fun updateState(
