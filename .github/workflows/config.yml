@@ -30,15 +30,13 @@ jobs:
           ruby-version: '2.7'
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
       # これがないとprivate.propertiesが無くてエラーが出る
-      - run:
-          name: Create private.properties
-          command: |
+      - name: Create private.properties
+          run: |
             echo "RELEASE_AD_BANNER_UNIT_ID=\"\"" > private.properties
             echo "DEBUG_AD_BANNER_UNIT_ID=\"\"" >> private.properties
       # これがないとgoogle-services.jsonが無くてエラーが出る
       # 既にgoogle-services.jsonをBase64にしたものを登録しているので，encodeしてあげる
-      - run:
-          name: encode google-service.json
+      - name: encode google-service.json
           env:
             GOOGLE_SERVICE: ${{ secrets.GOOGLE_SERVICE_JSON }}
           run: |
