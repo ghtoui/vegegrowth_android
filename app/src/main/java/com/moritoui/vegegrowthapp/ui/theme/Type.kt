@@ -19,17 +19,17 @@ val notoSansFont =
             Font(
                 resId = R.font.noto_sans_jp_google_font,
                 weight = FontWeight(weight),
-                variationSettings = FontVariation.Settings(FontWeight(weight), FontStyle.Normal),
+                variationSettings = FontVariation.Settings(FontWeight(weight), FontStyle.Normal)
             )
-        },
+        }
     )
 val Typography =
     Typography(
         bodyLarge =
-            TextStyle(
-                fontFamily = notoSansFont,
-                fontSize = 16.sp,
-                lineHeight = 24.sp,
-                letterSpacing = 0.5.sp,
-            ),
+        TextStyle(
+            fontFamily = notoSansFont,
+            fontSize = 16.sp,
+            lineHeight = 24.sp,
+            letterSpacing = 0.5.sp
+        )
     )

@@ -26,9 +26,7 @@ import com.moritoui.vegegrowthapp.ui.home.homeScreenRoute
 import com.moritoui.vegegrowthapp.ui.manage.manageScreenRoute
 import com.moritoui.vegegrowthapp.ui.takepicture.takePictureScreenRoute
 
-sealed class Screen(
-    val route: String,
-) {
+sealed class Screen(val route: String) {
     object HomeScreen : Screen("homeScreen")
 
     object TakePictureScreen : Screen("takePictureScreen")
@@ -37,11 +35,7 @@ sealed class Screen(
 }
 
 @Composable
-fun MainNavigation(
-    modifier: Modifier = Modifier,
-    firebaseAnalytics: FirebaseAnalytics,
-    navController: NavHostController = rememberNavController(),
-) {
+fun MainNavigation(modifier: Modifier = Modifier, firebaseAnalytics: FirebaseAnalytics, navController: NavHostController = rememberNavController()) {
     LaunchedEffect(navController) {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             val route = destination.route
@@ -53,7 +47,7 @@ fun MainNavigation(
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = Screen.HomeScreen.route,
+        startDestination = Screen.HomeScreen.route
     ) {
         homeScreenRoute(navController)
         takePictureScreenRoute(navController)
@@ -63,19 +57,14 @@ fun MainNavigation(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NavigationAppTopBar(
-    isVisibleBackButton: Boolean = true,
-    onBackNavigationButtonClick: () -> Unit = {},
-    title: String,
-    actions: @Composable () -> Unit = { },
-) {
+fun NavigationAppTopBar(isVisibleBackButton: Boolean = true, onBackNavigationButtonClick: () -> Unit = {}, title: String, actions: @Composable () -> Unit = { }) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
     NavigationBar {
         TopAppBar(
             title = {
                 Text(
-                    text = title,
+                    text = title
                 )
             },
             navigationIcon = {
@@ -83,7 +72,7 @@ fun NavigationAppTopBar(
                     IconButton(onClick = onBackNavigationButtonClick) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "戻る",
+                            contentDescription = "戻る"
                         )
                     }
                 }
@@ -91,24 +80,20 @@ fun NavigationAppTopBar(
             actions = {
                 actions()
             },
-            scrollBehavior = scrollBehavior,
+            scrollBehavior = scrollBehavior
         )
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FirstNavigationAppTopBar(
-    isVisibleNavigationButton: Boolean = true,
-    title: String,
-    actions: @Composable () -> Unit = { },
-) {
+fun FirstNavigationAppTopBar(isVisibleNavigationButton: Boolean = true, title: String, actions: @Composable () -> Unit = { }) {
     NavigationBar {
         CenterAlignedTopAppBar(
             title = {
                 Text(
                     text = title,
-                    textAlign = TextAlign.Center,
+                    textAlign = TextAlign.Center
                 )
             },
             navigationIcon = {
@@ -117,7 +102,7 @@ fun FirstNavigationAppTopBar(
                 if (isVisibleNavigationButton) {
                     actions()
                 }
-            },
+            }
         )
     }
 }
@@ -128,14 +113,11 @@ fun NavigationAppTopBarPreview() {
     NavigationAppTopBar(
         title = "preview",
         isVisibleBackButton = true,
-        onBackNavigationButtonClick = {},
+        onBackNavigationButtonClick = {}
     )
 }
 
-private fun firebaseEventSend(
-    firebaseAnalytics: FirebaseAnalytics,
-    screenName: String,
-) {
+private fun firebaseEventSend(firebaseAnalytics: FirebaseAnalytics, screenName: String) {
     // ユーザが画面遷移をしたときにログを取る
     firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
         Bundle().apply {

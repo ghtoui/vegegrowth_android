@@ -50,15 +50,15 @@ import kotlin.coroutines.suspendCoroutine
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun CameraScreen(
-    onCloseCamera: () -> Unit,
-    onTakePicClick: (ImageProxy?) -> Unit,
-) {
-    val cameraPermissionState: PermissionState = rememberPermissionState(android.Manifest.permission.CAMERA)
+fun CameraScreen(onCloseCamera: () -> Unit, onTakePicClick: (ImageProxy?) -> Unit) {
+    val cameraPermissionState: PermissionState =
+        rememberPermissionState(android.Manifest.permission.CAMERA)
 
     // カメラ使用許可を得る
     LaunchedEffect(Unit) {
-        if (!cameraPermissionState.status.isGranted && !cameraPermissionState.status.shouldShowRationale) {
+        if (!cameraPermissionState.status.isGranted &&
+            !cameraPermissionState.status.shouldShowRationale
+        ) {
             cameraPermissionState.launchPermissionRequest()
         }
     }
@@ -66,7 +66,7 @@ fun CameraScreen(
     if (cameraPermissionState.status.isGranted) {
         CameraXContent(
             onCloseCamera = onCloseCamera,
-            onTakePicClick = onTakePicClick,
+            onTakePicClick = onTakePicClick
         )
     } else {
         // 使用許可がない場合は、もう一度聞く
@@ -77,10 +77,7 @@ fun CameraScreen(
 }
 
 @Composable
-private fun CameraXContent(
-    onCloseCamera: () -> Unit,
-    onTakePicClick: (ImageProxy?) -> Unit,
-) {
+private fun CameraXContent(onCloseCamera: () -> Unit, onTakePicClick: (ImageProxy?) -> Unit) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
     val previewView =
@@ -110,7 +107,7 @@ private fun CameraXContent(
     Box {
         AndroidView(
             factory = { previewView },
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize()
         )
         CameraBottomBar(
             modifier = Modifier.align(Alignment.BottomCenter),
@@ -121,35 +118,31 @@ private fun CameraXContent(
                     }
                 }
             },
-            onCancelClick = onCloseCamera,
+            onCancelClick = onCloseCamera
         )
     }
 }
 
 @Composable
-private fun CameraBottomBar(
-    modifier: Modifier = Modifier,
-    onTakePicClick: () -> Unit,
-    onCancelClick: () -> Unit,
-) {
+private fun CameraBottomBar(modifier: Modifier = Modifier, onTakePicClick: () -> Unit, onCancelClick: () -> Unit) {
     Row(
         modifier =
-            modifier
-                .fillMaxWidth()
-                .padding(WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding())
-                .height(LocalConfiguration.current.screenHeightDp.dp / 10),
+        modifier
+            .fillMaxWidth()
+            .padding(WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding())
+            .height(LocalConfiguration.current.screenHeightDp.dp / 10),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceEvenly,
+        horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         IconButton(
             modifier = Modifier.aspectRatio(1f / 1f),
-            onClick = onCancelClick,
+            onClick = onCancelClick
         ) {
             Icon(
                 modifier = Modifier.aspectRatio(1f / 0.5f),
                 imageVector = Icons.Filled.Close,
                 contentDescription = "キャンセル",
-                tint = Color.White,
+                tint = Color.White
             )
         }
         Surface(
@@ -157,21 +150,21 @@ private fun CameraBottomBar(
             onClick = onTakePicClick,
             shape = CircleShape,
             border =
-                BorderStroke(
-                    width = 2.dp,
-                    color = Color.White,
-                ),
-            color = Color.Transparent,
+            BorderStroke(
+                width = 2.dp,
+                color = Color.White
+            ),
+            color = Color.Transparent
         ) {
             Surface(
                 modifier = Modifier.padding(6.dp),
                 shape = CircleShape,
-                color = Color.White,
+                color = Color.White
             ) {}
         }
         // surfaceを真ん中にするためにアイコンと同じ大きさを用意
         Spacer(
-            modifier = Modifier.aspectRatio(1f / 1f),
+            modifier = Modifier.aspectRatio(1f / 1f)
         )
     }
 }
@@ -181,15 +174,11 @@ private fun CameraBottomBar(
 fun CameraScreenPreview() {
     CameraBottomBar(
         onTakePicClick = { },
-        onCancelClick = { },
+        onCancelClick = { }
     )
 }
 
-private fun captureImage(
-    imageCapture: ImageCapture,
-    context: Context,
-    onImageCaptured: (ImageProxy?) -> Unit,
-) {
+private fun captureImage(imageCapture: ImageCapture, context: Context, onImageCaptured: (ImageProxy?) -> Unit) {
     imageCapture.takePicture(
         ContextCompat.getMainExecutor(context),
         object : ImageCapture.OnImageCapturedCallback() {
@@ -201,15 +190,14 @@ private fun captureImage(
             override fun onCaptureSuccess(image: ImageProxy) {
                 onImageCaptured(image)
             }
-        },
+        }
     )
 }
 
-private suspend fun Context.getCameraProvider(): ProcessCameraProvider =
-    suspendCoroutine { continuation ->
-        ProcessCameraProvider.getInstance(this).also { cameraProvider ->
-            cameraProvider.addListener({
-                continuation.resume(cameraProvider.get())
-            }, ContextCompat.getMainExecutor(this))
-        }
+private suspend fun Context.getCameraProvider(): ProcessCameraProvider = suspendCoroutine { continuation ->
+    ProcessCameraProvider.getInstance(this).also { cameraProvider ->
+        cameraProvider.addListener({
+            continuation.resume(cameraProvider.get())
+        }, ContextCompat.getMainExecutor(this))
     }
+}

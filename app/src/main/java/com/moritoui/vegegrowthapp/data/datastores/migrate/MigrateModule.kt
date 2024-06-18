@@ -16,11 +16,8 @@ import javax.inject.Singleton
 class MigrateModule {
     @Singleton
     @Provides
-    fun provideMigratePreferencesDataStore(
-        @ApplicationContext context: Context,
-    ): DataStore<MigratePreferences> =
-        DataStoreFactory.create(
-            serializer = MigratePreferencesSerializer(),
-            produceFile = { context.preferencesDataStoreFile("migrate.pb") },
-        )
+    fun provideMigratePreferencesDataStore(@ApplicationContext context: Context): DataStore<MigratePreferences> = DataStoreFactory.create(
+        serializer = MigratePreferencesSerializer(),
+        produceFile = { context.preferencesDataStoreFile("migrate.pb") }
+    )
 }

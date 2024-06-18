@@ -20,87 +20,78 @@ import java.nio.file.Files
 import javax.inject.Inject
 
 class VegetableRepositoryFileManager
-    @Inject
-    constructor(
-        @ApplicationContext applicationContext: Context,
-        getSelectVegeItemUseCase: GetOldSelectVegeItemUseCase,
-    ) : FileManagerImpl(applicationContext) {
-        private var vegeRepositoryList: List<VegeItemDetail>
-        private val imageDirectory = ContextCompat.getDataDir(applicationContext)
-        private val oldImageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-        private val selectVegeItem: VegeItem = getSelectVegeItemUseCase()
+@Inject
+constructor(@ApplicationContext applicationContext: Context, getSelectVegeItemUseCase: GetOldSelectVegeItemUseCase) : FileManagerImpl(applicationContext) {
+    private var vegeRepositoryList: List<VegeItemDetail>
+    private val imageDirectory = ContextCompat.getDataDir(applicationContext)
+    private val oldImageDirectory = Environment.getExternalStoragePublicDirectory(
+        Environment.DIRECTORY_PICTURES
+    )
+    private val selectVegeItem: VegeItem = getSelectVegeItemUseCase()
 
-        init {
-            this.vegeRepositoryList = readVegeRepositoryList(readJsonData(selectVegeItem.uuid))
-            // 非同期処理で昔のファイルパスで保存していたものを新しいパスに移動する
-            val scope = CoroutineScope(Dispatchers.IO)
-            scope.launch {
-                oldImagePath()
-            }
+    init {
+        this.vegeRepositoryList = readVegeRepositoryList(readJsonData(selectVegeItem.uuid))
+        // 非同期処理で昔のファイルパスで保存していたものを新しいパスに移動する
+        val scope = CoroutineScope(Dispatchers.IO)
+        scope.launch {
+            oldImagePath()
         }
+    }
 
-        fun saveVegeRepositoryAndImage(
-            vegeRepositoryList: List<VegeItemDetail>,
-            takePicImage: Bitmap?,
-        ) {
-            saveImage(
-                takePicImage = takePicImage,
-                fileName = vegeRepositoryList.last().uuid,
-            )
-            saveVegeRepository(vegeRepositoryList = vegeRepositoryList)
-            this.vegeRepositoryList = vegeRepositoryList
+    fun saveVegeRepositoryAndImage(vegeRepositoryList: List<VegeItemDetail>, takePicImage: Bitmap?) {
+        saveImage(
+            takePicImage = takePicImage,
+            fileName = vegeRepositoryList.last().uuid
+        )
+        saveVegeRepository(vegeRepositoryList = vegeRepositoryList)
+        this.vegeRepositoryList = vegeRepositoryList
+    }
+
+    private fun saveImage(takePicImage: Bitmap?, fileName: String) {
+        val imageFileName = "$fileName.jpg"
+        val imageFilePath = File(imageDirectory, imageFileName)
+        val outputStream: OutputStream = FileOutputStream(imageFilePath)
+        takePicImage?.compress(Bitmap.CompressFormat.JPEG, 50, outputStream)
+    }
+
+    fun saveVegeRepository(vegeRepositoryList: List<VegeItemDetail>) {
+        val jsonFileName = "${selectVegeItem.uuid}.json"
+        val jsonFilePath = File(applicationContext.filesDir, jsonFileName)
+        FileWriter(jsonFilePath).use { stream ->
+            stream.write(parseToJson(targetData = vegeRepositoryList))
         }
+    }
 
-        private fun saveImage(
-            takePicImage: Bitmap?,
-            fileName: String,
-        ) {
-            val imageFileName = "$fileName.jpg"
-            val imageFilePath = File(imageDirectory, imageFileName)
-            val outputStream: OutputStream = FileOutputStream(imageFilePath)
-            takePicImage?.compress(Bitmap.CompressFormat.JPEG, 50, outputStream)
-        }
+    private fun getImagePath(fileName: String): String {
+        val imageFileName = "$fileName.jpg"
+        return File(imageDirectory, imageFileName).toString()
+    }
 
-        fun saveVegeRepository(vegeRepositoryList: List<VegeItemDetail>) {
-            val jsonFileName = "${selectVegeItem.uuid}.json"
-            val jsonFilePath = File(applicationContext.filesDir, jsonFileName)
-            FileWriter(jsonFilePath).use { stream ->
-                stream.write(parseToJson(targetData = vegeRepositoryList))
-            }
-        }
+    fun getImagePathList(): List<String> = vegeRepositoryList.map {
+        getImagePath(it.uuid)
+    }
 
-        private fun getImagePath(fileName: String): String {
-            val imageFileName = "$fileName.jpg"
-            return File(imageDirectory, imageFileName).toString()
-        }
-
-        fun getImagePathList(): List<String> =
-            vegeRepositoryList.map {
-                getImagePath(it.uuid)
-            }
-
-        // 非同期処理で実行
-        // 古いパスで保存していた写真を新しいパスに移動させる
-        private suspend fun oldImagePath() {
-            withContext(Dispatchers.IO) {
-                vegeRepositoryList.forEach { item ->
-                    val oldPath = File(oldImageDirectory, "${item.uuid}.jpg")
-                    val newPath = File(imageDirectory, "${item.uuid}.jpg")
-                    try {
-                        Files.move(oldPath.toPath(), newPath.toPath())
-                        Log.d("IO", "Success")
-                    } catch (e: IOException) {
-                        Log.d("IO", e.toString())
-                    }
+    // 非同期処理で実行
+    // 古いパスで保存していた写真を新しいパスに移動させる
+    private suspend fun oldImagePath() {
+        withContext(Dispatchers.IO) {
+            vegeRepositoryList.forEach { item ->
+                val oldPath = File(oldImageDirectory, "${item.uuid}.jpg")
+                val newPath = File(imageDirectory, "${item.uuid}.jpg")
+                try {
+                    Files.move(oldPath.toPath(), newPath.toPath())
+                    Log.d("IO", "Success")
+                } catch (e: IOException) {
+                    Log.d("IO", e.toString())
                 }
             }
         }
-
-        private fun readVegeRepositoryList(json: String?): MutableList<VegeItemDetail> =
-            when (val vegeRepositoryList = parseFromJson<List<VegeItemDetail>>(json)) {
-                null -> mutableListOf()
-                else -> vegeRepositoryList.toMutableList()
-            }
-
-        fun getVegeRepositoryList(): MutableList<VegeItemDetail> = vegeRepositoryList.toMutableList()
     }
+
+    private fun readVegeRepositoryList(json: String?): MutableList<VegeItemDetail> = when (val vegeRepositoryList = parseFromJson<List<VegeItemDetail>>(json)) {
+        null -> mutableListOf()
+        else -> vegeRepositoryList.toMutableList()
+    }
+
+    fun getVegeRepositoryList(): MutableList<VegeItemDetail> = vegeRepositoryList.toMutableList()
+}

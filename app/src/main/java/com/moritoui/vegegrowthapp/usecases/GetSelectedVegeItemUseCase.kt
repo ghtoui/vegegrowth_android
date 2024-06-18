@@ -6,9 +6,7 @@ import com.moritoui.vegegrowthapp.model.VegeItem
 import javax.inject.Inject
 
 class GetSelectedVegeItemUseCase
-    @Inject
-    constructor(
-        private val vegetableDao: VegetableDao,
-    ) {
-        suspend operator fun invoke(vegetableId: Int): VegeItem = vegetableDao.getSelectedVegetable(vegetableId).toVegeItem()
-    }
+@Inject
+constructor(private val vegetableDao: VegetableDao) {
+    suspend operator fun invoke(vegetableId: Int): VegeItem = vegetableDao.getSelectedVegetable(vegetableId).toVegeItem()
+}

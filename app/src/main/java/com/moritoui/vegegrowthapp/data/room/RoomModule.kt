@@ -16,9 +16,7 @@ import javax.inject.Singleton
 object RoomModule {
     @Singleton
     @Provides
-    fun provideDatabase(
-        @ApplicationContext context: Context,
-    ) = Room
+    fun provideDatabase(@ApplicationContext context: Context) = Room
         .databaseBuilder(context, VegetableDatabase::class.java, "vegetable_database")
         .fallbackToDestructiveMigration()
         .build()

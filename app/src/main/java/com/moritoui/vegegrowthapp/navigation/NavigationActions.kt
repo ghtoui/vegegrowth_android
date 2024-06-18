@@ -13,7 +13,7 @@ fun HomeAddItem(onAddClick: () -> Unit) {
     IconButton(onClick = { onAddClick() }) {
         Icon(
             Icons.Filled.Add,
-            contentDescription = "追加",
+            contentDescription = "追加"
         )
     }
 }
@@ -21,10 +21,10 @@ fun HomeAddItem(onAddClick: () -> Unit) {
 @Composable
 fun GoToManageItem(onNavigateClick: () -> Unit) {
     TextButton(
-        onClick = onNavigateClick,
+        onClick = onNavigateClick
     ) {
         Text(
-            text = "管理画面",
+            text = "管理画面"
         )
     }
 }

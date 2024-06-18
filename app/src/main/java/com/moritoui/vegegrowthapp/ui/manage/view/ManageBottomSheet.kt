@@ -44,18 +44,12 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun ImageBottomSheet(
-    modifier: Modifier = Modifier,
-    index: Int,
-    pagerCount: Int,
-    imageFilePathList: List<String>,
-    onDismissRequest: (Int) -> Unit,
-) {
+fun ImageBottomSheet(modifier: Modifier = Modifier, index: Int, pagerCount: Int, imageFilePathList: List<String>, onDismissRequest: (Int) -> Unit) {
     val currentImageBarHeight = 5.dp
     val skipPartiallyExpanded by remember { mutableStateOf(true) }
     val bottomSheetState =
         rememberModalBottomSheetState(
-            skipPartiallyExpanded = skipPartiallyExpanded,
+            skipPartiallyExpanded = skipPartiallyExpanded
         )
 
     val pagerState = rememberPagerState(initialPage = index) { pagerCount }
@@ -63,50 +57,52 @@ fun ImageBottomSheet(
 
     ModalBottomSheet(
         modifier =
-            modifier
-                .padding(bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()),
+        modifier
+            .padding(
+                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+            ),
         onDismissRequest = { onDismissRequest(pagerState.currentPage) },
-        sheetState = bottomSheetState,
+        sheetState = bottomSheetState
     ) {
         Column(
             modifier =
-                Modifier
-                    .padding(top = 16.dp, bottom = 48.dp),
+            Modifier
+                .padding(top = 16.dp, bottom = 48.dp)
         ) {
             HorizontalPager(
                 state = pagerState,
                 contentPadding = PaddingValues(start = 24.dp, top = 12.dp, end = 24.dp),
-                pageSpacing = 8.dp,
+                pageSpacing = 8.dp
             ) { page ->
                 Box(
                     modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .background(MaterialTheme.colorScheme.primaryContainer.copy(0.1f))
-                            .border(
-                                width = 4.dp,
-                                color = MaterialTheme.colorScheme.onSurface.copy(0.05f),
-                            ),
-                    contentAlignment = Alignment.Center,
+                    Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.primaryContainer.copy(0.1f))
+                        .border(
+                            width = 4.dp,
+                            color = MaterialTheme.colorScheme.onSurface.copy(0.05f)
+                        ),
+                    contentAlignment = Alignment.Center
                 ) {
                     AsyncImage(
                         model = imageFilePathList[page],
                         contentDescription = null,
                         modifier =
-                            Modifier
-                                .aspectRatio(1f / 1f)
-                                .padding(8.dp),
-                        error = painterResource(id = R.drawable.no_image),
+                        Modifier
+                            .aspectRatio(1f / 1f)
+                            .padding(8.dp),
+                        error = painterResource(id = R.drawable.no_image)
                     )
                 }
             }
             Row(
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(start = 72.dp, top = 12.dp, end = 72.dp, bottom = 12.dp)
-                        .height(currentImageBarHeight),
-                horizontalArrangement = Arrangement.Center,
+                Modifier
+                    .fillMaxWidth()
+                    .padding(start = 72.dp, top = 12.dp, end = 72.dp, bottom = 12.dp)
+                    .height(currentImageBarHeight),
+                horizontalArrangement = Arrangement.Center
             ) {
                 repeat(pagerCount) {
                     val backGroundColor =
@@ -117,11 +113,13 @@ fun ImageBottomSheet(
                     Box(
                         // タップで画面遷移できるようにする
                         modifier =
-                            Modifier
-                                .weight(1f)
-                                .height(currentImageBarHeight)
-                                .background(backGroundColor)
-                                .clickable(onClick = { scope.launch { pagerState.animateScrollToPage(it) } }),
+                        Modifier
+                            .weight(1f)
+                            .height(currentImageBarHeight)
+                            .background(backGroundColor)
+                            .clickable(onClick = {
+                                scope.launch { pagerState.animateScrollToPage(it) }
+                            })
                     )
                 }
             }
@@ -130,13 +128,7 @@ fun ImageBottomSheet(
 }
 
 @Composable
-fun MemoEditorDialog(
-    inputText: String,
-    onValueChange: (String) -> Unit,
-    onCancelButtonClick: () -> Unit,
-    onSaveButtonClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun MemoEditorDialog(inputText: String, onValueChange: (String) -> Unit, onCancelButtonClick: () -> Unit, onSaveButtonClick: () -> Unit, modifier: Modifier = Modifier) {
     AlertDialog(
         modifier = modifier,
         onDismissRequest = { },
@@ -148,13 +140,13 @@ fun MemoEditorDialog(
                 value = inputText,
                 onValueChange = { onValueChange(it) },
                 singleLine = false,
-                modifier = Modifier.height(96.dp),
+                modifier = Modifier.height(96.dp)
             )
         },
         confirmButton = {
             Button(
                 onClick = { onSaveButtonClick() },
-                modifier = Modifier.padding(top = 8.dp),
+                modifier = Modifier.padding(top = 8.dp)
             ) {
                 Text("保存")
             }
@@ -162,11 +154,11 @@ fun MemoEditorDialog(
         dismissButton = {
             Button(
                 onClick = { onCancelButtonClick() },
-                modifier = Modifier.padding(top = 8.dp),
+                modifier = Modifier.padding(top = 8.dp)
             ) {
                 Text("キャンセル")
             }
-        },
+        }
     )
 }
 
@@ -181,7 +173,7 @@ fun BottomSheetPreview() {
             null,
             null,
             null,
-            null,
+            null
         )
 //    VegegrowthAppTheme {
 //        ImageBottomSheet(

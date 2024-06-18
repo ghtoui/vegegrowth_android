@@ -12,21 +12,20 @@ data class TakePictureScreenUiState(
     val isVisibleNavigateButton: Boolean,
     val isCameraOpen: Boolean,
     val lastSavedSize: Double?,
-    val isLoading: Boolean,
+    val isLoading: Boolean
 ) {
     companion object {
-        fun initialState(): TakePictureScreenUiState =
-            TakePictureScreenUiState(
-                vegeName = "",
-                isOpenDialog = false,
-                inputText = "",
-                isSuccessInputText = false,
-                isBeforeInputText = true,
-                takePicImage = null,
-                isVisibleNavigateButton = false,
-                isCameraOpen = false,
-                lastSavedSize = null,
-                isLoading = false,
-            )
+        fun initialState(): TakePictureScreenUiState = TakePictureScreenUiState(
+            vegeName = "",
+            isOpenDialog = false,
+            inputText = "",
+            isSuccessInputText = false,
+            isBeforeInputText = true,
+            takePicImage = null,
+            isVisibleNavigateButton = false,
+            isCameraOpen = false,
+            lastSavedSize = null,
+            isLoading = false
+        )
     }
 }

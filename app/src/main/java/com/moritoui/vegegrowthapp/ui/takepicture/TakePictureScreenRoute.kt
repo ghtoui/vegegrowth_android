@@ -11,7 +11,7 @@ fun NavGraphBuilder.takePictureScreenRoute(navController: NavController) {
     composable(
         "${Screen.TakePictureScreen.route}/{vegetableId}",
         // Intで受け取るように
-        arguments = listOf(navArgument("vegetableId") { type = NavType.IntType }),
+        arguments = listOf(navArgument("vegetableId") { type = NavType.IntType })
     ) {
         it.arguments?.getString("vegetableId")
         TakePictureScreen(navController = navController)

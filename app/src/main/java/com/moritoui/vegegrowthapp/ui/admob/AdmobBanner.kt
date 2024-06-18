@@ -10,15 +10,11 @@ import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 
 @Composable
-fun AdmobBanner(
-    modifier: Modifier = Modifier,
-    banner: AdView,
-    context: Context,
-) {
+fun AdmobBanner(modifier: Modifier = Modifier, banner: AdView, context: Context) {
     AndroidView(
         modifier =
-            modifier
-                .fillMaxWidth(),
+        modifier
+            .fillMaxWidth(),
         factory = {
             if (banner.parent != null) {
                 (banner.parent as FrameLayout).removeAllViews()
@@ -27,6 +23,6 @@ fun AdmobBanner(
                 minimumHeight = AdSize.BANNER.getHeightInPixels(context)
                 addView(banner)
             }
-        },
+        }
     )
 }

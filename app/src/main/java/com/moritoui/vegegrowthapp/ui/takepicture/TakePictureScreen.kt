@@ -51,10 +51,7 @@ import com.moritoui.vegegrowthapp.ui.takepicture.view.CameraScreen
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 
 @Composable
-fun TakePictureScreen(
-    navController: NavController,
-    viewModel: TakePictureScreenViewModel = hiltViewModel(),
-) {
+fun TakePictureScreen(navController: NavController, viewModel: TakePictureScreenViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     TakePictureScreen(
         uiState = uiState,
@@ -69,7 +66,7 @@ fun TakePictureScreen(
         },
         onSizeTextChange = { viewModel.changeInputText(it) },
         onConfirmClick = { viewModel.registerVegeData() },
-        onDismissClick = { viewModel.closeRegisterDialog() },
+        onDismissClick = { viewModel.closeRegisterDialog() }
     )
 }
 
@@ -84,29 +81,29 @@ private fun TakePictureScreen(
     onTakePictureButtonClick: (ImageProxy?) -> Unit,
     onSizeTextChange: (String) -> Unit,
     onConfirmClick: () -> Unit,
-    onDismissClick: () -> Unit,
+    onDismissClick: () -> Unit
 ) {
     Scaffold(
         topBar = {
             NavigationAppTopBar(
                 onBackNavigationButtonClick = onNavigationIconClick,
                 title = uiState.vegeName,
-                isVisibleBackButton = uiState.isVisibleNavigateButton,
+                isVisibleBackButton = uiState.isVisibleNavigateButton
             ) {
                 GoToManageItem(
-                    onNavigateClick = onGoToManageClick,
+                    onNavigateClick = onGoToManageClick
                 )
             }
-        },
+        }
     ) { it ->
         Column(
             modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(it)
-                    .padding(start = 24.dp, top = 24.dp, end = 24.dp),
+            Modifier
+                .fillMaxSize()
+                .padding(it)
+                .padding(start = 24.dp, top = 24.dp, end = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceEvenly,
+            verticalArrangement = Arrangement.SpaceEvenly
         ) {
             PictureView(image = uiState.takePicImage?.asImageBitmap())
             TakeButton(onClick = goToCameraButtonClick)
@@ -119,7 +116,7 @@ private fun TakePictureScreen(
     if (uiState.isCameraOpen) {
         CameraScreen(
             onCloseCamera = onCloseCameraClick,
-            onTakePicClick = onTakePictureButtonClick,
+            onTakePicClick = onTakePictureButtonClick
         )
     }
 
@@ -131,33 +128,30 @@ private fun TakePictureScreen(
         isBeforeInputText = uiState.isBeforeInputText,
         onValueChange = onSizeTextChange,
         onConfirmClick = onConfirmClick,
-        onDismissClick = onDismissClick,
+        onDismissClick = onDismissClick
     )
 }
 
 @Composable
-fun PictureView(
-    image: ImageBitmap?,
-    modifier: Modifier = Modifier.aspectRatio(1f / 1f),
-) {
+fun PictureView(image: ImageBitmap?, modifier: Modifier = Modifier.aspectRatio(1f / 1f)) {
     if (image != null) {
         Image(
             image,
             contentDescription = stringResource(R.string.picture_description),
             modifier = modifier,
-            contentScale = ContentScale.Fit,
+            contentScale = ContentScale.Fit
         )
     } else {
         Box(
             modifier =
-                modifier
-                    .background(MaterialTheme.colorScheme.surfaceVariant),
-            contentAlignment = Alignment.Center,
+            modifier
+                .background(MaterialTheme.colorScheme.surfaceVariant),
+            contentAlignment = Alignment.Center
         ) {
             Text(
                 text = stringResource(R.string.picture_none_message),
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp),
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp)
             )
         }
     }
@@ -166,10 +160,10 @@ fun PictureView(
 @Composable
 fun TakeButton(onClick: () -> Unit) {
     Button(
-        onClick = { onClick() },
+        onClick = { onClick() }
     ) {
         Text(
-            text = stringResource(R.string.take_picture_button),
+            text = stringResource(R.string.take_picture_button)
         )
     }
 }
@@ -177,10 +171,10 @@ fun TakeButton(onClick: () -> Unit) {
 @Composable
 fun RegisterButton(onClick: () -> Unit) {
     Button(
-        onClick = { onClick() },
+        onClick = { onClick() }
     ) {
         Text(
-            text = stringResource(R.string.register_button),
+            text = stringResource(R.string.register_button)
         )
     }
 }
@@ -194,7 +188,7 @@ fun RegisterAlertWindow(
     isBeforeInputText: Boolean,
     onValueChange: (String) -> Unit,
     onConfirmClick: () -> Unit,
-    onDismissClick: () -> Unit,
+    onDismissClick: () -> Unit
 ) {
     if (isOpenDialog) {
         AlertDialog(
@@ -209,8 +203,8 @@ fun RegisterAlertWindow(
                         Text(
                             stringResource(
                                 R.string.take_picture_last_saved_vege_size,
-                                lastSavedSize,
-                            ) + stringResource(id = R.string.common_cm_unit),
+                                lastSavedSize
+                            ) + stringResource(id = R.string.common_cm_unit)
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                     }
@@ -223,28 +217,30 @@ fun RegisterAlertWindow(
                             Text(
                                 text = stringResource(R.string.common_cm_unit),
                                 textAlign = TextAlign.End,
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier.fillMaxWidth()
                             )
-                        },
+                        }
                     )
                     // if文で空の要素を作りたいときは、modifierで高さとかを指定しとかないと表示されない時がある
                     Row(
                         modifier =
-                            Modifier
-                                .height(24.dp),
+                        Modifier
+                            .height(24.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         if (!isSuccessInputText && !isBeforeInputText) {
                             Icon(
                                 Icons.Sharp.Warning,
                                 contentDescription = null,
                                 tint = Color.Red,
-                                modifier = Modifier,
+                                modifier = Modifier
                             )
                             Text(
-                                text = stringResource(R.string.take_picture_error_enter_collect_number),
-                                color = Color.Red,
+                                text = stringResource(
+                                    R.string.take_picture_error_enter_collect_number
+                                ),
+                                color = Color.Red
                             )
                         }
                     }
@@ -253,37 +249,35 @@ fun RegisterAlertWindow(
             confirmButton = {
                 if (isSuccessInputText && !isBeforeInputText) {
                     TextButton(
-                        onClick = { onConfirmClick() },
+                        onClick = { onConfirmClick() }
                     ) {
                         Text(stringResource(id = R.string.register_button), color = Color.Blue)
                     }
                 } else {
                     TextButton(
-                        onClick = { },
+                        onClick = { }
                     ) {
                         Text(
                             stringResource(id = R.string.register_button),
-                            color = Color.Gray,
+                            color = Color.Gray
                         )
                     }
                 }
             },
             dismissButton = {
                 TextButton(
-                    onClick = { onDismissClick() },
+                    onClick = { onDismissClick() }
                 ) {
                     Text(stringResource(id = R.string.take_picture_back), color = Color.Blue)
                 }
-            },
+            }
         )
     }
 }
 
 @PreviewLightDark
 @Composable
-fun TakePicPreview(
-    @PreviewParameter(TakePictureScreenPreviewParameterProvider::class) params: TakePictureScreenPreviewParameterProvider.Params,
-) {
+fun TakePicPreview(@PreviewParameter(TakePictureScreenPreviewParameterProvider::class) params: TakePictureScreenPreviewParameterProvider.Params) {
     VegegrowthAppTheme {
         TakePictureScreen(
             uiState = params.uiState,
@@ -295,7 +289,7 @@ fun TakePicPreview(
             onTakePictureButtonClick = {},
             onNavigationIconClick = {},
             goToCameraButtonClick = {},
-            onGoToManageClick = {},
+            onGoToManageClick = {}
         )
     }
 }
@@ -304,17 +298,15 @@ class TakePictureScreenPreviewParameterProvider : PreviewParameterProvider<TakeP
     override val values =
         sequenceOf(
             Params(
-                uiState = TakePictureScreenUiState.initialState(),
+                uiState = TakePictureScreenUiState.initialState()
             ),
             Params(
                 uiState =
-                    TakePictureScreenUiState.initialState().copy(
-                        isVisibleNavigateButton = true,
-                    ),
-            ),
+                TakePictureScreenUiState.initialState().copy(
+                    isVisibleNavigateButton = true
+                )
+            )
         )
 
-    data class Params(
-        val uiState: TakePictureScreenUiState,
-    )
+    data class Params(val uiState: TakePictureScreenUiState)
 }

@@ -14,19 +14,18 @@ data class HomeScreenUiState(
     val selectMenu: SelectMenu,
     val selectStatus: VegeStatus,
     val filterStatus: FilterStatus,
-    val vegetables: List<VegeItem>,
+    val vegetables: List<VegeItem>
 ) {
     companion object {
-        fun initialState() =
-            HomeScreenUiState(
-                isOpenAddDialog = false,
-                inputText = "",
-                selectCategory = VegeCategory.None,
-                isAddAble = false,
-                selectMenu = SelectMenu.None,
-                selectStatus = VegeStatus.Default,
-                filterStatus = FilterStatus.All,
-                vegetables = emptyList(),
-            )
+        fun initialState() = HomeScreenUiState(
+            isOpenAddDialog = false,
+            inputText = "",
+            selectCategory = VegeCategory.None,
+            isAddAble = false,
+            selectMenu = SelectMenu.None,
+            selectStatus = VegeStatus.Default,
+            filterStatus = FilterStatus.All,
+            vegetables = emptyList()
+        )
     }
 }
