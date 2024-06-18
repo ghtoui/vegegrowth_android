@@ -1,0 +1,50 @@
+version: 2.1
+
+jobs:
+  build-and-test:
+    docker:
+      - image: cimg/android:2023.07
+    steps:
+      - checkout
+      - restore_cache:
+          key: jars-{{ checksum "build.gradle.kts" }}-{{ checksum "app/build.gradle.kts" }}
+      # これがないとprivate.propertiesが無くてエラーが出る
+      - run:
+          name: Create private.properties
+          command: |
+            echo "RELEASE_AD_BANNER_UNIT_ID=\"\"" > private.properties
+            echo "DEBUG_AD_BANNER_UNIT_ID=\"\"" >> private.properties
+      # これがないとgoogle-services.jsonが無くてエラーが出る
+      # 既にgoogle-services.jsonをBase64にしたものを登録しているので，encodeしてあげる
+      - run:
+          name: encode google-service.json
+          env:
+            GOOGLE_SERVICE: ${{ secrets.GOOGLE_SERVICE_JSON }}
+          run: |
+            echo $GOOGLE_SERVICE | base64 --decode --ignore-garbage > ./app/google-services.json
+            ./gradlew build
+
+      - run: ./gradlew androidDependencies
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: jars-{{ checksum "build.gradle.kts" }}-{{ checksum "app/build.gradle.kts" }}
+      - run:
+          name: Install Bundler
+          command: sudo gem install bundler:2.4.12
+      - run:
+          name: ktlint Check
+          command: ./gradlew --continue ktlintCheck
+      - run:
+          name: Test
+          command: ./gradlew testDebug --stacktrace
+      - run:
+          name: Unit Test
+          command: ./gradlew testDebugUnitTest
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - build-and-test
+
