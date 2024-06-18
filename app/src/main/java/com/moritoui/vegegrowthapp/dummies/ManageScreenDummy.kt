@@ -111,7 +111,7 @@ object ManageScreenDummy {
                 uuid = UUID.randomUUID().toString(),
                 name = "トマト",
                 size = 10.0,
-                memo = "赤いトマトができたので、収穫しました。",
+                memo = "赤いトマトができたので、収穫しました。\na\na\na\na\na\na",
                 date = "2023-10-01 20:30:14",
                 imagePath = "",
                 vegeItemId = 9,

@@ -31,9 +31,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class TakePictureScreenViewModel
-@Inject
-constructor(
+class TakePictureScreenViewModel @Inject constructor(
     private val dateFormatter: DateFormatter,
     private val vegetableDetailRepository: VegetableDetailRepository,
     private val getVegetableDetailsUseCase: GetVegetableDetailsUseCase,

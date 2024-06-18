@@ -57,10 +57,11 @@ class MainActivity : ComponentActivity() {
                             firebaseAnalytics
                         )
                         AdmobBanner(
-                            modifier = Modifier.padding(
-                                bottom = WindowInsets.navigationBars.asPaddingValues()
-                                    .calculateBottomPadding()
-                            ),
+                            modifier = Modifier
+                                .padding(
+                                    bottom = WindowInsets.navigationBars.asPaddingValues()
+                                        .calculateBottomPadding()
+                                ),
                             banner = banner,
                             context = context
                         )

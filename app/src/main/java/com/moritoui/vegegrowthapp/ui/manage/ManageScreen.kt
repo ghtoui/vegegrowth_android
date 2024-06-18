@@ -34,13 +34,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -114,7 +114,7 @@ private fun ManageScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(it),
+                .padding(top = it.calculateTopPadding()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             DrawLineChart(
@@ -140,7 +140,7 @@ private fun ManageScreen(
             DetailData(
                 memoData = uiState.vegeRepositoryList[pagerState.currentPage].memo,
                 onEditClick = { onEditClick(pagerState.currentPage) },
-                modifier = Modifier.weight(0.7f)
+                modifier = Modifier.height((LocalConfiguration.current.screenHeightDp / 6).dp)
             )
         }
     }
@@ -231,8 +231,7 @@ fun ImageCarousel(
                     }
                 Box(
                     // タップで画面遷移できるようにする
-                    modifier =
-                    Modifier
+                    modifier = Modifier
                         .weight(1f)
                         .height(currentImageBarHeight.dp)
                         .background(backGroundColor)
@@ -272,15 +271,14 @@ fun MemoData(memoData: String, onEditClick: () -> Unit, modifier: Modifier = Mod
         LazyColumn(
             modifier = Modifier
                 .padding(start = 12.dp, end = 12.dp)
-                .fillMaxSize()
         ) {
-            items(1) {
+            item {
                 Text(
                     text = memoData,
-                    modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .padding(top = 4.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 4.dp),
+                    minLines = 3
                 )
             }
         }
@@ -294,8 +292,7 @@ fun MemoTopBar(modifier: Modifier = Modifier, onEditClick: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "メモ",
-            fontSize = 24.sp
+            text = "メモ"
         )
         Spacer(Modifier.weight(1f))
         IconButton(
