@@ -17,10 +17,7 @@ class DateFormatter {
         return instant.toEpochMilli()
     }
 
-    fun diffEpochTime(
-        targetEpochTime: Long,
-        baseEpochTime: Long,
-    ): String {
+    fun diffEpochTime(targetEpochTime: Long, baseEpochTime: Long): String {
         val diffEpochTime = targetEpochTime - baseEpochTime
         // 差分の秒数 * 1000 で出るので、1000で割ってから日数で割る
         return (diffEpochTime / 1000 / 24 / 60 / 60).toString()

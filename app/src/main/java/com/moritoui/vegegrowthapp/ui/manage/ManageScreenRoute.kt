@@ -11,7 +11,7 @@ fun NavGraphBuilder.manageScreenRoute(navController: NavController) {
     composable(
         "${Screen.ManageScreen.route}/{vegetableId}",
         // Intで受け取るように
-        arguments = listOf(navArgument("vegetableId") { type = NavType.IntType }),
+        arguments = listOf(navArgument("vegetableId") { type = NavType.IntType })
     ) {
         it.arguments?.getString("vegetableId")
         ManageScreen(navController = navController)

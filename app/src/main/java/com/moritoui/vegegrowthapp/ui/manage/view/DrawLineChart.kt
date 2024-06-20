@@ -28,20 +28,16 @@ import com.moritoui.vegegrowthapp.model.VegeItemDetail
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 
 @Composable
-fun DrawLineChart(
-    modifier: Modifier = Modifier,
-    data: List<VegeItemDetail>,
-    currentIndex: Int,
-) {
+fun DrawLineChart(modifier: Modifier = Modifier, data: List<VegeItemDetail>, currentIndex: Int) {
     Box(
         modifier =
-            modifier
-                .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp)
-                .background(MaterialTheme.colorScheme.primaryContainer.copy(0.1f))
-                .border(
-                    width = 4.dp,
-                    color = MaterialTheme.colorScheme.onSurface.copy(0.05f),
-                ),
+        modifier
+            .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp)
+            .background(MaterialTheme.colorScheme.primaryContainer.copy(0.1f))
+            .border(
+                width = 4.dp,
+                color = MaterialTheme.colorScheme.onSurface.copy(0.05f)
+            )
     ) {
         val chartColor = MaterialTheme.colorScheme.onBackground
         val textColor = MaterialTheme.colorScheme.onBackground
@@ -49,9 +45,9 @@ fun DrawLineChart(
         val textMeasurer = rememberTextMeasurer()
         Canvas(
             modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
+            Modifier
+                .fillMaxSize()
+                .padding(16.dp)
         ) {
             var pointX: Float? = null
             var pointY: Float? = null
@@ -89,7 +85,7 @@ fun DrawLineChart(
             drawPath(
                 path = path,
                 color = chartColor,
-                style = Stroke(width = 4f),
+                style = Stroke(width = 4f)
             )
 
             if (pointX != null) {
@@ -124,14 +120,14 @@ fun DrawLineChart(
                 drawCircle(
                     color = Color.Red,
                     radius = 16f,
-                    center = Offset(pointX!!, pointY!!),
+                    center = Offset(pointX!!, pointY!!)
                 )
                 try {
                     drawText(
                         textMeasurer = textMeasurer,
                         text = detailData,
                         topLeft = Offset(x = pointTextX, y = pointTextY),
-                        style = TextStyle.Default.copy(color = textColor),
+                        style = TextStyle.Default.copy(color = textColor)
                     )
                 } catch (e: Exception) {
                     Log.e("error", e.toString())
@@ -147,7 +143,7 @@ fun DrawLineChartPreview() {
     VegegrowthAppTheme {
         DrawLineChart(
             data = ManageScreenDummy.getVegetableDetailList(),
-            currentIndex = 8,
+            currentIndex = 8
         )
     }
 }

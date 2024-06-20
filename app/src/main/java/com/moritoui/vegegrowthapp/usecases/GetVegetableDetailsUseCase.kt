@@ -6,12 +6,9 @@ import com.moritoui.vegegrowthapp.model.VegeItemDetail
 import javax.inject.Inject
 
 class GetVegetableDetailsUseCase
-    @Inject
-    constructor(
-        private val vegetableDao: VegetableDao,
-    ) {
-        suspend operator fun invoke(vegetableId: Int): List<VegeItemDetail> =
-            vegetableDao.getVegetableWithDetails(vegetableId)?.details?.map {
-                it.toVegeItemDetail()
-            } ?: emptyList()
-    }
+@Inject
+constructor(private val vegetableDao: VegetableDao) {
+    suspend operator fun invoke(vegetableId: Int): List<VegeItemDetail> = vegetableDao.getVegetableWithDetails(vegetableId)?.details?.map {
+        it.toVegeItemDetail()
+    } ?: emptyList()
+}

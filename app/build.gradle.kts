@@ -18,8 +18,8 @@ android {
         applicationId = "com.moritoui.vegegrowthapp"
         minSdk = 28
         targetSdk = 34
-        versionCode = 10
-        versionName = "2.1"
+        versionCode = 12
+        versionName = "2.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -36,19 +36,19 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
+                "proguard-rules.pro"
             )
             buildConfigField(
                 "String",
                 "AD_BANNER_UNIT_ID",
-                "${properties["RELEASE_AD_BANNER_UNIT_ID"]}",
+                "${properties["RELEASE_AD_BANNER_UNIT_ID"]}"
             )
         }
         debug {
             buildConfigField(
                 "String",
                 "AD_BANNER_UNIT_ID",
-                "${properties["DEBUG_AD_BANNER_UNIT_ID"]}",
+                "${properties["DEBUG_AD_BANNER_UNIT_ID"]}"
             )
         }
     }
@@ -97,7 +97,7 @@ val ktlintCheck by tasks.registering(JavaExec::class) {
     args(
         "**/src/**/*.kt",
         "**.kts",
-        "!**/build/**",
+        "!**/build/**"
     )
 }
 
@@ -116,7 +116,7 @@ tasks.register<JavaExec>("ktlintFormat") {
         "-F",
         "**/src/**/*.kt",
         "**.kts",
-        "!**/build/**",
+        "!**/build/**"
     )
 }
 

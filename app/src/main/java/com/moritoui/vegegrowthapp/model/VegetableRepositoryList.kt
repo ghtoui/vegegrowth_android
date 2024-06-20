@@ -15,7 +15,7 @@ object VegetableRepositoryList {
                 date = "2023-09-22 20:30:14",
                 imagePath = "",
                 vegeItemId = 0,
-                id = 0,
+                id = 0
             ),
             VegeItemDetail(
                 itemUuid = itemUuid,
@@ -26,7 +26,7 @@ object VegetableRepositoryList {
                 date = "2023-09-23 20:30:14",
                 imagePath = "",
                 vegeItemId = 1,
-                id = 1,
+                id = 1
             ),
             VegeItemDetail(
                 itemUuid = itemUuid,
@@ -37,7 +37,7 @@ object VegetableRepositoryList {
                 date = "2023-09-24 20:30:14",
                 imagePath = "",
                 vegeItemId = 2,
-                id = 2,
+                id = 2
             ),
             VegeItemDetail(
                 itemUuid = itemUuid,
@@ -48,7 +48,7 @@ object VegetableRepositoryList {
                 date = "2023-09-25 20:30:14",
                 imagePath = "",
                 vegeItemId = 3,
-                id = 3,
+                id = 3
             ),
             VegeItemDetail(
                 itemUuid = itemUuid,
@@ -59,7 +59,7 @@ object VegetableRepositoryList {
                 date = "2023-09-26 20:30:14",
                 imagePath = "",
                 vegeItemId = 4,
-                id = 4,
+                id = 4
             ),
             VegeItemDetail(
                 itemUuid = itemUuid,
@@ -70,7 +70,7 @@ object VegetableRepositoryList {
                 date = "2023-09-27 20:30:14",
                 imagePath = "",
                 vegeItemId = 5,
-                id = 5,
+                id = 5
             ),
             VegeItemDetail(
                 itemUuid = itemUuid,
@@ -81,7 +81,7 @@ object VegetableRepositoryList {
                 date = "2023-09-28 20:30:14",
                 imagePath = "",
                 vegeItemId = 6,
-                id = 6,
+                id = 6
             ),
             VegeItemDetail(
                 itemUuid = itemUuid,
@@ -92,7 +92,7 @@ object VegetableRepositoryList {
                 date = "2023-09-29 20:30:14",
                 imagePath = "",
                 vegeItemId = 7,
-                id = 7,
+                id = 7
             ),
             VegeItemDetail(
                 itemUuid = itemUuid,
@@ -103,7 +103,7 @@ object VegetableRepositoryList {
                 date = "2023-09-30 20:30:14",
                 imagePath = "",
                 vegeItemId = 8,
-                id = 8,
+                id = 8
             ),
             VegeItemDetail(
                 itemUuid = itemUuid,
@@ -114,8 +114,8 @@ object VegetableRepositoryList {
                 date = "2023-10-01 20:30:14",
                 imagePath = "",
                 vegeItemId = 9,
-                id = 9,
-            ),
+                id = 9
+            )
         )
     }
 }

@@ -14,24 +14,26 @@ data class VegeItemDetail(
     val size: Double,
     var memo: String,
     val date: String,
-    val imagePath: String = "",
+    val imagePath: String = ""
 ) {
     fun getDiffDatetime(baseDatetime: String): String {
         val dateFormatter = DateFormatter()
         val targetEpochTime = dateFormatter.stringToEpochTime(this.date)
         val baseEpochTime = dateFormatter.stringToEpochTime(baseDatetime)
-        return dateFormatter.diffEpochTime(baseEpochTime = baseEpochTime, targetEpochTime = targetEpochTime)
+        return dateFormatter.diffEpochTime(
+            baseEpochTime = baseEpochTime,
+            targetEpochTime = targetEpochTime
+        )
     }
 }
 
-fun VegeItemDetail.toVegetableEntity(): VegetableDetailEntity =
-    VegetableDetailEntity(
-        id = id,
-        note = memo,
-        vegetableId = vegeItemId,
-        size = size,
-        name = name,
-        imagePath = imagePath,
-        date = date,
-        uuid = uuid,
-    )
+fun VegeItemDetail.toVegetableEntity(): VegetableDetailEntity = VegetableDetailEntity(
+    id = id,
+    note = memo,
+    vegetableId = vegeItemId,
+    size = size,
+    name = name,
+    imagePath = imagePath,
+    date = date,
+    uuid = uuid
+)

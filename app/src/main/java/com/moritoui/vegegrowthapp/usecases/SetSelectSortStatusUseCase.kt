@@ -5,11 +5,9 @@ import com.moritoui.vegegrowthapp.repository.VegeItemListRepository
 import javax.inject.Inject
 
 class SetSelectSortStatusUseCase
-    @Inject
-    constructor(
-        private val vegeItemListRepository: VegeItemListRepository,
-    ) {
-        operator fun invoke(filterStatus: FilterStatus) {
-            vegeItemListRepository.setSelectedSortStatus(filterStatus = filterStatus)
-        }
+@Inject
+constructor(private val vegeItemListRepository: VegeItemListRepository) {
+    operator fun invoke(filterStatus: FilterStatus) {
+        vegeItemListRepository.setSelectedSortStatus(filterStatus = filterStatus)
     }
+}

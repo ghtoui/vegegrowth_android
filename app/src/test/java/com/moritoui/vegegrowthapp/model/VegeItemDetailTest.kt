@@ -14,7 +14,7 @@ class VegeItemDetailTest {
                 name = "name",
                 size = 4.3,
                 memo = "",
-                date = "2023-09-29 20:30:14",
+                date = "2023-09-29 20:30:14"
             )
         val diffDate = vegeItemDetail.getDiffDatetime("2023-09-25 20:30:14")
         val ansDiffDate = "4"

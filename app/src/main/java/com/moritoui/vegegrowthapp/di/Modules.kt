@@ -22,22 +22,16 @@ import javax.inject.Singleton
 object Modules {
     @Provides
     @Singleton
-    fun provideFileManager(
-        @ApplicationContext context: Context,
-    ): FileManager = FileManagerImpl(context)
+    fun provideFileManager(@ApplicationContext context: Context): FileManager = FileManagerImpl(context)
 
     @Provides
     @Singleton
-    fun provideVegeItemRepository(
-        fileManger: FileManager,
-        vegetableDao: VegetableDao,
-    ): VegeItemListRepository = VegeItemListRepositoryImpl(fileManger, vegetableDao)
+    fun provideVegeItemRepository(fileManger: FileManager, vegetableDao: VegetableDao): VegeItemListRepository = VegeItemListRepositoryImpl(fileManger, vegetableDao)
 
     @Provides
     @Singleton
     fun provideDateFormatter(): DateFormatter = DateFormatter()
 
     @Provides
-    fun provideVegeDetailRepository(fileManger: VegetableRepositoryFileManager): VegeItemDetailRepository =
-        VegeItemDetailRepositoryImpl(fileManger)
+    fun provideVegeDetailRepository(fileManger: VegetableRepositoryFileManager): VegeItemDetailRepository = VegeItemDetailRepositoryImpl(fileManger)
 }

@@ -23,74 +23,76 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 class DataMigrationRepositoryImpl
-    @Inject
-    constructor(
-        @ApplicationContext private val context: Context,
-        private val vegetableDao: VegetableDao,
-        private val vegetableDetailDao: VegetableDetailDao,
-        private val migratePreferences: DataStore<MigratePreferences>,
-    ) : DataMigrationRepository {
-        override var isDataMigrating: MutableStateFlow<Boolean> = MutableStateFlow(false)
+@Inject
+constructor(
+    @ApplicationContext private val context: Context,
+    private val vegetableDao: VegetableDao,
+    private val vegetableDetailDao: VegetableDetailDao,
+    private val migratePreferences: DataStore<MigratePreferences>
+) : DataMigrationRepository {
+    override var isDataMigrating: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
-        private var vegeItemDetailList: MutableList<VegeItemDetail> = mutableListOf()
-        private var picturePathList: List<String> = emptyList()
+    private var vegeItemDetailList: MutableList<VegeItemDetail> = mutableListOf()
+    private var picturePathList: List<String> = emptyList()
 
-        /**
-         * Roomに保存されていないデータを保存する
-         */
-        override suspend fun dataMigration() {
-            val isMigrate: Boolean = migratePreferences.data.first().isMigrated
-            val vegeItemListRepository = VegeItemListRepositoryImpl(FileManagerImpl(context), vegetableDao)
-            var vegeItemList = vegeItemListRepository.sortItemList()
-            if (vegeItemList.isEmpty() || isMigrate) {
-                return
-            }
+    /**
+     * Roomに保存されていないデータを保存する
+     */
+    override suspend fun dataMigration() {
+        val isMigrate: Boolean = migratePreferences.data.first().isMigrated
+        val vegeItemListRepository =
+            VegeItemListRepositoryImpl(FileManagerImpl(context), vegetableDao)
+        var vegeItemList = vegeItemListRepository.sortItemList()
+        if (vegeItemList.isEmpty() || isMigrate) {
+            return
+        }
 
-            isDataMigrating.update {
-                true
-            }
+        isDataMigrating.update {
+            true
+        }
 
-            vegeItemListRepository.selectIndex = 0
-            vegeItemList.forEach {
-                vegetableDao.upsertVegetable(it.toVegeTableEntity())
-            }
-            vegeItemList = vegetableDao.getVegetables().map { it.toVegeItem() }.toMutableList()
-            vegeItemList.forEachIndexed { itemIndex, item ->
-                vegeItemListRepository.selectIndex = itemIndex
-                val getSelectedIndexUseCase = GetOldSelectVegeItemUseCase(vegeItemListRepository)
-                val vegeItemDetailRepository =
-                    VegeItemDetailRepositoryImpl(
-                        VegetableRepositoryFileManager(context, getSelectedIndexUseCase),
+        vegeItemListRepository.selectIndex = 0
+        vegeItemList.forEach {
+            vegetableDao.upsertVegetable(it.toVegeTableEntity())
+        }
+        vegeItemList = vegetableDao.getVegetables().map { it.toVegeItem() }.toMutableList()
+        vegeItemList.forEachIndexed { itemIndex, item ->
+            vegeItemListRepository.selectIndex = itemIndex
+            val getSelectedIndexUseCase = GetOldSelectVegeItemUseCase(vegeItemListRepository)
+            val vegeItemDetailRepository =
+                VegeItemDetailRepositoryImpl(
+                    VegetableRepositoryFileManager(context, getSelectedIndexUseCase)
+                )
+            val getVegeItemDetailListUseCase =
+                GetOldVegeItemDetailListUseCase(vegeItemDetailRepository)
+            val getTakePictureFilePathListUseCase =
+                GetOldTakePictureFilePathListUseCase(
+                    vegeItemDetailRepository
+                )
+            vegeItemDetailList = getVegeItemDetailListUseCase()
+            picturePathList = getTakePictureFilePathListUseCase()
+            for (i in picturePathList.indices) {
+                vegetableDetailDao.upsertVegetableDetail(
+                    VegetableDetailEntity(
+                        vegetableId = item.id,
+                        imagePath = picturePathList[i],
+                        name = item.name,
+                        date = vegeItemDetailList[i].date,
+                        note = vegeItemDetailList[i].memo,
+                        size = vegeItemDetailList[i].size,
+                        uuid = vegeItemDetailList[i].uuid
                     )
-                val getVegeItemDetailListUseCase = GetOldVegeItemDetailListUseCase(vegeItemDetailRepository)
-                val getTakePictureFilePathListUseCase =
-                    GetOldTakePictureFilePathListUseCase(
-                        vegeItemDetailRepository,
-                    )
-                vegeItemDetailList = getVegeItemDetailListUseCase()
-                picturePathList = getTakePictureFilePathListUseCase()
-                for (i in picturePathList.indices) {
-                    vegetableDetailDao.upsertVegetableDetail(
-                        VegetableDetailEntity(
-                            vegetableId = item.id,
-                            imagePath = picturePathList[i],
-                            name = item.name,
-                            date = vegeItemDetailList[i].date,
-                            note = vegeItemDetailList[i].memo,
-                            size = vegeItemDetailList[i].size,
-                            uuid = vegeItemDetailList[i].uuid,
-                        ),
-                    )
-                }
-            }
-            isDataMigrating.update {
-                false
-            }
-
-            migratePreferences.updateData {
-                it.copy(
-                    isMigrated = true,
                 )
             }
         }
+        isDataMigrating.update {
+            false
+        }
+
+        migratePreferences.updateData {
+            it.copy(
+                isMigrated = true
+            )
+        }
     }
+}
