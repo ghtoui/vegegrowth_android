@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,7 +21,6 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
@@ -28,7 +28,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -202,17 +201,13 @@ fun VegeItemElement(
     ) {
         if (categoryIcon != null) {
             Icon(
+                modifier = Modifier.size(24.dp),
                 painter = painterResource(id = categoryIcon),
                 tint = iconTint,
                 contentDescription = null
             )
         } else {
-            Icon(
-                Icons.Filled.Info,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.background,
-                modifier = Modifier.aspectRatio(1f / 1f)
-            )
+            Spacer(modifier = Modifier.width(24.dp))
         }
         Text(
             text = item.name,
