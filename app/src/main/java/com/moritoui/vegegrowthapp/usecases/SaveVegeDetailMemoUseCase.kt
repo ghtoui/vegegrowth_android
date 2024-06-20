@@ -5,14 +5,9 @@ import com.moritoui.vegegrowthapp.repository.vegetabledetail.VegetableDetailRepo
 import javax.inject.Inject
 
 class SaveVegeDetailMemoUseCase
-    @Inject
-    constructor(
-        private val vegetableDetailRepository: VegetableDetailRepository,
-    ) {
-        suspend operator fun invoke(
-            memo: String,
-            vegeItemDetail: VegeItemDetail,
-        ) {
-            vegetableDetailRepository.editMemo(memo, vegeItemDetail)
-        }
+@Inject
+constructor(private val vegetableDetailRepository: VegetableDetailRepository) {
+    suspend operator fun invoke(memo: String, vegeItemDetail: VegeItemDetail) {
+        vegetableDetailRepository.editMemo(memo, vegeItemDetail)
     }
+}

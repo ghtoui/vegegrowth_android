@@ -10,6 +10,6 @@ data class VegetableWIthDetails(
     @Embedded val vegetable: VegetableEntity,
     @Relation(
         parentColumn = "id",
-        entityColumn = "vegetable_id",
-    ) val details: List<VegetableDetailEntity>,
+        entityColumn = "vegetable_id"
+    ) val details: List<VegetableDetailEntity>
 )

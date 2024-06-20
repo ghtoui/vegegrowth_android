@@ -10,20 +10,18 @@ import androidx.compose.ui.graphics.vector.ImageVector
 enum class SelectMenu {
     None,
     Delete,
-    Edit,
+    Edit
 }
 
 object SelectMenuMethod {
-    fun getIcon(selectMenu: SelectMenu): ImageVector =
-        when (selectMenu) {
-            SelectMenu.None -> Icons.Filled.MoreVert
-            SelectMenu.Delete -> Icons.Filled.Delete
-            SelectMenu.Edit -> Icons.Filled.Edit
-        }
+    fun getIcon(selectMenu: SelectMenu): ImageVector = when (selectMenu) {
+        SelectMenu.None -> Icons.Filled.MoreVert
+        SelectMenu.Delete -> Icons.Filled.Delete
+        SelectMenu.Edit -> Icons.Filled.Edit
+    }
 
-    fun getIconTint(selectMenu: SelectMenu): Color? =
-        when (selectMenu) {
-            SelectMenu.Delete -> Color.Red
-            else -> null
-        }
+    fun getIconTint(selectMenu: SelectMenu): Color? = when (selectMenu) {
+        SelectMenu.Delete -> Color.Red
+        else -> null
+    }
 }

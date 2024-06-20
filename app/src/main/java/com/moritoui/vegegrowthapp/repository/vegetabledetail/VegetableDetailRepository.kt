@@ -12,10 +12,7 @@ interface VegetableDetailRepository {
     /**
      * メモの編集
      */
-    suspend fun editMemo(
-        memo: String,
-        vegeItemDetail: VegeItemDetail,
-    )
+    suspend fun editMemo(memo: String, vegeItemDetail: VegeItemDetail)
 
     /**
      * 画像の保存

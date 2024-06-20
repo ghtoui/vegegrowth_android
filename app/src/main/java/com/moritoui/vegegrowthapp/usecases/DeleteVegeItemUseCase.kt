@@ -5,11 +5,9 @@ import com.moritoui.vegegrowthapp.repository.vegetable.VegetableRepository
 import javax.inject.Inject
 
 class DeleteVegeItemUseCase
-    @Inject
-    constructor(
-        private val vegetableRepository: VegetableRepository,
-    ) {
-        suspend operator fun invoke(vegeItem: VegeItem) {
-            vegetableRepository.deleteVegeItem(vegeItem)
-        }
+@Inject
+constructor(private val vegetableRepository: VegetableRepository) {
+    suspend operator fun invoke(vegeItem: VegeItem) {
+        vegetableRepository.deleteVegeItem(vegeItem)
     }
+}

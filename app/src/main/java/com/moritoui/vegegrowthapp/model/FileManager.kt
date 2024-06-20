@@ -20,9 +20,7 @@ interface FileManager {
     fun getVegeItemList(): MutableList<VegeItem>
 }
 
-open class FileManagerImpl(
-    override val applicationContext: Context,
-) : FileManager {
+open class FileManagerImpl(override val applicationContext: Context) : FileManager {
     override fun readJsonData(fileName: String): String? {
         var json: String? = null
         val jsonFileName = "$fileName.json"
@@ -45,17 +43,19 @@ open class FileManagerImpl(
         }
     }
 
-    override fun getVegeItemList(): MutableList<VegeItem> =
-        when (val vegeItemList = parseFromJson<List<VegeItem>>(readJsonData(fileName = "vegeItemList"))) {
-            null -> mutableListOf()
-            else -> vegeItemList.toMutableList()
-        }
+    override fun getVegeItemList(): MutableList<VegeItem> = when (
+        val vegeItemList = parseFromJson<List<VegeItem>>(
+            readJsonData(fileName = "vegeItemList")
+        )
+    ) {
+        null -> mutableListOf()
+        else -> vegeItemList.toMutableList()
+    }
 
-    inline fun <reified T> parseFromJson(json: String?): T? =
-        when (json) {
-            null -> null
-            else -> Json.decodeFromString<T>(json)
-        }
+    inline fun <reified T> parseFromJson(json: String?): T? = when (json) {
+        null -> null
+        else -> Json.decodeFromString<T>(json)
+    }
 
     inline fun <reified T> parseToJson(targetData: T): String = Json.encodeToString(targetData)
 }

@@ -6,14 +6,9 @@ import com.moritoui.vegegrowthapp.repository.VegeItemDetailRepository
 import javax.inject.Inject
 
 class SaveVegeItemDetailDataUseCase
-    @Inject
-    constructor(
-        private val vegeItemDetailRepository: VegeItemDetailRepository,
-    ) {
-        operator fun invoke(
-            takePicture: Bitmap?,
-            vegeItemDetailList: MutableList<VegeItemDetail>,
-        ) {
-            vegeItemDetailRepository.saveVegeDetail(takePicture, vegeItemDetailList)
-        }
+@Inject
+constructor(private val vegeItemDetailRepository: VegeItemDetailRepository) {
+    operator fun invoke(takePicture: Bitmap?, vegeItemDetailList: MutableList<VegeItemDetail>) {
+        vegeItemDetailRepository.saveVegeDetail(takePicture, vegeItemDetailList)
     }
+}

@@ -14,10 +14,10 @@ import com.moritoui.vegegrowthapp.model.VegeItemDetail
             entity = VegetableEntity::class,
             parentColumns = ["id"],
             childColumns = ["vegetable_id"],
-            onDelete = ForeignKey.CASCADE,
-        ),
+            onDelete = ForeignKey.CASCADE
+        )
     ],
-    indices = [Index(value = ["vegetable_id"])],
+    indices = [Index(value = ["vegetable_id"])]
 )
 data class VegetableDetailEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
@@ -27,17 +27,16 @@ data class VegetableDetailEntity(
     @ColumnInfo(name = "size") val size: Double,
     @ColumnInfo(name = "note") val note: String,
     @ColumnInfo(name = "date") val date: String,
-    @ColumnInfo(name = "uuid") val uuid: String,
+    @ColumnInfo(name = "uuid") val uuid: String
 )
 
-fun VegetableDetailEntity.toVegeItemDetail(): VegeItemDetail =
-    VegeItemDetail(
-        vegeItemId = vegetableId,
-        id = id,
-        size = size,
-        memo = note,
-        date = date,
-        imagePath = imagePath,
-        name = name,
-        uuid = uuid,
-    )
+fun VegetableDetailEntity.toVegeItemDetail(): VegeItemDetail = VegeItemDetail(
+    vegeItemId = vegetableId,
+    id = id,
+    size = size,
+    memo = note,
+    date = date,
+    imagePath = imagePath,
+    name = name,
+    uuid = uuid
+)
