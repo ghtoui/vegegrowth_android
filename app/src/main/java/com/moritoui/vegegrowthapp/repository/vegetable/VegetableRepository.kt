@@ -5,6 +5,7 @@ import com.moritoui.vegegrowthapp.model.VegeItem
 interface VegetableRepository {
     /**
      * 野菜の削除
+     * それに関わる情報を削除される(画像も全て)
      */
     suspend fun deleteVegeItem(vegeItem: VegeItem)
 

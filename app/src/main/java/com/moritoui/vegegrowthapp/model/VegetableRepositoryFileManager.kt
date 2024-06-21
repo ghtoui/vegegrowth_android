@@ -7,21 +7,20 @@ import android.util.Log
 import androidx.core.content.ContextCompat
 import com.moritoui.vegegrowthapp.usecases.GetOldSelectVegeItemUseCase
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.io.FileWriter
 import java.io.IOException
 import java.io.OutputStream
 import java.nio.file.Files
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class VegetableRepositoryFileManager
-@Inject
-constructor(@ApplicationContext applicationContext: Context, getSelectVegeItemUseCase: GetOldSelectVegeItemUseCase) : FileManagerImpl(applicationContext) {
+class VegetableRepositoryFileManager @Inject constructor(@ApplicationContext applicationContext: Context, getSelectVegeItemUseCase: GetOldSelectVegeItemUseCase) :
+    FileManagerImpl(applicationContext) {
     private var vegeRepositoryList: List<VegeItemDetail>
     private val imageDirectory = ContextCompat.getDataDir(applicationContext)
     private val oldImageDirectory = Environment.getExternalStoragePublicDirectory(
@@ -69,6 +68,12 @@ constructor(@ApplicationContext applicationContext: Context, getSelectVegeItemUs
 
     fun getImagePathList(): List<String> = vegeRepositoryList.map {
         getImagePath(it.uuid)
+    }
+
+    fun deleteImage(fileName: String) {
+        val imageFileName = "$fileName.jpg"
+        val imageFilePath = File(imageDirectory, imageFileName)
+        imageFilePath.delete()
     }
 
     // 非同期処理で実行

@@ -13,9 +13,7 @@ import java.io.OutputStream
 import java.util.UUID
 import javax.inject.Inject
 
-class VegetableDetailRepositoryImpl
-@Inject
-constructor(private val vegetableDetailDao: VegetableDetailDao, @ApplicationContext context: Context) : VegetableDetailRepository {
+class VegetableDetailRepositoryImpl @Inject constructor(private val vegetableDetailDao: VegetableDetailDao, @ApplicationContext context: Context) : VegetableDetailRepository {
     private val imageDirectory = ContextCompat.getDataDir(context)
 
     override suspend fun addVegeItemDetail(vegeItemDetail: VegeItemDetail) {
