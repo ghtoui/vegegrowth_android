@@ -14,8 +14,8 @@ import com.moritoui.vegegrowthapp.usecases.AddVegeItemUseCase
 import com.moritoui.vegegrowthapp.usecases.ChangeVegeItemStatusUseCase
 import com.moritoui.vegegrowthapp.usecases.DeleteVegeItemUseCase
 import com.moritoui.vegegrowthapp.usecases.GetVegeItemListUseCase
-import com.moritoui.vegegrowthapp.usecases.SetSelectedIndexUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.UUID
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,17 +23,13 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeScreenViewModel
-@Inject
-constructor(
+class HomeScreenViewModel @Inject constructor(
     private val addVegeItemUseCase: AddVegeItemUseCase,
     private val deleteVegeItemUseCase: DeleteVegeItemUseCase,
     private val getVegeItemListUseCase: GetVegeItemListUseCase,
-    private val setSelectedIndexUseCase: SetSelectedIndexUseCase,
     private val changeVegeItemStatusUseCase: ChangeVegeItemStatusUseCase,
     private val dataMigrationRepository: DataMigrationRepository
 ) : ViewModel() {
@@ -52,15 +48,7 @@ constructor(
                 )
             }
         }
-
-        _uiState
-            .onEach {
-                reloadVegetables()
-            }.launchIn(viewModelScope)
-    }
-
-    fun selectedIndex(index: Int) {
-        setSelectedIndexUseCase(index)
+        monitorUiState()
     }
 
     fun closeDialog() {
@@ -145,9 +133,13 @@ constructor(
         }
     }
 
-    fun deleteItem(vegeItem: VegeItem) {
+    fun deleteItem() {
+        val deleteItem = _uiState.value.targetDeleteItem ?: return
         viewModelScope.launch {
-            deleteVegeItemUseCase(vegeItem)
+            deleteVegeItemUseCase(deleteItem)
+            _uiState.update {
+                it.copy(targetDeleteItem = null)
+            }
         }
     }
 
@@ -176,6 +168,29 @@ constructor(
         }
     }
 
+    /**
+     * 削除ダイアログを閉じる
+     */
+    fun closeDeleteDialog() {
+        _uiState.update {
+            it.copy(
+                isOpenDeleteDialog = !it.isOpenDeleteDialog
+            )
+        }
+    }
+
+    /**
+     * 削除ダイアログを開いて，削除するものをセットする
+     */
+    fun openDeleteDialog(vegeItem: VegeItem) {
+        _uiState.update {
+            it.copy(
+                isOpenDeleteDialog = true,
+                targetDeleteItem = vegeItem
+            )
+        }
+    }
+
     private fun checkInputText(inputText: String): Boolean = when (inputText) {
         "" -> false
         else -> true
@@ -199,5 +214,14 @@ constructor(
                 )
             }
         }
+    }
+
+    /**
+     * uiStateの変更を監視する
+     */
+    private fun monitorUiState() {
+        _uiState.onEach {
+            reloadVegetables()
+        }.launchIn(viewModelScope)
     }
 }

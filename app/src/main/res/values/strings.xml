@@ -19,7 +19,7 @@
     <string name="save_text">保存</string>
     <string name="growth_end_text">生育終了</string>
     <string name="select_none">選択なし</string>
-    <string name="sort_text">並び替え</string>
+    <string name="filter_text">並び替え</string>
     <string name="all_text">全て</string>
     <string name="first_screen_title">一覧画面</string>
     <string name="vege_category_none_text">カテゴリーを選択してください</string>
@@ -31,4 +31,7 @@
     <string name="take_picture_back">戻る</string>
     <string name="common_cm_unit">cm</string>
     <string name="manage_screen_title">管理画面</string>
+    <string name="home_screen_select_menu_done">完了</string>
+    <string name="home_delete_dialog_title">%sを削除しますか？</string>
+    <string name="home_delete_dialog_description">削除したものは元に戻せません</string>
 </resources>

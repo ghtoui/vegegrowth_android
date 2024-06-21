@@ -1,6 +1,9 @@
 package com.moritoui.vegegrowthapp.navigation
 
 import android.os.Bundle
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,7 +47,31 @@ fun MainNavigation(modifier: Modifier = Modifier, firebaseAnalytics: FirebaseAna
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = Screen.HomeScreen.route
+        startDestination = Screen.HomeScreen.route,
+        enterTransition = {
+            slideInHorizontally(
+                initialOffsetX = { screenWidth -> screenWidth },
+                animationSpec = tween()
+            )
+        },
+        popEnterTransition = {
+            slideInHorizontally(
+                initialOffsetX = { screenWidth -> -screenWidth },
+                animationSpec = tween()
+            )
+        },
+        exitTransition = {
+            slideOutHorizontally(
+                targetOffsetX = { screenWidth -> -screenWidth },
+                animationSpec = tween()
+            )
+        },
+        popExitTransition = {
+            slideOutHorizontally(
+                targetOffsetX = { screenWidth -> screenWidth },
+                animationSpec = tween()
+            )
+        }
     ) {
         homeScreenRoute(navController)
         takePictureScreenRoute(navController)
