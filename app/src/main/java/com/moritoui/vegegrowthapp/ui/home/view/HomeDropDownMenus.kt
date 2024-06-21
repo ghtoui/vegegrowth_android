@@ -98,17 +98,11 @@ fun ItemListDropDownMenuItem(modifier: Modifier = Modifier, icon: ImageVector, t
 }
 
 @Composable
-fun SelectDropDownMenu(
-    modifier: Modifier = Modifier,
-    selectMenuExpanded: Boolean,
-    onDismissRequest: () -> Unit,
-    onDeleteIconClick: () -> Unit,
-    onEditIconClick: () -> Unit,
-) {
+fun SelectDropDownMenu(modifier: Modifier = Modifier, selectMenuExpanded: Boolean, onDismissRequest: () -> Unit, onDeleteIconClick: () -> Unit, onEditIconClick: () -> Unit) {
     DropdownMenu(
         expanded = selectMenuExpanded,
         onDismissRequest = onDismissRequest,
-        modifier = modifier,
+        modifier = modifier
     ) {
         ItemListDropDownMenuItem(
             icon = Icons.Filled.Delete,
@@ -125,14 +119,10 @@ fun SelectDropDownMenu(
 }
 
 @Composable
-fun FilterDropDownMenu(
-    filterMenuExpanded: Boolean,
-    onDismissRequest: () -> Unit,
-    onFilterItemClick: (FilterStatus) -> Unit,
-) {
+fun FilterDropDownMenu(filterMenuExpanded: Boolean, onDismissRequest: () -> Unit, onFilterItemClick: (FilterStatus) -> Unit) {
     DropdownMenu(
         expanded = filterMenuExpanded,
-        onDismissRequest = onDismissRequest,
+        onDismissRequest = onDismissRequest
     ) {
         FilterStatus.values().forEach { filterStatus ->
             DropdownMenuItem(

@@ -131,7 +131,7 @@ private fun HomeScreen(
                         onFilterDropDownMenuClose = { filterMenuExpanded = false },
                         onSelectMenuClick = { selectMenuExpanded = true },
                         onFilterMenuClick = { filterMenuExpanded = true },
-                        selectMenu = uiState.selectMenu,
+                        selectMenu = uiState.selectMenu
                     )
                 }
             ) { it ->
@@ -142,7 +142,7 @@ private fun HomeScreen(
                         .padding(it)
                         .padding(start = 32.dp, end = 24.dp)
                 ) {
-                    items(uiState.vegetables, key = {item -> item.id}) { item ->
+                    items(uiState.vegetables, key = { item -> item.id }) { item ->
                         VegeItemElement(
                             item = item,
                             selectMenu = uiState.selectMenu,
@@ -328,7 +328,7 @@ fun HomeScreenPreview(@PreviewParameter(HomePreviewParameterProvider::class) par
             onEditIconClick = {},
             onVegeItemClick = {},
             closeDeleteDialog = {},
-            openDeleteDialog = {},
+            openDeleteDialog = {}
         )
     }
 }
@@ -352,7 +352,7 @@ class HomePreviewParameterProvider : PreviewParameterProvider<HomePreviewParamet
                     vegetables = HomeScreenDummy.vegeList(),
                     selectMenu = SelectMenu.Delete
                 )
-            ),
+            )
         )
 
     data class Params(val uiState: HomeScreenUiState)

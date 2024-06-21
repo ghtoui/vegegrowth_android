@@ -185,13 +185,7 @@ fun AlertPreview() {
 }
 
 @Composable
-fun ConfirmDeleteItemDialog(
-    modifier: Modifier = Modifier,
-    deleteItem: VegeItem?,
-    onDismissRequest: () -> Unit,
-    onConfirmClick: () -> Unit,
-    onCancelClick: () -> Unit,
-) {
+fun ConfirmDeleteItemDialog(modifier: Modifier = Modifier, deleteItem: VegeItem?, onDismissRequest: () -> Unit, onConfirmClick: () -> Unit, onCancelClick: () -> Unit) {
     AlertDialog(
         modifier = modifier,
         onDismissRequest = onDismissRequest,
@@ -242,7 +236,7 @@ private fun ConfirmDeleteItemDialogPreview() {
                 name = "キャベツ",
                 VegeCategory.None,
                 uuid = "",
-                VegeStatus.End,
+                VegeStatus.End
             ),
             onDismissRequest = {},
             onConfirmClick = {},

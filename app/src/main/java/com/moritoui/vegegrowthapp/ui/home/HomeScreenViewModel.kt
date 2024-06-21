@@ -205,7 +205,7 @@ class HomeScreenViewModel @Inject constructor(
                         true
                     } else {
                         item.status == filterStatusMap[filterStatus] ||
-                                item.category == filterStatusMap[filterStatus]
+                            item.category == filterStatusMap[filterStatus]
                     }
                 }
             _uiState.update {

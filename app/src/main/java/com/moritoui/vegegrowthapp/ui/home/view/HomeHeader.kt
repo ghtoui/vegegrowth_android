@@ -118,22 +118,19 @@ fun ItemListTopBar(
                 onEditIconClick = {
                     onEditIconClick()
                     onSelectDropDownMenuClose()
-                },
+                }
             )
         }
     }
 }
 
 @Composable
-private fun SelectMenuHeader(
-    selectMenu: SelectMenu,
-    onMenuClick: () -> Unit,
-) {
+private fun SelectMenuHeader(selectMenu: SelectMenu, onMenuClick: () -> Unit) {
     val menuIcon = SelectMenuMethod.getIcon(selectMenu)
     val menuIconTint = SelectMenuMethod.getIconTint(selectMenu)
     when (selectMenu) {
         SelectMenu.None -> {
-            IconButton( onClick = onMenuClick ) {
+            IconButton(onClick = onMenuClick) {
                 Icon(
                     menuIcon,
                     contentDescription = stringResource(R.string.drop_down_menu_button),
