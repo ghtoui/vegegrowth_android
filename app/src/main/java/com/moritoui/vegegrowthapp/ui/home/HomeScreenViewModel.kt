@@ -26,9 +26,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeScreenViewModel
-@Inject
-constructor(
+class HomeScreenViewModel @Inject constructor(
     private val addVegeItemUseCase: AddVegeItemUseCase,
     private val deleteVegeItemUseCase: DeleteVegeItemUseCase,
     private val getVegeItemListUseCase: GetVegeItemListUseCase,
@@ -135,9 +133,13 @@ constructor(
         }
     }
 
-    fun deleteItem(vegeItem: VegeItem) {
+    fun deleteItem() {
+        val deleteItem = _uiState.value.targetDeleteItem ?: return
         viewModelScope.launch {
-            deleteVegeItemUseCase(vegeItem)
+            deleteVegeItemUseCase(deleteItem)
+            _uiState.update {
+                it.copy(targetDeleteItem = null)
+            }
         }
     }
 
@@ -162,6 +164,29 @@ constructor(
         _uiState.update {
             it.copy(
                 filterStatus = filterStatus
+            )
+        }
+    }
+
+    /**
+     * 削除ダイアログを閉じる
+     */
+    fun closeDeleteDialog() {
+        _uiState.update {
+            it.copy(
+                isOpenDeleteDialog = !it.isOpenDeleteDialog
+            )
+        }
+    }
+
+    /**
+     * 削除ダイアログを開いて，削除するものをセットする
+     */
+    fun openDeleteDialog(vegeItem: VegeItem) {
+        _uiState.update {
+            it.copy(
+                isOpenDeleteDialog = true,
+                targetDeleteItem = vegeItem
             )
         }
     }

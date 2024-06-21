@@ -88,11 +88,13 @@ private fun TakePictureScreen(
             NavigationAppTopBar(
                 onBackNavigationButtonClick = onNavigationIconClick,
                 title = uiState.vegeName,
-                isVisibleBackButton = uiState.isVisibleNavigateButton
+                isVisibleBackButton = true
             ) {
-                GoToManageItem(
-                    onNavigateClick = onGoToManageClick
-                )
+                if (uiState.isVisibleNavigateButton) {
+                    GoToManageItem(
+                        onNavigateClick = onGoToManageClick
+                    )
+                }
             }
         }
     ) { it ->

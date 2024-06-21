@@ -8,24 +8,28 @@ import com.moritoui.vegegrowthapp.model.VegeStatus
 
 data class HomeScreenUiState(
     val isOpenAddDialog: Boolean,
+    val isOpenDeleteDialog: Boolean,
     val inputText: String,
     val selectCategory: VegeCategory,
     val isAddAble: Boolean,
     val selectMenu: SelectMenu,
     val selectStatus: VegeStatus,
     val filterStatus: FilterStatus,
-    val vegetables: List<VegeItem>
+    val vegetables: List<VegeItem>,
+    val targetDeleteItem: VegeItem?
 ) {
     companion object {
         fun initialState() = HomeScreenUiState(
             isOpenAddDialog = false,
+            isOpenDeleteDialog = false,
             inputText = "",
             selectCategory = VegeCategory.None,
             isAddAble = false,
             selectMenu = SelectMenu.None,
             selectStatus = VegeStatus.Default,
             filterStatus = FilterStatus.All,
-            vegetables = emptyList()
+            vegetables = emptyList(),
+            targetDeleteItem = null
         )
     }
 }

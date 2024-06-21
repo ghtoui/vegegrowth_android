@@ -1,16 +1,19 @@
-package com.moritoui.vegegrowthapp.ui
+package com.moritoui.vegegrowthapp.ui.home.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
@@ -31,12 +34,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.moritoui.vegegrowthapp.R
 import com.moritoui.vegegrowthapp.model.VegeCategory
+import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegeStatus
 import com.moritoui.vegegrowthapp.model.VegeStatusMethod
-import com.moritoui.vegegrowthapp.ui.home.CategoryDropMenu
-import com.moritoui.vegegrowthapp.ui.home.ItemListDropDownMenuItem
+import com.moritoui.vegegrowthapp.previews.DarkLightPreview
+import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddAlertWindow(
     selectCategory: VegeCategory,
@@ -177,6 +180,67 @@ fun AlertPreview() {
             isOpenDialog = true,
             onMenuItemIconClick = {},
             onConfirmClick = { }
+        )
+    }
+}
+
+@Composable
+fun ConfirmDeleteItemDialog(modifier: Modifier = Modifier, deleteItem: VegeItem?, onDismissRequest: () -> Unit, onConfirmClick: () -> Unit, onCancelClick: () -> Unit) {
+    AlertDialog(
+        modifier = modifier,
+        onDismissRequest = onDismissRequest,
+        icon = {
+            Icon(
+                Icons.Filled.Delete,
+                contentDescription = stringResource(id = R.string.delete_text)
+            )
+        },
+        title = {
+            Column {
+                Text(
+                    stringResource(id = R.string.home_delete_dialog_title, deleteItem?.name ?: ""),
+                    style = MaterialTheme.typography.titleLarge
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    stringResource(id = R.string.home_delete_dialog_description),
+                    style = MaterialTheme.typography.titleSmall
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = onConfirmClick,
+                colors = ButtonDefaults.textButtonColors().copy(
+                    contentColor = Color.Red
+                )
+            ) {
+                Text(text = stringResource(id = R.string.delete_text))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onCancelClick) {
+                Text(text = stringResource(id = R.string.cancel_text))
+            }
+        }
+    )
+}
+
+@Composable
+@DarkLightPreview
+private fun ConfirmDeleteItemDialogPreview() {
+    VegegrowthAppTheme {
+        ConfirmDeleteItemDialog(
+            deleteItem = VegeItem(
+                id = 0,
+                name = "キャベツ",
+                VegeCategory.None,
+                uuid = "",
+                VegeStatus.End
+            ),
+            onDismissRequest = {},
+            onConfirmClick = {},
+            onCancelClick = {}
         )
     }
 }
