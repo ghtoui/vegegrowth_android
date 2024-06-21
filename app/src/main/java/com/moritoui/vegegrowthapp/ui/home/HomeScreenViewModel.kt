@@ -72,13 +72,14 @@ class HomeScreenViewModel @Inject constructor(
     fun selectStatus(vegeItem: VegeItem) {
         viewModelScope.launch {
             changeVegeItemStatusUseCase(vegeItem)
-        }
-        _uiState.value.vegetables.map { old ->
-            if (old.id == vegeItem.id) {
-                vegeItem
-            } else {
-                old
+            _uiState.value.vegetables.map { old ->
+                if (old.id == vegeItem.id) {
+                    vegeItem
+                } else {
+                    old
+                }
             }
+            reloadVegetables()
         }
     }
 
@@ -205,7 +206,7 @@ class HomeScreenViewModel @Inject constructor(
                         true
                     } else {
                         item.status == filterStatusMap[filterStatus] ||
-                            item.category == filterStatusMap[filterStatus]
+                                item.category == filterStatusMap[filterStatus]
                     }
                 }
             _uiState.update {
