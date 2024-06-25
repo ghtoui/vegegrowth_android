@@ -54,6 +54,7 @@ import com.moritoui.vegegrowthapp.navigation.HomeAddItem
 import com.moritoui.vegegrowthapp.navigation.NavigationAppTopBar
 import com.moritoui.vegegrowthapp.previews.DarkLightPreview
 import com.moritoui.vegegrowthapp.ui.home.model.HomeScreenUiState
+import com.moritoui.vegegrowthapp.ui.home.model.HomeVegetablesState
 import com.moritoui.vegegrowthapp.ui.home.view.AddAlertWindow
 import com.moritoui.vegegrowthapp.ui.home.view.ConfirmDeleteItemDialog
 import com.moritoui.vegegrowthapp.ui.home.view.ItemListDropDownMenuItem
@@ -64,8 +65,10 @@ import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 @Composable
 fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel(), navController: NavController) {
     val uiState by viewModel.uiState.collectAsState()
+    val vegetablesState by viewModel.vegetablesState.collectAsState()
     HomeScreen(
         uiState = uiState,
+        vegetablesState = vegetablesState,
         openAddVegeItemDialog = viewModel::openAddDialog,
         onCancelMenuClick = viewModel::onCancelMenuClick,
         onDeleteItem = viewModel::changeDeleteMode,
@@ -88,6 +91,7 @@ fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel(), navController: 
 @Composable
 private fun HomeScreen(
     uiState: HomeScreenUiState,
+    vegetablesState: HomeVegetablesState,
     openAddVegeItemDialog: () -> Unit,
     onCancelMenuClick: () -> Unit,
     onDeleteItem: () -> Unit,
@@ -142,7 +146,7 @@ private fun HomeScreen(
                         .padding(it)
                         .padding(start = 32.dp, end = 24.dp)
                 ) {
-                    items(uiState.vegetables, key = { item -> item.id }) { item ->
+                    items(vegetablesState.vegetables, key = { item -> item.id }) { item ->
                         VegeItemElement(
                             item = item,
                             selectMenu = uiState.selectMenu,
@@ -315,6 +319,7 @@ fun HomeScreenPreview(@PreviewParameter(HomePreviewParameterProvider::class) par
     VegegrowthAppTheme {
         HomeScreen(
             uiState = params.uiState,
+            vegetablesState = params.vegetablesState,
             openAddVegeItemDialog = {},
             onSelectVegeCategory = {},
             onCancelMenuClick = {},
@@ -337,23 +342,31 @@ class HomePreviewParameterProvider : PreviewParameterProvider<HomePreviewParamet
     override val values: Sequence<HomePreviewParameterProvider.Params> =
         sequenceOf(
             Params(
-                uiState = HomeScreenUiState.initialState().copy(
+                uiState = HomeScreenUiState.initialState(),
+                vegetablesState = HomeVegetablesState.initial().copy(
                     vegetables = HomeScreenDummy.vegeList()
                 )
             ),
             Params(
                 uiState = HomeScreenUiState.initialState().copy(
-                    vegetables = HomeScreenDummy.vegeList(),
                     selectMenu = SelectMenu.Edit
+                ),
+                vegetablesState = HomeVegetablesState.initial().copy(
+                    vegetables = HomeScreenDummy.vegeList()
                 )
             ),
             Params(
                 uiState = HomeScreenUiState.initialState().copy(
-                    vegetables = HomeScreenDummy.vegeList(),
                     selectMenu = SelectMenu.Delete
+                ),
+                vegetablesState = HomeVegetablesState.initial().copy(
+                    vegetables = HomeScreenDummy.vegeList()
                 )
             )
         )
 
-    data class Params(val uiState: HomeScreenUiState)
+    data class Params(
+        val uiState: HomeScreenUiState,
+        val vegetablesState: HomeVegetablesState,
+    )
 }
