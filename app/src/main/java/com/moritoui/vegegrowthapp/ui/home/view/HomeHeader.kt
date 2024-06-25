@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.List
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
@@ -50,7 +49,7 @@ fun ItemListTopBar(
             .wrapContentSize(Alignment.TopStart),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Button(onClick = { onFilterMenuClick() }) {
+        TextButton(onClick = { onFilterMenuClick() }) {
             Row {
                 Icon(
                     Icons.Filled.List,

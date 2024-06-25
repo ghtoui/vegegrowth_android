@@ -1,33 +1,44 @@
 package com.moritoui.vegegrowthapp.ui.home.view
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.moritoui.vegegrowthapp.R
+import com.moritoui.vegegrowthapp.model.SelectMenu
 import com.moritoui.vegegrowthapp.model.VegeCategory
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegeItemDetail
@@ -43,21 +54,22 @@ fun VegeItemListCard(
     modifier: Modifier = Modifier,
     vegetable: VegeItem,
     vegetableDetail: VegeItemDetail?,
-    onClick: (Int) -> Unit,
+    selectMenu: SelectMenu,
+    onItemDeleteClick: (VegeItem) -> Unit,
+    onSelectVegeStatus: (VegeItem) -> Unit,
+    onVegeItemClick: (Int) -> Unit,
 ) {
-    var showStatus by rememberSaveable { mutableStateOf(vegetable.status) }
-    showStatus = vegetable.status
-
-    val statusIcon: ImageVector = VegeStatusMethod.getIcon(showStatus)
-    val statusIconTint: Color = VegeStatusMethod.getIconTint(vegeStatus = showStatus) ?: LocalContentColor.current
-    val iconTint: Color = vegetable.category.getTint(otherColor = LocalContentColor.current)
-    val categoryIcon = vegetable.category.getIcon()
+    var selectedStatus = remember {
+        mutableStateOf(vegetable.status)
+    }
+    val statusIcon = VegeStatusMethod.getIcon(selectedStatus.value)
+    val statusIconTint = VegeStatusMethod.getIconTint(vegeStatus = selectedStatus.value) ?: LocalContentColor.current
 
     Card(
         modifier = modifier
             .fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
-        onClick = { onClick(vegetable.id) }
+        onClick = { onVegeItemClick(vegetable.id) }
     ) {
         Row(
             modifier = modifier
@@ -76,37 +88,149 @@ fun VegeItemListCard(
                 contentScale = ContentScale.Crop
             )
             Spacer(modifier = Modifier.width(8.dp))
-            Column {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    if (categoryIcon != null) {
-                        Icon(
-                            painter = painterResource(id = categoryIcon),
-                            contentDescription = null,
-                            tint = iconTint
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        vegetable.name,
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                }
-                if (vegetableDetail != null) {
-                    Text(
-                        vegetableDetail.date,
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }
-            }
+            VegetableInfo(
+                modifier = Modifier.weight(1f),
+                vegetable = vegetable,
+                vegetableDetail = vegetableDetail,
+            )
             Spacer(modifier = Modifier.width(8.dp))
             Icon(
                 statusIcon,
                 contentDescription = null,
                 tint = statusIconTint,
             )
+            Spacer(modifier = Modifier.width(8.dp))
+            VegetableEditMenu(
+                vegetable = vegetable,
+                selectMenu = selectMenu,
+                selectedStatus = selectedStatus,
+                onItemDeleteClick = onItemDeleteClick,
+                onSelectVegeStatus = onSelectVegeStatus,
+            )
         }
+    }
+}
+
+@Composable
+private fun VegetableInfo(
+    modifier: Modifier = Modifier,
+    vegetable: VegeItem,
+    vegetableDetail: VegeItemDetail?,
+) {
+    val iconTint: Color = vegetable.category.getTint(otherColor = LocalContentColor.current)
+    val categoryIcon = vegetable.category.getIcon()
+    Column(modifier = modifier) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if (categoryIcon != null) {
+                Icon(
+                    painter = painterResource(id = categoryIcon),
+                    contentDescription = null,
+                    tint = iconTint
+                )
+            }
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                vegetable.name,
+                style = MaterialTheme.typography.titleLarge
+            )
+        }
+        if (vegetableDetail != null) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    stringResource(R.string.vege_detail_save_last_date),
+                    style = MaterialTheme.typography.bodySmall
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    vegetableDetail.date,
+                    style = MaterialTheme.typography.bodyLarge,
+                    maxLines = 1
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun VegetableEditMenu(
+    modifier: Modifier = Modifier,
+    vegetable: VegeItem,
+    selectMenu: SelectMenu,
+    selectedStatus: MutableState<VegeStatus>,
+    onItemDeleteClick: (VegeItem) -> Unit,
+    onSelectVegeStatus: (VegeItem) -> Unit
+) {
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    var isCheck by rememberSaveable { mutableStateOf(false) }
+    if (selectMenu != SelectMenu.None) {
+        Box(
+            modifier = modifier,
+            contentAlignment = Alignment.BottomEnd
+        ) {
+            IconButton(onClick = {
+                onItemDeleteClick(vegetable)
+                isCheck = !isCheck
+            }) {
+                if (selectMenu == SelectMenu.Delete) {
+                    Icon(
+                        Icons.Filled.Delete,
+                        contentDescription = stringResource(id = R.string.delete_text),
+                        tint =
+                        when (isCheck) {
+                            false -> Color.Red
+                            true -> Color.Transparent
+                        },
+                        modifier = Modifier.aspectRatio(1f / 1f)
+                    )
+                } else {
+                    IconButton(onClick = { expanded = true }) {
+                        Icon(
+                            Icons.Filled.Edit,
+                            contentDescription = stringResource(id = R.string.delete_text),
+                            modifier = Modifier.aspectRatio(1f / 1f)
+                        )
+                    }
+                }
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = {
+                        expanded = false
+                    }
+                ) {
+                    VegeStatus.values().forEach { status ->
+                        ItemListDropDownMenuItem(
+                            icon = VegeStatusMethod.getIcon(status),
+                            text = stringResource(VegeStatusMethod.getText(status)),
+                            iconTint =
+                            VegeStatusMethod.getIconTint(status)
+                                ?: LocalContentColor.current,
+                            onClick = {
+                                vegetable.status = status
+                                selectedStatus.value = status
+                                onSelectVegeStatus(vegetable)
+                                expanded = false
+                            }
+                        )
+                    }
+                }
+                Icon(
+                    Icons.Filled.Check,
+                    contentDescription = stringResource(R.string.done_text),
+                    tint =
+                    when (isCheck) {
+                        false -> Color.Transparent
+                        true -> Color.Black
+                    },
+                    modifier = Modifier.aspectRatio(1f / 1f)
+                )
+            }
+        }
+    } else {
+        isCheck = false
     }
 }
 
@@ -132,7 +256,10 @@ fun VegeItemListCardPreview() {
                 itemUuid = "",
                 uuid = ""
             ),
-            onClick = {}
+            onVegeItemClick = {},
+            onSelectVegeStatus = {},
+            onItemDeleteClick = {},
+            selectMenu = SelectMenu.Edit,
         )
     }
 }

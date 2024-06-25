@@ -16,6 +16,7 @@ data class HomeScreenUiState(
     val selectStatus: VegeStatus,
     val filterStatus: FilterStatus,
     val targetDeleteItem: VegeItem?,
+    val isLoading: Boolean,
 ) {
     companion object {
         fun initialState() = HomeScreenUiState(
@@ -27,7 +28,8 @@ data class HomeScreenUiState(
             selectMenu = SelectMenu.None,
             selectStatus = VegeStatus.Default,
             filterStatus = FilterStatus.All,
-            targetDeleteItem = null
+            targetDeleteItem = null,
+            isLoading = false,
         )
     }
 }

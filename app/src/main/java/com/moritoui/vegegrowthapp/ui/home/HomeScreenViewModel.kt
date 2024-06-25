@@ -250,7 +250,13 @@ class HomeScreenViewModel @Inject constructor(
      */
     private fun monitorUiState() {
         _uiState.onEach {
+            _uiState.update {
+                it.copy(isLoading = true)
+            }
             reloadVegetables()
+            _uiState.update {
+                it.copy(isLoading = false)
+            }
         }.launchIn(viewModelScope)
     }
 }
