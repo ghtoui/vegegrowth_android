@@ -59,6 +59,7 @@ import com.moritoui.vegegrowthapp.ui.home.view.AddAlertWindow
 import com.moritoui.vegegrowthapp.ui.home.view.ConfirmDeleteItemDialog
 import com.moritoui.vegegrowthapp.ui.home.view.ItemListDropDownMenuItem
 import com.moritoui.vegegrowthapp.ui.home.view.ItemListTopBar
+import com.moritoui.vegegrowthapp.ui.home.view.VegeItemListCard
 import com.moritoui.vegegrowthapp.ui.takepicture.navigateToTakePicture
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 
@@ -144,18 +145,24 @@ private fun HomeScreen(
                     Modifier
                         .fillMaxWidth()
                         .padding(it)
-                        .padding(start = 32.dp, end = 24.dp)
+                        .padding(horizontal = 24.dp)
                 ) {
-                    items(vegetablesState.vegetables, key = { item -> item.id }) { item ->
-                        VegeItemElement(
-                            item = item,
-                            selectMenu = uiState.selectMenu,
-                            onItemDeleteClick = { item ->
-                                openDeleteDialog(item)
-                            },
-                            onSelectVegeStatus = onSelectVegeStatus,
-                            onVegeItemClick = { onVegeItemClick(it.id) }
+                    items(vegetablesState.vegetables.zip(vegetablesState.vegetableDetails), key = { item -> item.first.id }) { vegetable ->
+                        VegeItemListCard(
+                            vegetable = vegetable.first,
+                            vegetableDetail = vegetable.second,
+                            onClick = { onVegeItemClick(it) }
                         )
+                        Spacer(modifier = Modifier.height(8.dp))
+//                        VegeItemElement(
+//                            item = item,
+//                            selectMenu = uiState.selectMenu,
+//                            onItemDeleteClick = { item ->
+//                                openDeleteDialog(item)
+//                            },
+//                            onSelectVegeStatus = onSelectVegeStatus,
+//                            onVegeItemClick = { onVegeItemClick(it.id) }
+//                        )
                     }
                 }
             }
