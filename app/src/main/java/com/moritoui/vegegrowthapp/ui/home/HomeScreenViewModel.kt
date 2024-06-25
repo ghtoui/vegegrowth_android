@@ -222,13 +222,13 @@ class HomeScreenViewModel @Inject constructor(
         viewModelScope.launch {
             val filterStatus = _uiState.value.filterStatus
             val filteredVegetables = getVegeItemListUseCase().filter { item ->
-                    if (filterStatus == FilterStatus.All) {
-                        true
-                    } else {
-                        item.status == filterStatusMap[filterStatus] ||
-                                item.category == filterStatusMap[filterStatus]
-                    }
+                if (filterStatus == FilterStatus.All) {
+                    true
+                } else {
+                    item.status == filterStatusMap[filterStatus] ||
+                        item.category == filterStatusMap[filterStatus]
                 }
+            }
 
             _vegetables.update {
                 filteredVegetables

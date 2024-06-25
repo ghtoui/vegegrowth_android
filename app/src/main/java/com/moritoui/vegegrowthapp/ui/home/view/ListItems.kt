@@ -4,17 +4,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -59,7 +58,7 @@ fun VegeItemListCard(
     onSelectVegeStatus: (VegeItem) -> Unit,
     onVegeItemClick: (Int) -> Unit,
 ) {
-    var selectedStatus = remember {
+    val selectedStatus = remember {
         mutableStateOf(vegetable.status)
     }
     val statusIcon = VegeStatusMethod.getIcon(selectedStatus.value)
@@ -67,14 +66,18 @@ fun VegeItemListCard(
 
     Card(
         modifier = modifier
+            .padding(6.dp)
             .fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
-        onClick = { onVegeItemClick(vegetable.id) }
+        onClick = { onVegeItemClick(vegetable.id) },
+        elevation = CardDefaults.elevatedCardElevation(
+            defaultElevation = 4.dp,
+        )
     ) {
         Row(
             modifier = modifier
                 .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             AsyncImage(
                 modifier = Modifier
@@ -91,13 +94,14 @@ fun VegeItemListCard(
             VegetableInfo(
                 modifier = Modifier.weight(1f),
                 vegetable = vegetable,
-                vegetableDetail = vegetableDetail,
+                vegetableDetail = vegetableDetail
             )
             Spacer(modifier = Modifier.width(8.dp))
             Icon(
                 statusIcon,
                 contentDescription = null,
                 tint = statusIconTint,
+                modifier = Modifier.size(24.dp),
             )
             Spacer(modifier = Modifier.width(8.dp))
             VegetableEditMenu(
@@ -105,18 +109,14 @@ fun VegeItemListCard(
                 selectMenu = selectMenu,
                 selectedStatus = selectedStatus,
                 onItemDeleteClick = onItemDeleteClick,
-                onSelectVegeStatus = onSelectVegeStatus,
+                onSelectVegeStatus = onSelectVegeStatus
             )
         }
     }
 }
 
 @Composable
-private fun VegetableInfo(
-    modifier: Modifier = Modifier,
-    vegetable: VegeItem,
-    vegetableDetail: VegeItemDetail?,
-) {
+private fun VegetableInfo(modifier: Modifier = Modifier, vegetable: VegeItem, vegetableDetail: VegeItemDetail?) {
     val iconTint: Color = vegetable.category.getTint(otherColor = LocalContentColor.current)
     val categoryIcon = vegetable.category.getIcon()
     Column(modifier = modifier) {
@@ -162,10 +162,9 @@ private fun VegetableEditMenu(
     selectMenu: SelectMenu,
     selectedStatus: MutableState<VegeStatus>,
     onItemDeleteClick: (VegeItem) -> Unit,
-    onSelectVegeStatus: (VegeItem) -> Unit
+    onSelectVegeStatus: (VegeItem) -> Unit,
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
-    var isCheck by rememberSaveable { mutableStateOf(false) }
     if (selectMenu != SelectMenu.None) {
         Box(
             modifier = modifier,
@@ -173,25 +172,20 @@ private fun VegetableEditMenu(
         ) {
             IconButton(onClick = {
                 onItemDeleteClick(vegetable)
-                isCheck = !isCheck
             }) {
                 if (selectMenu == SelectMenu.Delete) {
                     Icon(
                         Icons.Filled.Delete,
                         contentDescription = stringResource(id = R.string.delete_text),
-                        tint =
-                        when (isCheck) {
-                            false -> Color.Red
-                            true -> Color.Transparent
-                        },
-                        modifier = Modifier.aspectRatio(1f / 1f)
+                        tint = Color.Red,
+                        modifier = Modifier.size(24.dp)
                     )
                 } else {
                     IconButton(onClick = { expanded = true }) {
                         Icon(
                             Icons.Filled.Edit,
                             contentDescription = stringResource(id = R.string.delete_text),
-                            modifier = Modifier.aspectRatio(1f / 1f)
+                            modifier = Modifier.size(24.dp)
                         )
                     }
                 }
@@ -217,20 +211,8 @@ private fun VegetableEditMenu(
                         )
                     }
                 }
-                Icon(
-                    Icons.Filled.Check,
-                    contentDescription = stringResource(R.string.done_text),
-                    tint =
-                    when (isCheck) {
-                        false -> Color.Transparent
-                        true -> Color.Black
-                    },
-                    modifier = Modifier.aspectRatio(1f / 1f)
-                )
             }
         }
-    } else {
-        isCheck = false
     }
 }
 
@@ -243,7 +225,7 @@ fun VegeItemListCardPreview() {
                 name = "キャベツ",
                 id = 0,
                 status = VegeStatus.End,
-                category = VegeCategory.Leaf,
+                category = VegeCategory.Leaf
             ),
             vegetableDetail = VegeItemDetail(
                 name = "キャベツ",
@@ -259,7 +241,7 @@ fun VegeItemListCardPreview() {
             onVegeItemClick = {},
             onSelectVegeStatus = {},
             onItemDeleteClick = {},
-            selectMenu = SelectMenu.Edit,
+            selectMenu = SelectMenu.Edit
         )
     }
 }

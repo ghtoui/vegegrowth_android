@@ -38,7 +38,7 @@ fun ItemListTopBar(
     onSelectMenuClick: () -> Unit,
     onFilterMenuClick: () -> Unit,
     onFilterItemClick: (FilterStatus) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val menuIcon = SelectMenuMethod.getIcon(selectMenu)
     val menuIconTint = SelectMenuMethod.getIconTint(selectMenu)

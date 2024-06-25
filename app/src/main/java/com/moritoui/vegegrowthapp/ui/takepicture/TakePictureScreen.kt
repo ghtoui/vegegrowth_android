@@ -81,7 +81,7 @@ private fun TakePictureScreen(
     onTakePictureButtonClick: (ImageProxy?) -> Unit,
     onSizeTextChange: (String) -> Unit,
     onConfirmClick: () -> Unit,
-    onDismissClick: () -> Unit
+    onDismissClick: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -190,7 +190,7 @@ fun RegisterAlertWindow(
     isBeforeInputText: Boolean,
     onValueChange: (String) -> Unit,
     onConfirmClick: () -> Unit,
-    onDismissClick: () -> Unit
+    onDismissClick: () -> Unit,
 ) {
     if (isOpenDialog) {
         AlertDialog(

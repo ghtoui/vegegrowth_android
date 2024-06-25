@@ -36,7 +36,7 @@ class TakePictureScreenViewModel @Inject constructor(
     private val vegetableDetailRepository: VegetableDetailRepository,
     private val getVegetableDetailsUseCase: GetVegetableDetailsUseCase,
     private val getSelectedVegeItemUseCase: GetSelectedVegeItemUseCase,
-    savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     val args = checkNotNull(savedStateHandle.get<Int>("vegetableId"))
 
@@ -73,7 +73,7 @@ class TakePictureScreenViewModel @Inject constructor(
         isBeforeInputText: Boolean = _uiState.value.isBeforeInputText,
         takePicImage: Bitmap? = _uiState.value.takePicImage,
         isVisibleNavigateButton: Boolean = _uiState.value.isVisibleNavigateButton,
-        isCameraOpen: Boolean = _uiState.value.isCameraOpen
+        isCameraOpen: Boolean = _uiState.value.isCameraOpen,
     ) {
         _uiState.update { currentState ->
             currentState.copy(

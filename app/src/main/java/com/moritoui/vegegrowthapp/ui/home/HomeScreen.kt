@@ -1,10 +1,8 @@
 package com.moritoui.vegegrowthapp.ui.home
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -85,7 +83,7 @@ private fun HomeScreen(
     openDeleteDialog: (VegeItem) -> Unit,
     onConfirmClick: () -> Unit,
     onDismiss: () -> Unit,
-    onSelectVegeCategory: (VegeCategory) -> Unit
+    onSelectVegeCategory: (VegeCategory) -> Unit,
 ) {
     var selectMenuExpanded by rememberSaveable { mutableStateOf(false) }
     var filterMenuExpanded by rememberSaveable { mutableStateOf(false) }
@@ -127,7 +125,7 @@ private fun HomeScreen(
                     VegeGrowthLoading(
                         modifier = Modifier
                             .padding(top = it.calculateTopPadding())
-                            .fillMaxSize(),
+                            .fillMaxSize()
                     )
                 }
                 LazyColumn(
@@ -144,9 +142,8 @@ private fun HomeScreen(
                             onItemDeleteClick = { item ->
                                 openDeleteDialog(item)
                             },
-                            onSelectVegeStatus = onSelectVegeStatus,
+                            onSelectVegeStatus = onSelectVegeStatus
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
             }
@@ -216,7 +213,7 @@ class HomePreviewParameterProvider : PreviewParameterProvider<HomePreviewParamet
             ),
             Params(
                 uiState = HomeScreenUiState.initialState().copy(
-                    selectMenu = SelectMenu.Edit,
+                    selectMenu = SelectMenu.Edit
                 ),
                 vegetablesState = HomeVegetablesState.initial().copy(
                     vegetables = HomeScreenDummy.vegeList(),
@@ -234,8 +231,5 @@ class HomePreviewParameterProvider : PreviewParameterProvider<HomePreviewParamet
             )
         )
 
-    data class Params(
-        val uiState: HomeScreenUiState,
-        val vegetablesState: HomeVegetablesState,
-    )
+    data class Params(val uiState: HomeScreenUiState, val vegetablesState: HomeVegetablesState)
 }

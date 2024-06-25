@@ -11,7 +11,7 @@ import com.moritoui.vegegrowthapp.R
 enum class VegeStatus {
     Default,
     Favorite,
-    End
+    End,
 }
 
 object VegeStatusMethod {

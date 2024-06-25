@@ -49,7 +49,7 @@ fun AddAlertWindow(
     onValueChange: (String) -> Unit,
     onConfirmClick: () -> Unit,
     onDismissClick: () -> Unit,
-    onSelectVegeCategory: (VegeCategory) -> Unit
+    onSelectVegeCategory: (VegeCategory) -> Unit,
 ) {
     if (isOpenDialog) {
         AlertDialog(

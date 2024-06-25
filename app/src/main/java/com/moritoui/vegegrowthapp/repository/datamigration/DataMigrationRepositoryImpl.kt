@@ -28,7 +28,7 @@ constructor(
     @ApplicationContext private val context: Context,
     private val vegetableDao: VegetableDao,
     private val vegetableDetailDao: VegetableDetailDao,
-    private val migratePreferences: DataStore<MigratePreferences>
+    private val migratePreferences: DataStore<MigratePreferences>,
 ) : DataMigrationRepository {
     override var isDataMigrating: MutableStateFlow<Boolean> = MutableStateFlow(false)
 

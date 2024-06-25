@@ -29,7 +29,7 @@ data class HomeScreenUiState(
             selectStatus = VegeStatus.Default,
             filterStatus = FilterStatus.All,
             targetDeleteItem = null,
-            isLoading = false,
+            isLoading = false
         )
     }
 }
