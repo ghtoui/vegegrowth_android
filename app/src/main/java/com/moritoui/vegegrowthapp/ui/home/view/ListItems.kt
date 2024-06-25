@@ -71,7 +71,7 @@ fun VegeItemListCard(
         shape = RoundedCornerShape(24.dp),
         onClick = { onVegeItemClick(vegetable.id) },
         elevation = CardDefaults.elevatedCardElevation(
-            defaultElevation = 4.dp,
+            defaultElevation = 4.dp
         )
     ) {
         Row(
@@ -101,7 +101,7 @@ fun VegeItemListCard(
                 statusIcon,
                 contentDescription = null,
                 tint = statusIconTint,
-                modifier = Modifier.size(24.dp),
+                modifier = Modifier.size(24.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
             VegetableEditMenu(

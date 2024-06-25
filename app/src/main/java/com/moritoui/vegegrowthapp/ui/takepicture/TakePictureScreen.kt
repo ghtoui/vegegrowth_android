@@ -164,10 +164,7 @@ fun PictureView(image: ImageBitmap?, modifier: Modifier = Modifier.aspectRatio(1
 }
 
 @Composable
-fun TakeButton(
-    isTakenPicture: Boolean,
-    onClick: () -> Unit
-) {
+fun TakeButton(isTakenPicture: Boolean, onClick: () -> Unit) {
     Button(
         onClick = { onClick() },
         colors = when (isTakenPicture) {
@@ -270,7 +267,7 @@ fun RegisterAlertWindow(
                     colors = when (isSuccessInputText && !isBeforeInputText) {
                         true -> ButtonDefaults.textButtonColors()
                         false -> ButtonDefaults.textButtonColors().copy(
-                            contentColor = Color.Gray,
+                            contentColor = Color.Gray
                         )
                     }
                 ) {
