@@ -9,7 +9,7 @@ enum class FilterStatus {
     Default,
     Leaf,
     Flower,
-    Other
+    Other,
 }
 
 val filterStatusMap =

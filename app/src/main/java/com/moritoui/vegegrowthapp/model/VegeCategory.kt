@@ -7,7 +7,7 @@ enum class VegeCategory {
     None,
     Leaf,
     Flower,
-    Other
+    Other,
 }
 
 fun VegeCategory.getIcon(): Int? = when (this) {

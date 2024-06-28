@@ -12,7 +12,7 @@ data class TakePictureScreenUiState(
     val isVisibleNavigateButton: Boolean,
     val isCameraOpen: Boolean,
     val lastSavedSize: Double?,
-    val isLoading: Boolean
+    val isLoading: Boolean,
 ) {
     companion object {
         fun initialState(): TakePictureScreenUiState = TakePictureScreenUiState(

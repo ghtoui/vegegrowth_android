@@ -10,7 +10,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 enum class SelectMenu {
     None,
     Delete,
-    Edit
+    Edit,
 }
 
 object SelectMenuMethod {

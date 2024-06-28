@@ -1,6 +1,5 @@
 package com.moritoui.vegegrowthapp.ui.home.view
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -39,7 +38,7 @@ fun ItemListTopBar(
     onSelectMenuClick: () -> Unit,
     onFilterMenuClick: () -> Unit,
     onFilterItemClick: (FilterStatus) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val menuIcon = SelectMenuMethod.getIcon(selectMenu)
     val menuIconTint = SelectMenuMethod.getIconTint(selectMenu)
@@ -50,28 +49,26 @@ fun ItemListTopBar(
             .wrapContentSize(Alignment.TopStart),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            modifier =
-            Modifier
-                .clickable { onFilterMenuClick() }
-        ) {
-            Icon(
-                Icons.Filled.List,
-                contentDescription = null
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(
-                text = stringResource(R.string.filter_text)
-            )
-            FilterDropDownMenu(
-                filterMenuExpanded = filterMenuExpanded,
-                onDismissRequest = onFilterDropDownMenuClose,
-                onFilterItemClick = {
-                    onFilterItemClick(it)
-                    onFilterDropDownMenuClose()
-                }
-            )
+        TextButton(onClick = { onFilterMenuClick() }) {
+            Row {
+                Icon(
+                    Icons.Filled.List,
+                    contentDescription = null
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = stringResource(R.string.filter_text)
+                )
+            }
         }
+        FilterDropDownMenu(
+            filterMenuExpanded = filterMenuExpanded,
+            onDismissRequest = onFilterDropDownMenuClose,
+            onFilterItemClick = {
+                onFilterItemClick(it)
+                onFilterDropDownMenuClose()
+            }
+        )
         Box(
             modifier =
             Modifier

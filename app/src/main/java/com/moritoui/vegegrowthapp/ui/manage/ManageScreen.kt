@@ -83,12 +83,11 @@ private fun ManageScreen(
     onDismissRequest: () -> Unit,
     onMemoTextChange: (String) -> Unit,
     onCancelButtonClick: () -> Unit,
-    onSaveButtonClick: (VegeItemDetail) -> Unit
+    onSaveButtonClick: (VegeItemDetail) -> Unit,
 ) {
     if (uiState.vegeRepositoryList.isEmpty()) {
         VegeGrowthLoading(
-            modifier = Modifier.fillMaxSize(),
-            isLoading = uiState.vegeRepositoryList.isEmpty()
+            modifier = Modifier.fillMaxSize()
         )
         return
     }
@@ -178,7 +177,7 @@ fun ImageCarousel(
     onImageClick: () -> Unit,
     onImageBottomBarClick: (Int) -> Unit,
     currentImageBarModifier: Modifier = Modifier,
-    imagePathList: List<String>
+    imagePathList: List<String>,
 ) {
     Column(
         modifier = modifier,

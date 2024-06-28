@@ -23,7 +23,7 @@ constructor(
     getVegetableDetailsUseCase: GetVegetableDetailsUseCase,
     getImagePathListUseCase: GetImagePathListUseCase,
     private val detailRepository: VegetableDetailRepository,
-    savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     private val args = checkNotNull(savedStateHandle.get<Int>("vegetableId"))
     private var vegeItemDetailList: List<VegeItemDetail> = emptyList()
@@ -49,7 +49,7 @@ constructor(
         vegeRepositoryList: List<VegeItemDetail> = _uiState.value.vegeRepositoryList,
         isOpenImageBottomSheet: Boolean = _uiState.value.isOpenImageBottomSheet,
         inputMemoText: String = _uiState.value.inputMemoText,
-        isOpenMemoEditorBottomSheet: Boolean = _uiState.value.isOpenMemoEditorBottomSheet
+        isOpenMemoEditorBottomSheet: Boolean = _uiState.value.isOpenMemoEditorBottomSheet,
     ) {
         _uiState.update { currentState ->
             currentState.copy(
