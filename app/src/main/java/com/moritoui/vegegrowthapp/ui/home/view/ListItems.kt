@@ -225,7 +225,8 @@ fun VegeItemListCardPreview() {
                 name = "キャベツ",
                 id = 0,
                 status = VegeStatus.End,
-                category = VegeCategory.Leaf
+                category = VegeCategory.Leaf,
+                folderId = null
             ),
             vegetableDetail = VegeItemDetail(
                 name = "キャベツ",

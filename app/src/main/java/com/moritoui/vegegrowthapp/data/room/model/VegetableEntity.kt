@@ -13,11 +13,13 @@ data class VegetableEntity(
     @ColumnInfo(name = "vegetable_name") val vegetableName: String,
     @ColumnInfo(name = "vegetable_category") val vegetableCategory: VegeCategory,
     @ColumnInfo(name = "vegetable_state") val vegetableState: VegeStatus,
+    @ColumnInfo(name = "folder_id") val folderId: Int?,
 )
 
 fun VegetableEntity.toVegeItem(): VegeItem = VegeItem(
     name = vegetableName,
     category = vegetableCategory,
     id = id,
-    status = vegetableState
+    status = vegetableState,
+    folderId = folderId,
 )

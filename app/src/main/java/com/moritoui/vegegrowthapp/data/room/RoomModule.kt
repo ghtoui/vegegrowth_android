@@ -18,7 +18,7 @@ object RoomModule {
     @Provides
     fun provideDatabase(@ApplicationContext context: Context) = Room
         .databaseBuilder(context, VegetableDatabase::class.java, "vegetable_database")
-        .fallbackToDestructiveMigration()
+        .addMigrations(MIGRATION_1_2)
         .build()
 
     @Provides

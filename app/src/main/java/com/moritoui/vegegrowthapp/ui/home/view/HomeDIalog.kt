@@ -236,7 +236,8 @@ private fun ConfirmDeleteItemDialogPreview() {
                 name = "キャベツ",
                 VegeCategory.None,
                 uuid = "",
-                VegeStatus.End
+                VegeStatus.End,
+                folderId = null
             ),
             onDismissRequest = {},
             onConfirmClick = {},

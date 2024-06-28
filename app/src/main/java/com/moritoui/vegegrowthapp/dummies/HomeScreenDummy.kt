@@ -11,28 +11,32 @@ object HomeScreenDummy {
             name = "v1",
             VegeCategory.Leaf,
             uuid = "",
-            VegeStatus.End
+            VegeStatus.End,
+            folderId = null,
         ),
         VegeItem(
             id = 1,
             name = "v2",
             VegeCategory.Flower,
             uuid = "",
-            VegeStatus.Favorite
+            VegeStatus.Favorite,
+            folderId = null,
         ),
         VegeItem(
             id = 2,
             name = "v3",
             VegeCategory.Other,
             uuid = "",
-            VegeStatus.Default
+            VegeStatus.Default,
+            folderId = null,
         ),
         VegeItem(
             id = 3,
             name = "v4",
             VegeCategory.None,
             uuid = "",
-            VegeStatus.End
+            VegeStatus.End,
+            folderId = null,
         )
     )
 }

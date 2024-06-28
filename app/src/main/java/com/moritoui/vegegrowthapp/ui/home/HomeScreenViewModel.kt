@@ -117,7 +117,8 @@ class HomeScreenViewModel @Inject constructor(
                 name = _uiState.value.inputText,
                 category = _uiState.value.selectCategory,
                 uuid = UUID.randomUUID().toString(),
-                status = VegeStatus.Default
+                status = VegeStatus.Default,
+                folderId = null
             )
         viewModelScope.launch {
             addVegeItemUseCase(vegeItem)
