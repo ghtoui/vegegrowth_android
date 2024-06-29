@@ -12,6 +12,7 @@
     <string name="home_folder">フォルダー</string>
     <string name="home_item_not_classified">分類されていないもの</string>
     <string name="folder_save_num">%s個</string>
+    <string name="home_screen_title">一覧画面</string>
 
     <!--  撮影画面  -->
     <string name="take_picture_button">撮影</string>
@@ -35,7 +36,6 @@
     <string name="select_none">選択なし</string>
     <string name="filter_text">並び替え</string>
     <string name="all_text">全て</string>
-    <string name="first_screen_title">一覧画面</string>
     <string name="vege_category_none_text">カテゴリーを選択してください</string>
     <string name="flower_text">花</string>
     <string name="leaf_text">葉</string>

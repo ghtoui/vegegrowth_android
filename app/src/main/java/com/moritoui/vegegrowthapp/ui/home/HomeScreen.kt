@@ -115,7 +115,7 @@ private fun HomeScreen(
     Scaffold(
         topBar = {
             NavigationAppTopBar(
-                title = stringResource(R.string.first_screen_title),
+                title = stringResource(R.string.home_screen_title),
                 actions = {
                     HomeAddItem(
                         onFolderAddClick = { openAddDialogType(AddDialogType.AddFolder) },

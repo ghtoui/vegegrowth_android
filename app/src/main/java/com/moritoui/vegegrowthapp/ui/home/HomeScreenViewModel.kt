@@ -48,7 +48,7 @@ class HomeScreenViewModel @Inject constructor(
     private val deleteVegeFolderUseCase: DeleteVegeFolderUseCase,
     private val getVegeItemListUseCase: GetVegeItemListUseCase,
     private val changeVegeItemStatusUseCase: ChangeVegeItemStatusUseCase,
-    private val getVegeItemDetailLast: GetVegeItemDetailLastUseCase,
+    private val getVegeItemDetailLastUseCase: GetVegeItemDetailLastUseCase,
     private val dataMigrationRepository: DataMigrationRepository,
     private val getVegetableFolderUseCase: GetVegetableFolderUseCase,
     private val insertVegetableFolderUseCase: InsertVegetableFolderUseCase,
@@ -321,7 +321,7 @@ class HomeScreenViewModel @Inject constructor(
     /**
      * 指定された野菜の最新登録情報を取得する
      */
-    private suspend fun reloadVegetableDetailLast(vegeItem: VegeItem): VegeItemDetail? = getVegeItemDetailLast(vegeItem.id)
+    private suspend fun reloadVegetableDetailLast(vegeItem: VegeItem): VegeItemDetail? = getVegeItemDetailLastUseCase(vegeItem.id)
 
     /**
      * uiStateの変更を監視する

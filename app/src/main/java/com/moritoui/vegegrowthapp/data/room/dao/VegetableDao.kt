@@ -44,4 +44,11 @@ interface VegetableDao {
     @Transaction
     @Query("SELECT * FROM vegetable_resources WHERE id = :id")
     suspend fun getVegetableWithDetails(id: Int): VegetableWIthDetails?
+
+    /**
+     * フォルダIDが一致するものを取得する
+     */
+    @Transaction
+    @Query("SELECT * FROM vegetable_resources WHERE folder_id = :folderId")
+    suspend fun getVegetableFromFolderId(folderId: Int): List<VegetableEntity>
 }
