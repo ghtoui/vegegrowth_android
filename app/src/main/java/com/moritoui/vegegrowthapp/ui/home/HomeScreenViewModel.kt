@@ -1,5 +1,6 @@
 package com.moritoui.vegegrowthapp.ui.home
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.moritoui.vegegrowthapp.data.room.model.VegetableFolderEntity
@@ -16,6 +17,7 @@ import com.moritoui.vegegrowthapp.ui.home.model.HomeScreenUiState
 import com.moritoui.vegegrowthapp.ui.home.model.HomeVegetablesState
 import com.moritoui.vegegrowthapp.usecases.AddVegeItemUseCase
 import com.moritoui.vegegrowthapp.usecases.ChangeVegeItemStatusUseCase
+import com.moritoui.vegegrowthapp.usecases.DeleteVegeFolderUseCase
 import com.moritoui.vegegrowthapp.usecases.DeleteVegeItemUseCase
 import com.moritoui.vegegrowthapp.usecases.GetVegeItemDetailLastUseCase
 import com.moritoui.vegegrowthapp.usecases.GetVegeItemListUseCase
@@ -44,6 +46,7 @@ import javax.inject.Inject
 class HomeScreenViewModel @Inject constructor(
     private val addVegeItemUseCase: AddVegeItemUseCase,
     private val deleteVegeItemUseCase: DeleteVegeItemUseCase,
+    private val deleteVegeFolderUseCase: DeleteVegeFolderUseCase,
     private val getVegeItemListUseCase: GetVegeItemListUseCase,
     private val changeVegeItemStatusUseCase: ChangeVegeItemStatusUseCase,
     private val getVegeItemDetailLast: GetVegeItemDetailLastUseCase,
@@ -203,11 +206,21 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     fun deleteItem() {
-        val deleteItem = _uiState.value.targetDeleteItem ?: return
         viewModelScope.launch {
-            deleteVegeItemUseCase(deleteItem)
+            val deleteItem = _uiState.value.targetDeleteItem
+            val deleteFolder = _uiState.value.targetDeleteFolder
+            if (deleteItem != null) {
+                deleteVegeItemUseCase(deleteItem)
+            }
+            if (deleteFolder != null) {
+//                deleteVegeFolderUseCase(deleteFolder)
+                Log.d("test", "$deleteFolder")
+            }
             _uiState.update {
-                it.copy(targetDeleteItem = null)
+                it.copy(
+                    targetDeleteItem = null,
+                    targetDeleteFolder = null,
+                )
             }
         }
     }

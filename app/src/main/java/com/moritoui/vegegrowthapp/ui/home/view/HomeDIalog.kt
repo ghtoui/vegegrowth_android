@@ -31,10 +31,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.moritoui.vegegrowthapp.R
+import com.moritoui.vegegrowthapp.data.room.model.VegetableFolderEntity
 import com.moritoui.vegegrowthapp.model.VegeCategory
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegeStatus
@@ -202,20 +204,43 @@ fun AlertPreview() {
 }
 
 @Composable
-fun ConfirmDeleteItemDialog(modifier: Modifier = Modifier, deleteItem: VegeItem?, onDismissRequest: () -> Unit, onConfirmClick: () -> Unit, onCancelClick: () -> Unit) {
+fun ConfirmDeleteItemDialog(
+    modifier: Modifier = Modifier,
+    deleteItem: VegeItem?,
+    deleteFolder: VegetableFolderEntity?,
+    onDismissRequest: () -> Unit,
+    onConfirmClick: () -> Unit,
+    onCancelClick: () -> Unit
+) {
     AlertDialog(
         modifier = modifier,
         onDismissRequest = onDismissRequest,
         icon = {
-            Icon(
-                Icons.Filled.Delete,
-                contentDescription = stringResource(id = R.string.delete_text)
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if (deleteItem != null) {
+                    Icon(
+                        painterResource(id = R.drawable.ic_leaf),
+                        contentDescription = null
+                    )
+                }
+                if (deleteFolder != null) {
+                    Icon(
+                        painterResource(id = R.drawable.ic_folder),
+                        contentDescription = null
+                    )
+                }
+                Icon(
+                    Icons.Filled.Delete,
+                    contentDescription = stringResource(id = R.string.delete_text)
+                )
+            }
         },
         title = {
             Column {
                 Text(
-                    stringResource(id = R.string.home_delete_dialog_title, deleteItem?.name ?: ""),
+                    stringResource(id = R.string.home_delete_dialog_title, deleteItem?.name ?: deleteFolder?.folderName ?: ""),
                     style = MaterialTheme.typography.titleLarge
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -258,7 +283,8 @@ private fun ConfirmDeleteItemDialogPreview() {
             ),
             onDismissRequest = {},
             onConfirmClick = {},
-            onCancelClick = {}
+            onCancelClick = {},
+            deleteFolder = null,
         )
     }
 }

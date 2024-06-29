@@ -1,10 +1,10 @@
 package com.moritoui.vegegrowthapp.data.room.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Transaction
 import androidx.room.Update
 import com.moritoui.vegegrowthapp.data.room.model.VegetableFolderEntity
 
@@ -29,7 +29,12 @@ interface VegetableFolderDao {
     /**
      * 保存されているフォルダーを取得する
      */
-    @Transaction
     @Query("SELECT * FROM vegetable_folder_resources")
     suspend fun getVegetableFolder(): List<VegetableFolderEntity>
+
+    /**
+     * 選択したものを削除する
+     */
+    @Delete
+    suspend fun deleteVegetableFolder(vegetableFolderEntity: VegetableFolderEntity)
 }

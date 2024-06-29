@@ -82,7 +82,7 @@ fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel(), navController: 
         closeDeleteDialog = viewModel::closeDeleteDialog,
         insertErrorEvent = viewModel.insertVegetableFolderEvent,
         openDeleteDialog = viewModel::openDeleteVegeItemDialog,
-        onDeleteFolderItem = {},
+        onDeleteFolderItem = viewModel::openDeleteFolderDialog,
         onFolderClick = {},
     )
 }
@@ -260,6 +260,7 @@ private fun HomeScreen(
     if (uiState.isOpenDeleteDialog) {
         ConfirmDeleteItemDialog(
             deleteItem = uiState.targetDeleteItem,
+            deleteFolder = uiState.targetDeleteFolder,
             onDismissRequest = {
                 closeDeleteDialog()
             },
