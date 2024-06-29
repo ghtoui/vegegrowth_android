@@ -22,10 +22,8 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -60,11 +58,8 @@ fun VegeItemListCard(
     onSelectVegeStatus: (VegeItem) -> Unit,
     onVegeItemClick: (Int) -> Unit,
 ) {
-    val selectedStatus = remember {
-        mutableStateOf(vegetable.status)
-    }
-    val statusIcon = VegeStatusMethod.getIcon(selectedStatus.value)
-    val statusIconTint = VegeStatusMethod.getIconTint(vegeStatus = selectedStatus.value) ?: LocalContentColor.current
+    val statusIcon = VegeStatusMethod.getIcon(vegetable.status)
+    val statusIconTint = VegeStatusMethod.getIconTint(vegetable.status) ?: LocalContentColor.current
 
     Card(
         modifier = modifier
@@ -88,7 +83,6 @@ fun VegeItemListCard(
                 model = vegetableDetail?.imagePath,
                 contentDescription = "最後に撮影された写真",
                 error = painterResource(id = R.drawable.no_image),
-                // Previewで見えるようにするため
                 placeholder = painterResource(R.drawable.loading_image),
                 contentScale = ContentScale.Crop
             )
@@ -107,11 +101,20 @@ fun VegeItemListCard(
             )
             Spacer(modifier = Modifier.width(8.dp))
             VegetableEditMenu(
-                vegetable = vegetable,
                 selectMenu = selectMenu,
-                selectedStatus = selectedStatus,
-                onItemDeleteClick = onItemDeleteClick,
-                onSelectVegeStatus = onSelectVegeStatus
+                onItemDeleteClick = { onItemDeleteClick(vegetable) },
+                onSelectVegeStatus = {
+                    onSelectVegeStatus(
+                        VegeItem(
+                            id = vegetable.id,
+                            folderId = vegetable.folderId,
+                            name = vegetable.name,
+                            uuid = vegetable.uuid,
+                            category = vegetable.category,
+                            status = it,
+                        )
+                    )
+                }
             )
         }
     }
@@ -168,36 +171,21 @@ private fun VegetableCategoryIcon(
 @Composable
 private fun VegetableEditMenu(
     modifier: Modifier = Modifier,
-    vegetable: VegeItem,
     selectMenu: SelectMenu,
-    selectedStatus: MutableState<VegeStatus>,
-    onItemDeleteClick: (VegeItem) -> Unit,
-    onSelectVegeStatus: (VegeItem) -> Unit,
+    onItemDeleteClick: (() -> Unit)? = null,
+    onSelectVegeStatus: ((VegeStatus) -> Unit)? = null,
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
-    if (selectMenu != SelectMenu.None) {
-        Box(
-            modifier = modifier,
-            contentAlignment = Alignment.BottomEnd
-        ) {
-            IconButton(onClick = {
-                onItemDeleteClick(vegetable)
-            }) {
-                if (selectMenu == SelectMenu.Delete) {
+    when (selectMenu) {
+        SelectMenu.Edit -> {
+            onSelectVegeStatus ?: return
+            Box {
+                IconButton(onClick = { expanded = true }) {
                     Icon(
-                        Icons.Filled.Delete,
+                        Icons.Filled.Edit,
                         contentDescription = stringResource(id = R.string.delete_text),
-                        tint = Color.Red,
                         modifier = Modifier.size(24.dp)
                     )
-                } else {
-                    IconButton(onClick = { expanded = true }) {
-                        Icon(
-                            Icons.Filled.Edit,
-                            contentDescription = stringResource(id = R.string.delete_text),
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
                 }
                 DropdownMenu(
                     expanded = expanded,
@@ -210,18 +198,33 @@ private fun VegetableEditMenu(
                             icon = VegeStatusMethod.getIcon(status),
                             text = stringResource(VegeStatusMethod.getText(status)),
                             iconTint =
-                            VegeStatusMethod.getIconTint(status)
-                                ?: LocalContentColor.current,
+                            VegeStatusMethod.getIconTint(status) ?: LocalContentColor.current,
                             onClick = {
-                                vegetable.status = status
-                                selectedStatus.value = status
-                                onSelectVegeStatus(vegetable)
+                                onSelectVegeStatus(status)
                                 expanded = false
                             }
                         )
                     }
                 }
             }
+        }
+
+        SelectMenu.Delete -> {
+            onItemDeleteClick ?: return
+            IconButton(
+                modifier = modifier,
+                onClick = onItemDeleteClick
+            ) {
+                Icon(
+                    Icons.Filled.Delete,
+                    contentDescription = stringResource(id = R.string.delete_text),
+                    tint = Color.Red,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+        }
+
+        else -> {
         }
     }
 }
@@ -261,27 +264,30 @@ fun VegeItemListCardPreview() {
 fun VegeFolderCard(
     modifier: Modifier = Modifier,
     vegetableFolder: VegetableFolderEntity,
+    selectMenu: SelectMenu,
+    onItemDeleteClick: (VegetableFolderEntity) -> Unit,
+    onFolderClick: (VegetableFolderEntity) -> Unit,
 ) {
     Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .sizeIn(minHeight = 100.dp),
+        modifier = modifier,
         shape = RoundedCornerShape(24.dp),
+        onClick = { onFolderClick(vegetableFolder) }
     ) {
         Row(
             modifier = Modifier
-                .padding(8.dp),
+                .padding(8.dp)
+                .fillMaxWidth()
+                .sizeIn(minHeight = 40.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                modifier = Modifier.size(40.dp),
-                painter = painterResource(id = R.drawable.ic_folder),
-                contentDescription = null
-            )
-            Spacer(modifier = Modifier.width(8.dp))
             VegetableCategoryIcon(category = vegetableFolder.vegetableCategory)
             Spacer(modifier = Modifier.width(8.dp))
             Text(vegetableFolder.folderName)
+            Spacer(modifier = Modifier.weight(1f))
+            VegetableEditMenu(
+                selectMenu = selectMenu,
+                onItemDeleteClick = { onItemDeleteClick(vegetableFolder) },
+            )
         }
     }
 }
@@ -296,7 +302,10 @@ fun VegeFolderCardPreview() {
                 folderNumber = 0,
                 id = 0,
                 vegetableCategory = VegeCategory.Leaf
-            )
+            ),
+            selectMenu = SelectMenu.Delete,
+            onItemDeleteClick = {},
+            onFolderClick = {}
         )
     }
 }

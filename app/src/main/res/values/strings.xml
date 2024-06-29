@@ -11,6 +11,7 @@
     <string name="error_duplicate_insert">既に登録されているフォルダー名です\n名前を変えてもう一度登録してください</string>
     <string name="home_folder">フォルダー</string>
     <string name="home_item_not_classified">分類されていないもの</string>
+    <string name="folder_save_num">%s個</string>
 
     <!--  撮影画面  -->
     <string name="take_picture_button">撮影</string>

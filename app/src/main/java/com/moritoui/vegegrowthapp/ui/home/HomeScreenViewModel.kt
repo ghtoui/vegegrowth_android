@@ -251,11 +251,23 @@ class HomeScreenViewModel @Inject constructor(
     /**
      * 削除ダイアログを開いて，削除するものをセットする
      */
-    fun openDeleteDialog(vegeItem: VegeItem) {
+    fun openDeleteVegeItemDialog(vegeItem: VegeItem) {
         _uiState.update {
             it.copy(
                 isOpenDeleteDialog = true,
                 targetDeleteItem = vegeItem
+            )
+        }
+    }
+
+    /**
+     * 削除ダイアログを開いて，削除するものをセットする
+     */
+    fun openDeleteFolderDialog(folder: VegetableFolderEntity) {
+        _uiState.update {
+            it.copy(
+                isOpenDeleteDialog = true,
+                targetDeleteFolder = folder
             )
         }
     }

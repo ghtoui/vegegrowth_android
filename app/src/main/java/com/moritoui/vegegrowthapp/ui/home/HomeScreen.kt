@@ -3,16 +3,19 @@ package com.moritoui.vegegrowthapp.ui.home
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,7 +24,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -29,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.moritoui.vegegrowthapp.R
+import com.moritoui.vegegrowthapp.data.room.model.VegetableFolderEntity
 import com.moritoui.vegegrowthapp.dummies.HomeScreenDummy
 import com.moritoui.vegegrowthapp.dummies.ManageScreenDummy
 import com.moritoui.vegegrowthapp.model.FilterStatus
@@ -59,9 +65,9 @@ fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel(), navController: 
     HomeScreen(
         uiState = uiState,
         vegetablesState = vegetablesState,
+        onDeleteVegeItem = viewModel::changeDeleteMode,
         openAddDialogType = viewModel::openAddDialog,
         onCancelMenuClick = viewModel::onCancelMenuClick,
-        onDeleteItem = viewModel::changeDeleteMode,
         onEditIconClick = viewModel::changeEditMode,
         onFilterItemClick = viewModel::setFilterItemList,
         confirmItemDelete = viewModel::deleteItem,
@@ -74,8 +80,10 @@ fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel(), navController: 
         onDismiss = viewModel::closeDialog,
         onSelectVegeCategory = viewModel::selectCategory,
         closeDeleteDialog = viewModel::closeDeleteDialog,
-        openDeleteDialog = viewModel::openDeleteDialog,
-        insertErrorEvent = viewModel.insertVegetableFolderEvent
+        insertErrorEvent = viewModel.insertVegetableFolderEvent,
+        openDeleteDialog = viewModel::openDeleteVegeItemDialog,
+        onDeleteFolderItem = {},
+        onFolderClick = {},
     )
 }
 
@@ -85,7 +93,7 @@ private fun HomeScreen(
     vegetablesState: HomeVegetablesState,
     openAddDialogType: (AddDialogType) -> Unit,
     onCancelMenuClick: () -> Unit,
-    onDeleteItem: () -> Unit,
+    onDeleteVegeItem: () -> Unit,
     onEditIconClick: () -> Unit,
     onFilterItemClick: (FilterStatus) -> Unit,
     confirmItemDelete: () -> Unit,
@@ -94,10 +102,12 @@ private fun HomeScreen(
     changeInputText: (String) -> Unit,
     closeDeleteDialog: () -> Unit,
     openDeleteDialog: (VegeItem) -> Unit,
+    onDeleteFolderItem: (VegetableFolderEntity) -> Unit,
     onAddDialogConfirmClick: (AddDialogType) -> Unit,
     onDismiss: () -> Unit,
     onSelectVegeCategory: (VegeCategory) -> Unit,
     insertErrorEvent: Flow<Boolean>,
+    onFolderClick: (VegetableFolderEntity) -> Unit,
 ) {
     var selectMenuExpanded by rememberSaveable { mutableStateOf(false) }
     var filterMenuExpanded by rememberSaveable { mutableStateOf(false) }
@@ -122,10 +132,8 @@ private fun HomeScreen(
             Scaffold(
                 topBar = {
                     ItemListTopBar(
-                        modifier = Modifier
-                            .padding(top = 16.dp),
                         onCancelClick = onCancelMenuClick,
-                        onDeleteIconClick = onDeleteItem,
+                        onDeleteIconClick = onDeleteVegeItem,
                         onEditIconClick = onEditIconClick,
                         onFilterItemClick = onFilterItemClick,
                         selectMenuExpanded = selectMenuExpanded,
@@ -147,17 +155,26 @@ private fun HomeScreen(
                 }
                     LazyVerticalGrid(
                         modifier = Modifier
-                            .padding(top = it.calculateTopPadding()),
+                            .padding(top = it.calculateTopPadding(), bottom = 8.dp),
                         columns = GridCells.Fixed(2),
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         if (vegetablesState.vegetableFolders.isNotEmpty()) {
                             item(
-                                span = { GridItemSpan(maxCurrentLineSpan) },
+                                span = { GridItemSpan(maxLineSpan) },
                             ) {
                                 Column {
-                                    Text(stringResource(id = R.string.home_folder))
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.ic_folder),
+                                            contentDescription = null,
+                                        )
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text(stringResource(id = R.string.home_folder))
+                                    }
                                     Spacer(modifier = Modifier.height(2.dp))
                                     HorizontalDivider(
                                         modifier = Modifier.fillMaxWidth(),
@@ -169,11 +186,14 @@ private fun HomeScreen(
                         items(vegetablesState.vegetableFolders) { folder ->
                             VegeFolderCard(
                                 vegetableFolder = folder,
+                                onFolderClick = { onFolderClick(folder) },
+                                selectMenu = uiState.selectMenu,
+                                onItemDeleteClick = { onDeleteFolderItem(it) }
                             )
                         }
                         if (vegetablesState.vegetables.isNotEmpty()) {
                             item(
-                                span = { GridItemSpan(maxCurrentLineSpan) },
+                                span = { GridItemSpan(maxLineSpan) },
                             ) {
                                 Column {
                                     Text(stringResource(id = R.string.home_item_not_classified))
@@ -188,7 +208,7 @@ private fun HomeScreen(
                         vegetablesState.vegetables.zip(vegetablesState.vegetableDetails).forEach { vegetable ->
                             item(
                                 key = "${vegetable.first.id}, ${vegetable.first.name}",
-                                span = { GridItemSpan(maxCurrentLineSpan) },
+                                span = { GridItemSpan(maxLineSpan) },
                             ) {
                                 VegeItemListCard(
                                     vegetable = vegetable.first,
@@ -264,7 +284,7 @@ fun HomeScreenPreview(@PreviewParameter(HomePreviewParameterProvider::class) par
             openAddDialogType = {},
             onSelectVegeCategory = {},
             onCancelMenuClick = {},
-            onDeleteItem = {},
+            onDeleteVegeItem = {},
             onFilterItemClick = {},
             onDismiss = {},
             onSelectVegeStatus = {},
@@ -276,12 +296,14 @@ fun HomeScreenPreview(@PreviewParameter(HomePreviewParameterProvider::class) par
             closeDeleteDialog = {},
             openDeleteDialog = {},
             insertErrorEvent = flow { },
+            onFolderClick = {},
+            onDeleteFolderItem = {}
         )
     }
 }
 
 class HomePreviewParameterProvider : PreviewParameterProvider<HomePreviewParameterProvider.Params> {
-    override val values: Sequence<HomePreviewParameterProvider.Params> =
+    override val values: Sequence<Params> =
         sequenceOf(
             Params(
                 uiState = HomeScreenUiState.initialState(),

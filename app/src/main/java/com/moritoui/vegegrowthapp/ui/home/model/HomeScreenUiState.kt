@@ -1,5 +1,6 @@
 package com.moritoui.vegegrowthapp.ui.home.model
 
+import com.moritoui.vegegrowthapp.data.room.model.VegetableFolderEntity
 import com.moritoui.vegegrowthapp.model.FilterStatus
 import com.moritoui.vegegrowthapp.model.SelectMenu
 import com.moritoui.vegegrowthapp.model.VegeCategory
@@ -17,6 +18,7 @@ data class HomeScreenUiState(
     val selectStatus: VegeStatus,
     val filterStatus: FilterStatus,
     val targetDeleteItem: VegeItem?,
+    val targetDeleteFolder: VegetableFolderEntity?,
     val isLoading: Boolean,
 ) {
     companion object {
@@ -31,7 +33,8 @@ data class HomeScreenUiState(
             selectStatus = VegeStatus.Default,
             filterStatus = FilterStatus.All,
             targetDeleteItem = null,
-            isLoading = false
+            isLoading = false,
+            targetDeleteFolder = null,
         )
     }
 }
