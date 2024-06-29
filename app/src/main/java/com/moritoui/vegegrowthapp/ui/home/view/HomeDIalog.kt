@@ -56,7 +56,7 @@ fun AddTextCategoryDialog(
     onCancelClick: () -> Unit,
     onSelectVegeCategory: (VegeCategory) -> Unit,
     onDismissRequest: () -> Unit = {},
-    errorEvent: Flow<Boolean>,
+    errorEvent: Flow<Boolean>? = null,
 ) {
     val isVisibleDuplicateInsertError = rememberSaveable {
         mutableStateOf(false)
@@ -75,7 +75,7 @@ fun AddTextCategoryDialog(
                     singleLine = true
                 )
                 LaunchedEffect(errorEvent) {
-                    errorEvent.collect {
+                    errorEvent?.collect {
                         isVisibleDuplicateInsertError.value = it
                     }
                 }
@@ -206,8 +206,8 @@ fun AlertPreview() {
 @Composable
 fun ConfirmDeleteItemDialog(
     modifier: Modifier = Modifier,
-    deleteItem: VegeItem?,
-    deleteFolder: VegetableFolderEntity?,
+    deleteItem: VegeItem? = null,
+    deleteFolder: VegetableFolderEntity? = null,
     onDismissRequest: () -> Unit,
     onConfirmClick: () -> Unit,
     onCancelClick: () -> Unit,

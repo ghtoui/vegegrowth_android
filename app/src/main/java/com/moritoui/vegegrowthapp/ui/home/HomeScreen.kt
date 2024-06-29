@@ -45,6 +45,7 @@ import com.moritoui.vegegrowthapp.navigation.HomeAddItem
 import com.moritoui.vegegrowthapp.navigation.NavigationAppTopBar
 import com.moritoui.vegegrowthapp.previews.DarkLightPreview
 import com.moritoui.vegegrowthapp.ui.common.VegeGrowthLoading
+import com.moritoui.vegegrowthapp.ui.folder.navigateToFolder
 import com.moritoui.vegegrowthapp.ui.home.model.AddDialogType
 import com.moritoui.vegegrowthapp.ui.home.model.HomeScreenUiState
 import com.moritoui.vegegrowthapp.ui.home.model.HomeVegetablesState
@@ -72,9 +73,7 @@ fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel(), navController: 
         onFilterItemClick = viewModel::setFilterItemList,
         confirmItemDelete = viewModel::deleteItem,
         onSelectVegeStatus = viewModel::selectStatus,
-        onVegeItemClick = {
-            navController.navigateToTakePicture(it)
-        },
+        onVegeItemClick =  navController::navigateToTakePicture ,
         changeInputText = viewModel::changeInputText,
         onAddDialogConfirmClick = viewModel::onAddDialogConfirm,
         onDismiss = viewModel::closeDialog,
@@ -83,7 +82,7 @@ fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel(), navController: 
         insertErrorEvent = viewModel.insertVegetableFolderEvent,
         openDeleteDialog = viewModel::openDeleteVegeItemDialog,
         onDeleteFolderItem = viewModel::openDeleteFolderDialog,
-        onFolderClick = {}
+        onFolderClick = navController::navigateToFolder
     )
 }
 
@@ -107,7 +106,7 @@ private fun HomeScreen(
     onDismiss: () -> Unit,
     onSelectVegeCategory: (VegeCategory) -> Unit,
     insertErrorEvent: Flow<Boolean>,
-    onFolderClick: (VegetableFolderEntity) -> Unit,
+    onFolderClick: (Int) -> Unit,
 ) {
     var selectMenuExpanded by rememberSaveable { mutableStateOf(false) }
     var filterMenuExpanded by rememberSaveable { mutableStateOf(false) }
@@ -188,7 +187,7 @@ private fun HomeScreen(
                     items(vegetablesState.vegetableFolders) { folder ->
                         VegeFolderCard(
                             vegetableFolder = folder,
-                            onFolderClick = { onFolderClick(folder) },
+                            onFolderClick = { onFolderClick(folder.id) },
                             selectMenu = uiState.selectMenu,
                             onItemDeleteClick = { onDeleteFolderItem(it) }
                         )
@@ -239,7 +238,6 @@ private fun HomeScreen(
                 onConfirmClick = { onAddDialogConfirmClick(AddDialogType.AddVegeItem) },
                 onCancelClick = onDismiss,
                 onSelectVegeCategory = onSelectVegeCategory,
-                errorEvent = insertErrorEvent
             )
         }
         AddDialogType.AddFolder -> {

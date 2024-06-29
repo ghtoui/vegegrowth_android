@@ -19,7 +19,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.moritoui.vegegrowthapp.data.room.model.VegetableFolderEntity
+import com.moritoui.vegegrowthapp.R
 import com.moritoui.vegegrowthapp.dummies.HomeScreenDummy
 import com.moritoui.vegegrowthapp.dummies.ManageScreenDummy
 import com.moritoui.vegegrowthapp.model.FilterStatus
@@ -32,8 +32,11 @@ import com.moritoui.vegegrowthapp.ui.common.VegeGrowthLoading
 import com.moritoui.vegegrowthapp.ui.folder.model.FolderScreenUiState
 import com.moritoui.vegegrowthapp.ui.folder.model.VegetablesState
 import com.moritoui.vegegrowthapp.ui.home.model.AddDialogType
+import com.moritoui.vegegrowthapp.ui.home.view.AddTextCategoryDialog
+import com.moritoui.vegegrowthapp.ui.home.view.ConfirmDeleteItemDialog
 import com.moritoui.vegegrowthapp.ui.home.view.ItemListTopBar
 import com.moritoui.vegegrowthapp.ui.home.view.VegeItemListCard
+import com.moritoui.vegegrowthapp.ui.takepicture.navigateToTakePicture
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 
 @Composable
@@ -47,21 +50,20 @@ fun FolderScreen(
         uiState = uiState,
         vegetablesState = vegetablesState,
         onBackNavigationButtonClick = navController::popBackStack,
-        openAddDialogType = {},
-        onCancelMenuClick = {},
-        onDeleteVegeItem = {},
-        onEditIconClick = {},
-        onFilterItemClick = {},
-        confirmItemDelete = {},
-        onSelectVegeStatus = {},
-        onVegeItemClick = {},
-        changeInputText = {},
-        closeDeleteDialog = {},
-        openDeleteDialog = {},
-        onDeleteFolderItem = {},
-        onAddDialogConfirmClick = {},
-        onDismiss = {},
-        onSelectVegeCategory = {},
+        openAddDialogType = viewModel::openAddDialog,
+        onCancelMenuClick = viewModel::onCancelMenuClick,
+        onDeleteVegeItem = viewModel::changeDeleteMode,
+        onEditIconClick = viewModel::changeEditMode,
+        onFilterItemClick = viewModel::setFilterItemList,
+        confirmItemDelete = viewModel::deleteItem,
+        onSelectVegeStatus = viewModel::selectStatus,
+        onVegeItemClick = navController::navigateToTakePicture,
+        changeInputText = viewModel::changeInputText,
+        closeDeleteDialog = viewModel::closeDeleteDialog,
+        openDeleteDialog = viewModel::openDeleteVegeItemDialog,
+        onAddDialogConfirmClick = viewModel::onAddDialogConfirm,
+        onDismiss = viewModel::closeDialog,
+        onSelectVegeCategory = viewModel::selectCategory,
     )
 }
 
@@ -81,7 +83,6 @@ private fun FolderScreen(
     changeInputText: (String) -> Unit,
     closeDeleteDialog: () -> Unit,
     openDeleteDialog: (VegeItem) -> Unit,
-    onDeleteFolderItem: (VegetableFolderEntity) -> Unit,
     onAddDialogConfirmClick: (AddDialogType) -> Unit,
     onDismiss: () -> Unit,
     onSelectVegeCategory: (VegeCategory) -> Unit,
@@ -155,6 +156,38 @@ private fun FolderScreen(
             }
         }
     }
+    when (uiState.openAddDialogType) {
+        AddDialogType.AddVegeItem -> {
+            AddTextCategoryDialog(
+                titleResId = R.string.add_vege_item_dialog_title,
+                selectCategory = uiState.selectCategory,
+                inputText = uiState.inputText,
+                isAddAble = uiState.isAddAble,
+                onValueChange = changeInputText,
+                onConfirmClick = { onAddDialogConfirmClick(AddDialogType.AddVegeItem) },
+                onCancelClick = onDismiss,
+                onSelectVegeCategory = onSelectVegeCategory,
+            )
+        }
+
+        else -> {}
+    }
+
+    if (uiState.isOpenDeleteDialog) {
+        ConfirmDeleteItemDialog(
+            deleteItem = uiState.targetDeleteItem,
+            onDismissRequest = {
+                closeDeleteDialog()
+            },
+            onConfirmClick = {
+                confirmItemDelete()
+                closeDeleteDialog()
+            },
+            onCancelClick = {
+                closeDeleteDialog()
+            }
+        )
+    }
 }
 
 @DarkLightPreview
@@ -167,7 +200,6 @@ fun FolderScreenPreview(
             uiState = params.uiState,
             vegetablesState = params.vegetablesState,
             onBackNavigationButtonClick = {},
-            onDeleteFolderItem = {},
             onSelectVegeStatus = {},
             openDeleteDialog = {},
             onFilterItemClick = {},

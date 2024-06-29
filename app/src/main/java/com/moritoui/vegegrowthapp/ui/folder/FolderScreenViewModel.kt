@@ -4,14 +4,23 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.moritoui.vegegrowthapp.model.FilterStatus
+import com.moritoui.vegegrowthapp.model.SelectMenu
+import com.moritoui.vegegrowthapp.model.VegeCategory
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegeItemDetail
+import com.moritoui.vegegrowthapp.model.VegeStatus
 import com.moritoui.vegegrowthapp.model.filterStatusMap
 import com.moritoui.vegegrowthapp.ui.folder.model.FolderScreenUiState
 import com.moritoui.vegegrowthapp.ui.folder.model.VegetablesState
+import com.moritoui.vegegrowthapp.ui.home.model.AddDialogType
+import com.moritoui.vegegrowthapp.usecases.AddVegeItemUseCase
+import com.moritoui.vegegrowthapp.usecases.ChangeVegeItemStatusUseCase
+import com.moritoui.vegegrowthapp.usecases.DeleteVegeItemUseCase
+import com.moritoui.vegegrowthapp.usecases.GetSelectedVegeFolderUseCase
 import com.moritoui.vegegrowthapp.usecases.GetVegeItemDetailLastUseCase
 import com.moritoui.vegegrowthapp.usecases.GetVegeItemFromFolderIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.UUID
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -29,8 +38,12 @@ class FolderScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getVegetableFromFolderIdUseCase: GetVegeItemFromFolderIdUseCase,
     private val getVegeItemDetailLastUseCase: GetVegeItemDetailLastUseCase,
+    private val deleteVegeItemUseCase: DeleteVegeItemUseCase,
+    private val addVegeItemUseCase: AddVegeItemUseCase,
+    private val changeVegeItemStatusUseCase: ChangeVegeItemStatusUseCase,
+    private val getSelectedVegeFolderUseCase: GetSelectedVegeFolderUseCase,
 ) : ViewModel() {
-    private val args = checkNotNull(savedStateHandle.get<Int>("vegetableId"))
+    private val args = checkNotNull(savedStateHandle.get<Int>("folderId"))
 
     private val _uiState = MutableStateFlow(FolderScreenUiState.initial())
     val uiState: StateFlow<FolderScreenUiState> = _uiState.asStateFlow()
@@ -50,6 +63,173 @@ class FolderScreenViewModel @Inject constructor(
         SharingStarted.WhileSubscribed(5000),
         VegetablesState.initial()
     )
+
+    init {
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(
+                    selectedFolder = getSelectedVegeFolderUseCase(args)
+                )
+            }
+        }
+        monitorUiState()
+    }
+
+    fun closeDialog() {
+        _uiState.update {
+            it.copy(
+                openAddDialogType = AddDialogType.NotOpenDialog
+            )
+        }
+    }
+
+    fun openAddDialog(addDialogType: AddDialogType) {
+        _uiState.update {
+            it.copy(
+                openAddDialogType = addDialogType,
+                inputText = "",
+                selectCategory = VegeCategory.None
+            )
+        }
+    }
+
+    fun selectStatus(vegeItem: VegeItem) {
+        viewModelScope.launch {
+            changeVegeItemStatusUseCase(vegeItem)
+            _vegetables.value.map { old ->
+                if (old.id == vegeItem.id) {
+                    vegeItem
+                } else {
+                    old
+                }
+            }
+            reloadVegetables()
+        }
+    }
+
+    fun changeInputText(inputText: String) {
+        val isAddAble = checkInputText(inputText = inputText)
+        _uiState.update {
+            it.copy(
+                inputText = inputText,
+                isAddAble = isAddAble
+            )
+        }
+    }
+
+    /**
+     * 押されたダイアログの種類によって処理を変える
+     */
+    fun onAddDialogConfirm(addDialogType: AddDialogType) {
+        when (addDialogType) {
+            AddDialogType.AddVegeItem -> {
+                val vegeItem =
+                    VegeItem(
+                        name = _uiState.value.inputText,
+                        category = _uiState.value.selectCategory,
+                        uuid = UUID.randomUUID().toString(),
+                        status = VegeStatus.Default,
+                        folderId = args
+                    )
+                viewModelScope.launch {
+                    addVegeItemUseCase(vegeItem)
+                    reloadVegetables()
+                    closeDialog()
+                }
+            }
+            else -> {
+                return
+            }
+        }
+    }
+
+    fun changeDeleteMode() {
+        _uiState.update {
+            it.copy(
+                selectMenu =
+                if (_uiState.value.selectMenu == SelectMenu.Delete) {
+                    SelectMenu.None
+                } else {
+                    SelectMenu.Delete
+                }
+            )
+        }
+    }
+
+    fun changeEditMode() {
+        _uiState.update {
+            it.copy(
+                selectMenu =
+                if (_uiState.value.selectMenu == SelectMenu.Edit) {
+                    SelectMenu.None
+                } else {
+                    SelectMenu.Edit
+                }
+            )
+        }
+    }
+
+    fun deleteItem() {
+        viewModelScope.launch {
+            val deleteItem = _uiState.value.targetDeleteItem
+            if (deleteItem != null) {
+                deleteVegeItemUseCase(deleteItem)
+            }
+            _uiState.update {
+                it.copy(
+                    targetDeleteItem = null,
+                )
+            }
+        }
+    }
+
+    fun onCancelMenuClick() {
+        _uiState.update {
+            it.copy(
+                selectMenu = SelectMenu.None
+            )
+        }
+    }
+
+    fun selectCategory(selectCategory: VegeCategory) {
+        _uiState.update {
+            it.copy(
+                selectCategory = selectCategory
+            )
+        }
+    }
+
+    // 現在選択されている
+    fun setFilterItemList(filterStatus: FilterStatus) {
+        _uiState.update {
+            it.copy(
+                filterStatus = filterStatus
+            )
+        }
+    }
+
+    /**
+     * 削除ダイアログを閉じる
+     */
+    fun closeDeleteDialog() {
+        _uiState.update {
+            it.copy(
+                isOpenDeleteDialog = !it.isOpenDeleteDialog
+            )
+        }
+    }
+
+    /**
+     * 削除ダイアログを開いて，削除するものをセットする
+     */
+    fun openDeleteVegeItemDialog(vegeItem: VegeItem) {
+        _uiState.update {
+            it.copy(
+                isOpenDeleteDialog = true,
+                targetDeleteItem = vegeItem
+            )
+        }
+    }
 
     /**
      * 登録されている野菜のリストを更新する
@@ -93,5 +273,10 @@ class FolderScreenViewModel @Inject constructor(
                 it.copy(isLoading = false)
             }
         }.launchIn(viewModelScope)
+    }
+
+    private fun checkInputText(inputText: String): Boolean = when (inputText) {
+        "" -> false
+        else -> true
     }
 }
