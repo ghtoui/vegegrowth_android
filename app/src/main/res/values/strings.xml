@@ -1,13 +1,24 @@
 <resources>
+    <!--  共通  -->
     <string name="app_name">vegegrowthApp</string>
+
+    <!--  ホーム画面  -->
     <string name="register_button">登録</string>
+    <string name="add_vege_item_dialog_title">追加したい野菜の名前を入力してください</string>
+    <string name="add_folder_dialog_title">追加したいフォルダーの名前を入力してください</string>
+    <string name="edit_text_field_title">メニューから選択してください</string>
+    <string name="drop_down_menu_button">メニューバー</string>
+    <string name="error_duplicate_insert">既に登録されているフォルダー名です\n名前を変えてもう一度登録してください</string>
+
+    <!--  撮影画面  -->
     <string name="take_picture_button">撮影</string>
     <string name="picture_none_message">撮影した写真がここに表示されます</string>
     <string name="picture_description">撮影した画像</string>
-    <string name="addtextfield_describe">追加したい野菜の名前を入力してください</string>
-    <string name="edit_text_field_title">メニューから選択してください</string>
     <string name="register_text_field_describe">撮影した野菜の大きさを入力してください</string>
-    <string name="drop_down_menu_button">メニューバー</string>
+
+    <!--  管理画面  -->
+
+    <!--  未分類  -->
     <string name="delete_text">削除</string>
     <string name="edit_button">編集</string>
     <string name="favorite_button">お気に入り</string>
@@ -34,5 +45,9 @@
     <string name="home_screen_select_menu_done">完了</string>
     <string name="home_delete_dialog_title">%sを削除しますか？</string>
     <string name="home_delete_dialog_description">削除したものは元に戻せません</string>
-    <string name="vege_detail_save_last_date">"最後の登録日"</string>
+    <string name="vege_detail_save_last_date">最後の登録日</string>
+
+    <!--  読み上げ用のテキスト  -->
+    <string name="description_folder_add">フォルダー追加</string>
+    <string name="description_item_add">追加</string>
 </resources>

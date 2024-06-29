@@ -4,9 +4,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Card
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -31,14 +34,17 @@ import com.moritoui.vegegrowthapp.navigation.HomeAddItem
 import com.moritoui.vegegrowthapp.navigation.NavigationAppTopBar
 import com.moritoui.vegegrowthapp.previews.DarkLightPreview
 import com.moritoui.vegegrowthapp.ui.common.VegeGrowthLoading
+import com.moritoui.vegegrowthapp.ui.home.model.AddDialogType
 import com.moritoui.vegegrowthapp.ui.home.model.HomeScreenUiState
 import com.moritoui.vegegrowthapp.ui.home.model.HomeVegetablesState
-import com.moritoui.vegegrowthapp.ui.home.view.AddAlertWindow
+import com.moritoui.vegegrowthapp.ui.home.view.AddTextCategoryDialog
 import com.moritoui.vegegrowthapp.ui.home.view.ConfirmDeleteItemDialog
 import com.moritoui.vegegrowthapp.ui.home.view.ItemListTopBar
 import com.moritoui.vegegrowthapp.ui.home.view.VegeItemListCard
 import com.moritoui.vegegrowthapp.ui.takepicture.navigateToTakePicture
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 @Composable
 fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel(), navController: NavController) {
@@ -47,7 +53,7 @@ fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel(), navController: 
     HomeScreen(
         uiState = uiState,
         vegetablesState = vegetablesState,
-        openAddVegeItemDialog = viewModel::openAddDialog,
+        openAddDialogType = viewModel::openAddDialog,
         onCancelMenuClick = viewModel::onCancelMenuClick,
         onDeleteItem = viewModel::changeDeleteMode,
         onEditIconClick = viewModel::changeEditMode,
@@ -58,11 +64,12 @@ fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel(), navController: 
             navController.navigateToTakePicture(it)
         },
         changeInputText = viewModel::changeInputText,
-        onConfirmClick = viewModel::saveVegeItem,
+        onAddDialogConfirmClick = viewModel::onAddDialogConfirm,
         onDismiss = viewModel::closeDialog,
         onSelectVegeCategory = viewModel::selectCategory,
         closeDeleteDialog = viewModel::closeDeleteDialog,
-        openDeleteDialog = viewModel::openDeleteDialog
+        openDeleteDialog = viewModel::openDeleteDialog,
+        insertErrorEvent = viewModel.insertVegetableFolderEvent
     )
 }
 
@@ -70,7 +77,7 @@ fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel(), navController: 
 private fun HomeScreen(
     uiState: HomeScreenUiState,
     vegetablesState: HomeVegetablesState,
-    openAddVegeItemDialog: () -> Unit,
+    openAddDialogType: (AddDialogType) -> Unit,
     onCancelMenuClick: () -> Unit,
     onDeleteItem: () -> Unit,
     onEditIconClick: () -> Unit,
@@ -81,9 +88,10 @@ private fun HomeScreen(
     changeInputText: (String) -> Unit,
     closeDeleteDialog: () -> Unit,
     openDeleteDialog: (VegeItem) -> Unit,
-    onConfirmClick: () -> Unit,
+    onAddDialogConfirmClick: (AddDialogType) -> Unit,
     onDismiss: () -> Unit,
     onSelectVegeCategory: (VegeCategory) -> Unit,
+    insertErrorEvent: Flow<Boolean>,
 ) {
     var selectMenuExpanded by rememberSaveable { mutableStateOf(false) }
     var filterMenuExpanded by rememberSaveable { mutableStateOf(false) }
@@ -92,7 +100,10 @@ private fun HomeScreen(
         topBar = {
             NavigationAppTopBar(
                 title = stringResource(R.string.first_screen_title),
-                actions = { HomeAddItem(onAddClick = openAddVegeItemDialog) },
+                actions = { HomeAddItem(
+                    onFolderAddClick = { openAddDialogType(AddDialogType.AddFolder) },
+                    onAddClick = { openAddDialogType(AddDialogType.AddVegeItem) }
+                ) },
                 isVisibleBackButton = false
             )
         }
@@ -133,6 +144,13 @@ private fun HomeScreen(
                         .fillMaxWidth()
                         .padding(top = it.calculateTopPadding())
                 ) {
+                    items(vegetablesState.vegetableFolders, key = { folder -> "${folder.id}, ${folder.folderName}" }) { folder ->
+                        Card(
+                            modifier = Modifier.size(100.dp)
+                        ) {
+                            Text(folder.folderName)
+                        }
+                    }
                     items(vegetablesState.vegetables.zip(vegetablesState.vegetableDetails), key = { item -> item.first.id }) { vegetable ->
                         VegeItemListCard(
                             vegetable = vegetable.first,
@@ -149,16 +167,37 @@ private fun HomeScreen(
             }
         }
     }
-    AddAlertWindow(
-        selectCategory = uiState.selectCategory,
-        isOpenDialog = uiState.isOpenAddDialog,
-        inputText = uiState.inputText,
-        isAddAble = uiState.isAddAble,
-        onValueChange = changeInputText,
-        onConfirmClick = onConfirmClick,
-        onDismissClick = onDismiss,
-        onSelectVegeCategory = onSelectVegeCategory
-    )
+    when (uiState.openAddDialogType) {
+        AddDialogType.AddVegeItem -> {
+            AddTextCategoryDialog(
+                titleResId = R.string.add_vege_item_dialog_title,
+                selectCategory = uiState.selectCategory,
+                inputText = uiState.inputText,
+                isAddAble = uiState.isAddAble,
+                onValueChange = changeInputText,
+                onConfirmClick = { onAddDialogConfirmClick(AddDialogType.AddVegeItem) },
+                onCancelClick = onDismiss,
+                onSelectVegeCategory = onSelectVegeCategory,
+                errorEvent = insertErrorEvent,
+            )
+        }
+        AddDialogType.AddFolder -> {
+            AddTextCategoryDialog(
+                titleResId = R.string.add_folder_dialog_title,
+                selectCategory = uiState.selectCategory,
+                inputText = uiState.inputText,
+                isAddAble = uiState.isAddAble,
+                onValueChange = changeInputText,
+                onConfirmClick = { onAddDialogConfirmClick(AddDialogType.AddFolder) },
+                onCancelClick = onDismiss,
+                onSelectVegeCategory = onSelectVegeCategory,
+                errorEvent = insertErrorEvent,
+            )
+        }
+        else -> {
+
+        }
+    }
     if (uiState.isOpenDeleteDialog) {
         ConfirmDeleteItemDialog(
             deleteItem = uiState.targetDeleteItem,
@@ -183,7 +222,7 @@ fun HomeScreenPreview(@PreviewParameter(HomePreviewParameterProvider::class) par
         HomeScreen(
             uiState = params.uiState,
             vegetablesState = params.vegetablesState,
-            openAddVegeItemDialog = {},
+            openAddDialogType = {},
             onSelectVegeCategory = {},
             onCancelMenuClick = {},
             onDeleteItem = {},
@@ -191,12 +230,13 @@ fun HomeScreenPreview(@PreviewParameter(HomePreviewParameterProvider::class) par
             onDismiss = {},
             onSelectVegeStatus = {},
             confirmItemDelete = {},
-            onConfirmClick = {},
+            onAddDialogConfirmClick = {},
             changeInputText = {},
             onEditIconClick = {},
             onVegeItemClick = {},
             closeDeleteDialog = {},
-            openDeleteDialog = {}
+            openDeleteDialog = {},
+            insertErrorEvent = flow { },
         )
     }
 }

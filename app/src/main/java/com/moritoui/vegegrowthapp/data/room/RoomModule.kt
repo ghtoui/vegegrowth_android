@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.moritoui.vegegrowthapp.data.room.dao.VegetableDao
 import com.moritoui.vegegrowthapp.data.room.dao.VegetableDetailDao
+import com.moritoui.vegegrowthapp.data.room.dao.VegetableFolderDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,4 +27,7 @@ object RoomModule {
 
     @Provides
     fun provideVegetableDetailDao(database: VegetableDatabase): VegetableDetailDao = database.vegetableDetailDao()
+
+    @Provides
+    fun provideVegetableFolderDao(database: VegetableDatabase): VegetableFolderDao = database.vegetableFolderDao()
 }

@@ -1,5 +1,6 @@
 package com.moritoui.vegegrowthapp.ui.home.view
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -39,65 +41,80 @@ import com.moritoui.vegegrowthapp.model.VegeStatus
 import com.moritoui.vegegrowthapp.model.VegeStatusMethod
 import com.moritoui.vegegrowthapp.previews.DarkLightPreview
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
+import kotlinx.coroutines.flow.Flow
 
 @Composable
-fun AddAlertWindow(
+fun AddTextCategoryDialog(
+    @StringRes titleResId: Int,
     selectCategory: VegeCategory,
-    isOpenDialog: Boolean,
     inputText: String,
     isAddAble: Boolean,
     onValueChange: (String) -> Unit,
     onConfirmClick: () -> Unit,
-    onDismissClick: () -> Unit,
+    onCancelClick: () -> Unit,
     onSelectVegeCategory: (VegeCategory) -> Unit,
+    onDismissRequest: () -> Unit = {},
+    errorEvent: Flow<Boolean>,
 ) {
-    if (isOpenDialog) {
-        AlertDialog(
-            // ここが空だとウィンドウ外をタップしても何も起こらない
-            onDismissRequest = { },
-            title = {
-                Text(text = stringResource(R.string.addtextfield_describe))
-            },
-            text = {
-                Column {
-                    TextField(
-                        value = inputText,
-                        onValueChange = { onValueChange(it) },
-                        singleLine = true
-                    )
-                    CategoryDropMenu(
-                        selectCategory = selectCategory,
-                        onDropDownMenuClick = onSelectVegeCategory,
-                        modifier =
-                        Modifier
-                            .padding(top = 4.dp)
-                    )
-                }
-            },
-            confirmButton = {
-                if (isAddAble) {
-                    TextButton(
-                        onClick = { onConfirmClick() }
-                    ) {
-                        Text(stringResource(R.string.add_text))
-                    }
-                } else {
-                    TextButton(
-                        onClick = { }
-                    ) {
-                        Text(stringResource(id = R.string.add_text), color = Color.LightGray)
+    val isVisibleDuplicateInsertError = rememberSaveable {
+        mutableStateOf(false)
+    }
+    AlertDialog(
+        // ここが空だとウィンドウ外をタップしても何も起こらない
+        onDismissRequest = onDismissRequest,
+        title = {
+            Text(text = stringResource(titleResId))
+        },
+        text = {
+            Column {
+                TextField(
+                    value = inputText,
+                    onValueChange = { onValueChange(it) },
+                    singleLine = true
+                )
+                LaunchedEffect(errorEvent) {
+                    errorEvent.collect {
+                        isVisibleDuplicateInsertError.value = it
                     }
                 }
-            },
-            dismissButton = {
+                if (isVisibleDuplicateInsertError.value) {
+                    Text(
+                        stringResource(id = R.string.error_duplicate_insert),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+                CategoryDropMenu(
+                    selectCategory = selectCategory,
+                    onDropDownMenuClick = onSelectVegeCategory,
+                    modifier =
+                    Modifier
+                        .padding(top = 4.dp)
+                )
+            }
+        },
+        confirmButton = {
+            if (isAddAble) {
                 TextButton(
-                    onClick = { onDismissClick() }
+                    onClick = { onConfirmClick() }
                 ) {
-                    Text(stringResource(R.string.cancel_text))
+                    Text(stringResource(R.string.add_text))
+                }
+            } else {
+                TextButton(
+                    onClick = { }
+                ) {
+                    Text(stringResource(id = R.string.add_text), color = Color.LightGray)
                 }
             }
-        )
-    }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { onCancelClick() }
+            ) {
+                Text(stringResource(R.string.cancel_text))
+            }
+        }
+    )
 }
 
 @Composable

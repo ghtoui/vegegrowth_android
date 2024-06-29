@@ -7,7 +7,8 @@ import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegeStatus
 
 data class HomeScreenUiState(
-    val isOpenAddDialog: Boolean,
+    val openAddDialogType: AddDialogType,
+    val isOpenAddFolderDialog: Boolean,
     val isOpenDeleteDialog: Boolean,
     val inputText: String,
     val selectCategory: VegeCategory,
@@ -20,7 +21,8 @@ data class HomeScreenUiState(
 ) {
     companion object {
         fun initialState() = HomeScreenUiState(
-            isOpenAddDialog = false,
+            openAddDialogType = AddDialogType.NotOpenDialog,
+            isOpenAddFolderDialog = false,
             isOpenDeleteDialog = false,
             inputText = "",
             selectCategory = VegeCategory.None,

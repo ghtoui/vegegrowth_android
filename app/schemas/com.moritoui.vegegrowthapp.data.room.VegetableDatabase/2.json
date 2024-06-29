@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "66c5215f16ed56f4a770caea918568e7",
+    "identityHash": "13c0c1aa9da99980c6013156001e51ce",
     "entities": [
       {
         "tableName": "vegetable_resources",
@@ -167,14 +167,24 @@
             "id"
           ]
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_vegetable_folder_resources_folder_name",
+            "unique": true,
+            "columnNames": [
+              "folder_name"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_vegetable_folder_resources_folder_name` ON `${TABLE_NAME}` (`folder_name`)"
+          }
+        ],
         "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '66c5215f16ed56f4a770caea918568e7')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '13c0c1aa9da99980c6013156001e51ce')"
     ]
   }
 }
