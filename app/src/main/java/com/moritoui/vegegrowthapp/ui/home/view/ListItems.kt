@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -37,6 +38,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.moritoui.vegegrowthapp.R
+import com.moritoui.vegegrowthapp.data.room.model.VegetableFolderEntity
 import com.moritoui.vegegrowthapp.model.SelectMenu
 import com.moritoui.vegegrowthapp.model.VegeCategory
 import com.moritoui.vegegrowthapp.model.VegeItem
@@ -117,19 +119,11 @@ fun VegeItemListCard(
 
 @Composable
 private fun VegetableInfo(modifier: Modifier = Modifier, vegetable: VegeItem, vegetableDetail: VegeItemDetail?) {
-    val iconTint: Color = vegetable.category.getTint(otherColor = LocalContentColor.current)
-    val categoryIcon = vegetable.category.getIcon()
     Column(modifier = modifier) {
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (categoryIcon != null) {
-                Icon(
-                    painter = painterResource(id = categoryIcon),
-                    contentDescription = null,
-                    tint = iconTint
-                )
-            }
+            VegetableCategoryIcon(category = vegetable.category)
             Spacer(modifier = Modifier.width(4.dp))
             Text(
                 vegetable.name,
@@ -152,6 +146,22 @@ private fun VegetableInfo(modifier: Modifier = Modifier, vegetable: VegeItem, ve
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun VegetableCategoryIcon(
+    category: VegeCategory
+) {
+    val iconTint: Color = category.getTint(otherColor = LocalContentColor.current)
+    val categoryIcon = category.getIcon()
+
+    if (categoryIcon != null) {
+        Icon(
+            painter = painterResource(id = categoryIcon),
+            contentDescription = null,
+            tint = iconTint
+        )
     }
 }
 
@@ -243,6 +253,50 @@ fun VegeItemListCardPreview() {
             onSelectVegeStatus = {},
             onItemDeleteClick = {},
             selectMenu = SelectMenu.Edit
+        )
+    }
+}
+
+@Composable
+fun VegeFolderCard(
+    modifier: Modifier = Modifier,
+    vegetableFolder: VegetableFolderEntity,
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .sizeIn(minHeight = 100.dp),
+        shape = RoundedCornerShape(24.dp),
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                modifier = Modifier.size(40.dp),
+                painter = painterResource(id = R.drawable.ic_folder),
+                contentDescription = null
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            VegetableCategoryIcon(category = vegetableFolder.vegetableCategory)
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(vegetableFolder.folderName)
+        }
+    }
+}
+
+@DarkLightPreview
+@Composable
+fun VegeFolderCardPreview() {
+    VegegrowthAppTheme {
+        VegeFolderCard(
+            vegetableFolder = VegetableFolderEntity(
+                folderName = "テストフォルダー",
+                folderNumber = 0,
+                id = 0,
+                vegetableCategory = VegeCategory.Leaf
+            )
         )
     }
 }

@@ -1,13 +1,18 @@
 package com.moritoui.vegegrowthapp.ui.home
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Card
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,6 +45,7 @@ import com.moritoui.vegegrowthapp.ui.home.model.HomeVegetablesState
 import com.moritoui.vegegrowthapp.ui.home.view.AddTextCategoryDialog
 import com.moritoui.vegegrowthapp.ui.home.view.ConfirmDeleteItemDialog
 import com.moritoui.vegegrowthapp.ui.home.view.ItemListTopBar
+import com.moritoui.vegegrowthapp.ui.home.view.VegeFolderCard
 import com.moritoui.vegegrowthapp.ui.home.view.VegeItemListCard
 import com.moritoui.vegegrowthapp.ui.takepicture.navigateToTakePicture
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
@@ -139,31 +145,64 @@ private fun HomeScreen(
                             .fillMaxSize()
                     )
                 }
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = it.calculateTopPadding())
-                ) {
-                    items(vegetablesState.vegetableFolders, key = { folder -> "${folder.id}, ${folder.folderName}" }) { folder ->
-                        Card(
-                            modifier = Modifier.size(100.dp)
-                        ) {
-                            Text(folder.folderName)
+                    LazyVerticalGrid(
+                        modifier = Modifier
+                            .padding(top = it.calculateTopPadding()),
+                        columns = GridCells.Fixed(2),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        if (vegetablesState.vegetableFolders.isNotEmpty()) {
+                            item(
+                                span = { GridItemSpan(maxCurrentLineSpan) },
+                            ) {
+                                Column {
+                                    Text(stringResource(id = R.string.home_folder))
+                                    Spacer(modifier = Modifier.height(2.dp))
+                                    HorizontalDivider(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        thickness = 3.dp
+                                    )
+                                }
+                            }
+                        }
+                        items(vegetablesState.vegetableFolders) { folder ->
+                            VegeFolderCard(
+                                vegetableFolder = folder,
+                            )
+                        }
+                        if (vegetablesState.vegetables.isNotEmpty()) {
+                            item(
+                                span = { GridItemSpan(maxCurrentLineSpan) },
+                            ) {
+                                Column {
+                                    Text(stringResource(id = R.string.home_item_not_classified))
+                                    Spacer(modifier = Modifier.height(2.dp))
+                                    HorizontalDivider(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        thickness = 3.dp
+                                    )
+                                }
+                            }
+                        }
+                        vegetablesState.vegetables.zip(vegetablesState.vegetableDetails).forEach { vegetable ->
+                            item(
+                                key = "${vegetable.first.id}, ${vegetable.first.name}",
+                                span = { GridItemSpan(maxCurrentLineSpan) },
+                            ) {
+                                VegeItemListCard(
+                                    vegetable = vegetable.first,
+                                    vegetableDetail = vegetable.second,
+                                    onVegeItemClick = { onVegeItemClick(it) },
+                                    selectMenu = uiState.selectMenu,
+                                    onItemDeleteClick = { item ->
+                                        openDeleteDialog(item)
+                                    },
+                                    onSelectVegeStatus = onSelectVegeStatus
+                                )
+                            }
                         }
                     }
-                    items(vegetablesState.vegetables.zip(vegetablesState.vegetableDetails), key = { item -> item.first.id }) { vegetable ->
-                        VegeItemListCard(
-                            vegetable = vegetable.first,
-                            vegetableDetail = vegetable.second,
-                            onVegeItemClick = { onVegeItemClick(it) },
-                            selectMenu = uiState.selectMenu,
-                            onItemDeleteClick = { item ->
-                                openDeleteDialog(item)
-                            },
-                            onSelectVegeStatus = onSelectVegeStatus
-                        )
-                    }
-                }
             }
         }
     }
@@ -248,7 +287,8 @@ class HomePreviewParameterProvider : PreviewParameterProvider<HomePreviewParamet
                 uiState = HomeScreenUiState.initialState(),
                 vegetablesState = HomeVegetablesState.initial().copy(
                     vegetables = HomeScreenDummy.vegeList(),
-                    vegetableDetails = ManageScreenDummy.getVegetableDetailList()
+                    vegetableDetails = ManageScreenDummy.getVegetableDetailList(),
+                    vegetableFolders = HomeScreenDummy.vegeFolderList(),
                 )
             ),
             Params(
@@ -257,7 +297,8 @@ class HomePreviewParameterProvider : PreviewParameterProvider<HomePreviewParamet
                 ),
                 vegetablesState = HomeVegetablesState.initial().copy(
                     vegetables = HomeScreenDummy.vegeList(),
-                    vegetableDetails = ManageScreenDummy.getVegetableDetailList()
+                    vegetableDetails = ManageScreenDummy.getVegetableDetailList(),
+                    vegetableFolders = HomeScreenDummy.vegeFolderList(),
                 )
             ),
             Params(
@@ -266,7 +307,8 @@ class HomePreviewParameterProvider : PreviewParameterProvider<HomePreviewParamet
                 ),
                 vegetablesState = HomeVegetablesState.initial().copy(
                     vegetables = HomeScreenDummy.vegeList(),
-                    vegetableDetails = ManageScreenDummy.getVegetableDetailList()
+                    vegetableDetails = ManageScreenDummy.getVegetableDetailList(),
+                    vegetableFolders = HomeScreenDummy.vegeFolderList(),
                 )
             )
         )

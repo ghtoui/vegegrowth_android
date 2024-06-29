@@ -1,5 +1,6 @@
 package com.moritoui.vegegrowthapp.dummies
 
+import com.moritoui.vegegrowthapp.data.room.model.VegetableFolderEntity
 import com.moritoui.vegegrowthapp.model.VegeCategory
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegeStatus
@@ -38,5 +39,31 @@ object HomeScreenDummy {
             VegeStatus.End,
             folderId = null,
         )
+    )
+    fun vegeFolderList(): List<VegetableFolderEntity> = listOf(
+        VegetableFolderEntity(
+            id = 0,
+            folderNumber = 0,
+            folderName = "test0",
+            vegetableCategory = VegeCategory.None,
+        ),
+        VegetableFolderEntity(
+            id = 1,
+            folderNumber = 1,
+            folderName = "test1",
+            vegetableCategory = VegeCategory.Leaf,
+        ),
+        VegetableFolderEntity(
+            id = 2,
+            folderNumber = 2,
+            folderName = "test2",
+            vegetableCategory = VegeCategory.Flower,
+        ),
+        VegetableFolderEntity(
+            id = 3,
+            folderNumber = 3,
+            folderName = "test3",
+            vegetableCategory = VegeCategory.None,
+        ),
     )
 }
