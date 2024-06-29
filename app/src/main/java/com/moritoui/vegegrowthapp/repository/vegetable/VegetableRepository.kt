@@ -27,5 +27,5 @@ interface VegetableRepository {
     /**
      * フォルダIDが一致する野菜を取得する
      */
-    suspend fun getVegetablesFromFolderId(folderId: Int): List<VegeItem>
+    suspend fun getVegetablesFromFolderId(folderId: Int?): List<VegeItem>
 }

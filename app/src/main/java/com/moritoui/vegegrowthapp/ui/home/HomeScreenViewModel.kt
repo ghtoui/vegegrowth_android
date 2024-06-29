@@ -19,7 +19,7 @@ import com.moritoui.vegegrowthapp.usecases.ChangeVegeItemStatusUseCase
 import com.moritoui.vegegrowthapp.usecases.DeleteVegeFolderUseCase
 import com.moritoui.vegegrowthapp.usecases.DeleteVegeItemUseCase
 import com.moritoui.vegegrowthapp.usecases.GetVegeItemDetailLastUseCase
-import com.moritoui.vegegrowthapp.usecases.GetVegeItemListUseCase
+import com.moritoui.vegegrowthapp.usecases.GetVegeItemFromFolderIdUseCase
 import com.moritoui.vegegrowthapp.usecases.GetVegetableFolderUseCase
 import com.moritoui.vegegrowthapp.usecases.InsertVegetableFolderUseCase
 import com.moritoui.vegegrowthapp.usecases.UpdateVegetableFolderUseCase
@@ -46,7 +46,7 @@ class HomeScreenViewModel @Inject constructor(
     private val addVegeItemUseCase: AddVegeItemUseCase,
     private val deleteVegeItemUseCase: DeleteVegeItemUseCase,
     private val deleteVegeFolderUseCase: DeleteVegeFolderUseCase,
-    private val getVegeItemListUseCase: GetVegeItemListUseCase,
+    private val getVegeItemFromFolderIdUseCase: GetVegeItemFromFolderIdUseCase,
     private val changeVegeItemStatusUseCase: ChangeVegeItemStatusUseCase,
     private val getVegeItemDetailLastUseCase: GetVegeItemDetailLastUseCase,
     private val dataMigrationRepository: DataMigrationRepository,
@@ -54,6 +54,9 @@ class HomeScreenViewModel @Inject constructor(
     private val insertVegetableFolderUseCase: InsertVegetableFolderUseCase,
     private val updateVegetableFolderUseCase: UpdateVegetableFolderUseCase,
 ) : ViewModel() {
+    // ホーム画面では未分類のフォルダーIDnullのみを表示する
+    private val folderId = null
+
     private val _uiState = MutableStateFlow(HomeScreenUiState.initialState())
     val uiState: StateFlow<HomeScreenUiState> = _uiState.asStateFlow()
 
@@ -146,7 +149,7 @@ class HomeScreenViewModel @Inject constructor(
                         category = _uiState.value.selectCategory,
                         uuid = UUID.randomUUID().toString(),
                         status = VegeStatus.Default,
-                        folderId = null
+                        folderId = 0,
                     )
                 viewModelScope.launch {
                     addVegeItemUseCase(vegeItem)
@@ -295,7 +298,7 @@ class HomeScreenViewModel @Inject constructor(
     private fun reloadVegetables() {
         viewModelScope.launch {
             val filterStatus = _uiState.value.filterStatus
-            val filteredVegetables = getVegeItemListUseCase().filter { item ->
+            val filteredVegetables = getVegeItemFromFolderIdUseCase(folderId).filter { item ->
                 if (filterStatus == FilterStatus.All) {
                     true
                 } else {

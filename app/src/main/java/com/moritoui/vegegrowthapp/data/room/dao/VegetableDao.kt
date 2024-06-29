@@ -49,6 +49,6 @@ interface VegetableDao {
      * フォルダIDが一致するものを取得する
      */
     @Transaction
-    @Query("SELECT * FROM vegetable_resources WHERE folder_id = :folderId")
-    suspend fun getVegetableFromFolderId(folderId: Int): List<VegetableEntity>
+    @Query("SELECT * FROM vegetable_resources WHERE folder_id IS :folderId")
+    suspend fun getVegetableFromFolderId(folderId: Int?): List<VegetableEntity>
 }

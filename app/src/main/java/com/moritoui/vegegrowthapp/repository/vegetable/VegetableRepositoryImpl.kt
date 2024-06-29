@@ -30,7 +30,7 @@ class VegetableRepositoryImpl @Inject constructor(private val vegetableDao: Vege
         it.toVegeItem()
     }
 
-    override suspend fun getVegetablesFromFolderId(folderId: Int): List<VegeItem> = vegetableDao.getVegetableFromFolderId(folderId).map {
+    override suspend fun getVegetablesFromFolderId(folderId: Int?): List<VegeItem> = vegetableDao.getVegetableFromFolderId(folderId).map {
         it.toVegeItem()
     }
 }

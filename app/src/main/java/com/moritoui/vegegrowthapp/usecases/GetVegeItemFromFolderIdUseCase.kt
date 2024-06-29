@@ -7,5 +7,5 @@ import javax.inject.Inject
 class GetVegeItemFromFolderIdUseCase @Inject constructor(
     private val vegetableRepository: VegetableRepository
 ) {
-    suspend operator fun invoke(folderId: Int): List<VegeItem> = vegetableRepository.getVegetablesFromFolderId(folderId)
+    suspend operator fun invoke(folderId: Int?): List<VegeItem> = vegetableRepository.getVegetablesFromFolderId(folderId)
 }
