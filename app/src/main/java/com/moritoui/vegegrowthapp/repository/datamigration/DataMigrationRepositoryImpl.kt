@@ -40,10 +40,13 @@ constructor(
      */
     override suspend fun dataMigration() {
         val isMigrate: Boolean = migratePreferences.data.first().isMigrated
+        if (isMigrate) {
+            return
+        }
         val vegeItemListRepository =
             VegeItemListRepositoryImpl(FileManagerImpl(context), vegetableDao)
         var vegeItemList = vegeItemListRepository.sortItemList()
-        if (vegeItemList.isEmpty() || isMigrate) {
+        if (vegeItemList.isEmpty()) {
             return
         }
 

@@ -76,6 +76,13 @@ android {
 // Allow references to generated code
 kapt {
     correctErrorTypes = true
+
+    arguments {
+        /**
+         * schema定義を出力しておくと、AutoMigrationできるようになる
+         */
+        arg("room.schemaLocation", "$projectDir/schemas")
+    }
 }
 
 val ktlint by configurations.creating

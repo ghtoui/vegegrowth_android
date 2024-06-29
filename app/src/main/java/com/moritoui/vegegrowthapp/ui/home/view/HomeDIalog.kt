@@ -1,5 +1,6 @@
 package com.moritoui.vegegrowthapp.ui.home.view
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -29,75 +31,92 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.moritoui.vegegrowthapp.R
+import com.moritoui.vegegrowthapp.data.room.model.VegetableFolderEntity
 import com.moritoui.vegegrowthapp.model.VegeCategory
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegeStatus
 import com.moritoui.vegegrowthapp.model.VegeStatusMethod
 import com.moritoui.vegegrowthapp.previews.DarkLightPreview
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
+import kotlinx.coroutines.flow.Flow
 
 @Composable
-fun AddAlertWindow(
+fun AddTextCategoryDialog(
+    @StringRes titleResId: Int,
     selectCategory: VegeCategory,
-    isOpenDialog: Boolean,
     inputText: String,
     isAddAble: Boolean,
     onValueChange: (String) -> Unit,
     onConfirmClick: () -> Unit,
-    onDismissClick: () -> Unit,
+    onCancelClick: () -> Unit,
     onSelectVegeCategory: (VegeCategory) -> Unit,
+    onDismissRequest: () -> Unit = {},
+    errorEvent: Flow<Boolean>,
 ) {
-    if (isOpenDialog) {
-        AlertDialog(
-            // ここが空だとウィンドウ外をタップしても何も起こらない
-            onDismissRequest = { },
-            title = {
-                Text(text = stringResource(R.string.addtextfield_describe))
-            },
-            text = {
-                Column {
-                    TextField(
-                        value = inputText,
-                        onValueChange = { onValueChange(it) },
-                        singleLine = true
-                    )
-                    CategoryDropMenu(
-                        selectCategory = selectCategory,
-                        onDropDownMenuClick = onSelectVegeCategory,
-                        modifier =
-                        Modifier
-                            .padding(top = 4.dp)
-                    )
-                }
-            },
-            confirmButton = {
-                if (isAddAble) {
-                    TextButton(
-                        onClick = { onConfirmClick() }
-                    ) {
-                        Text(stringResource(R.string.add_text))
-                    }
-                } else {
-                    TextButton(
-                        onClick = { }
-                    ) {
-                        Text(stringResource(id = R.string.add_text), color = Color.LightGray)
+    val isVisibleDuplicateInsertError = rememberSaveable {
+        mutableStateOf(false)
+    }
+    AlertDialog(
+        // ここが空だとウィンドウ外をタップしても何も起こらない
+        onDismissRequest = onDismissRequest,
+        title = {
+            Text(text = stringResource(titleResId))
+        },
+        text = {
+            Column {
+                TextField(
+                    value = inputText,
+                    onValueChange = { onValueChange(it) },
+                    singleLine = true
+                )
+                LaunchedEffect(errorEvent) {
+                    errorEvent.collect {
+                        isVisibleDuplicateInsertError.value = it
                     }
                 }
-            },
-            dismissButton = {
+                if (isVisibleDuplicateInsertError.value) {
+                    Text(
+                        stringResource(id = R.string.error_duplicate_insert),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+                CategoryDropMenu(
+                    selectCategory = selectCategory,
+                    onDropDownMenuClick = onSelectVegeCategory,
+                    modifier =
+                    Modifier
+                        .padding(top = 4.dp)
+                )
+            }
+        },
+        confirmButton = {
+            if (isAddAble) {
                 TextButton(
-                    onClick = { onDismissClick() }
+                    onClick = { onConfirmClick() }
                 ) {
-                    Text(stringResource(R.string.cancel_text))
+                    Text(stringResource(R.string.add_text))
+                }
+            } else {
+                TextButton(
+                    onClick = { }
+                ) {
+                    Text(stringResource(id = R.string.add_text), color = Color.LightGray)
                 }
             }
-        )
-    }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { onCancelClick() }
+            ) {
+                Text(stringResource(R.string.cancel_text))
+            }
+        }
+    )
 }
 
 @Composable
@@ -185,20 +204,43 @@ fun AlertPreview() {
 }
 
 @Composable
-fun ConfirmDeleteItemDialog(modifier: Modifier = Modifier, deleteItem: VegeItem?, onDismissRequest: () -> Unit, onConfirmClick: () -> Unit, onCancelClick: () -> Unit) {
+fun ConfirmDeleteItemDialog(
+    modifier: Modifier = Modifier,
+    deleteItem: VegeItem?,
+    deleteFolder: VegetableFolderEntity?,
+    onDismissRequest: () -> Unit,
+    onConfirmClick: () -> Unit,
+    onCancelClick: () -> Unit,
+) {
     AlertDialog(
         modifier = modifier,
         onDismissRequest = onDismissRequest,
         icon = {
-            Icon(
-                Icons.Filled.Delete,
-                contentDescription = stringResource(id = R.string.delete_text)
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if (deleteItem != null) {
+                    Icon(
+                        painterResource(id = R.drawable.ic_leaf),
+                        contentDescription = null
+                    )
+                }
+                if (deleteFolder != null) {
+                    Icon(
+                        painterResource(id = R.drawable.ic_folder),
+                        contentDescription = null
+                    )
+                }
+                Icon(
+                    Icons.Filled.Delete,
+                    contentDescription = stringResource(id = R.string.delete_text)
+                )
+            }
         },
         title = {
             Column {
                 Text(
-                    stringResource(id = R.string.home_delete_dialog_title, deleteItem?.name ?: ""),
+                    stringResource(id = R.string.home_delete_dialog_title, deleteItem?.name ?: deleteFolder?.folderName ?: ""),
                     style = MaterialTheme.typography.titleLarge
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -236,11 +278,13 @@ private fun ConfirmDeleteItemDialogPreview() {
                 name = "キャベツ",
                 VegeCategory.None,
                 uuid = "",
-                VegeStatus.End
+                VegeStatus.End,
+                folderId = null
             ),
             onDismissRequest = {},
             onConfirmClick = {},
-            onCancelClick = {}
+            onCancelClick = {},
+            deleteFolder = null
         )
     }
 }
