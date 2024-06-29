@@ -66,7 +66,7 @@ class HomeScreenViewModel @Inject constructor(
     val vegetablesState: StateFlow<HomeVegetablesState> = combine(
         _vegetables,
         _vegetableDetails,
-        _vegetableFolders,
+        _vegetableFolders
     ) { vegetables, vegetableDetails, vegetableFolders ->
         HomeVegetablesState(
             vegetables = vegetables,
@@ -85,7 +85,6 @@ class HomeScreenViewModel @Inject constructor(
     private val _insertVegetableFolderEvent: MutableSharedFlow<Boolean> = MutableStateFlow(false)
     val insertVegetableFolderEvent: SharedFlow<Boolean> = _insertVegetableFolderEvent.asSharedFlow()
 
-
     init {
         viewModelScope.launch {
             dataMigrationRepository.dataMigration()
@@ -96,7 +95,7 @@ class HomeScreenViewModel @Inject constructor(
     fun closeDialog() {
         _uiState.update {
             it.copy(
-                openAddDialogType = AddDialogType.NotOpenDialog,
+                openAddDialogType = AddDialogType.NotOpenDialog
             )
         }
     }
@@ -160,7 +159,7 @@ class HomeScreenViewModel @Inject constructor(
                     id = 0,
                     folderNumber = _vegetableFolders.value.size,
                     folderName = _uiState.value.inputText,
-                    vegetableCategory = _uiState.value.selectCategory,
+                    vegetableCategory = _uiState.value.selectCategory
                 )
                 viewModelScope.launch {
                     insertVegetableFolderUseCase(vegeFolder)
@@ -174,7 +173,9 @@ class HomeScreenViewModel @Inject constructor(
                         }
                 }
             }
-            else -> { return }
+            else -> {
+                return
+            }
         }
     }
 
@@ -217,7 +218,7 @@ class HomeScreenViewModel @Inject constructor(
             _uiState.update {
                 it.copy(
                     targetDeleteItem = null,
-                    targetDeleteFolder = null,
+                    targetDeleteFolder = null
                 )
             }
         }
@@ -299,7 +300,7 @@ class HomeScreenViewModel @Inject constructor(
                     true
                 } else {
                     item.status == filterStatusMap[filterStatus] ||
-                            item.category == filterStatusMap[filterStatus]
+                        item.category == filterStatusMap[filterStatus]
                 }
             }
 

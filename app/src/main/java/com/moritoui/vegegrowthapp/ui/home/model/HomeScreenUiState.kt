@@ -34,7 +34,7 @@ data class HomeScreenUiState(
             filterStatus = FilterStatus.All,
             targetDeleteItem = null,
             isLoading = false,
-            targetDeleteFolder = null,
+            targetDeleteFolder = null
         )
     }
 }

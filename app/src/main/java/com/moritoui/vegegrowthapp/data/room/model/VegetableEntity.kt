@@ -34,5 +34,5 @@ fun VegetableEntity.toVegeItem(): VegeItem = VegeItem(
     category = vegetableCategory,
     id = id,
     status = vegetableState,
-    folderId = folderId,
+    folderId = folderId
 )

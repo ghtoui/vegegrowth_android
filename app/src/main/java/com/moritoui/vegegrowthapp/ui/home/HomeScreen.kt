@@ -83,7 +83,7 @@ fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel(), navController: 
         insertErrorEvent = viewModel.insertVegetableFolderEvent,
         openDeleteDialog = viewModel::openDeleteVegeItemDialog,
         onDeleteFolderItem = viewModel::openDeleteFolderDialog,
-        onFolderClick = {},
+        onFolderClick = {}
     )
 }
 
@@ -116,10 +116,12 @@ private fun HomeScreen(
         topBar = {
             NavigationAppTopBar(
                 title = stringResource(R.string.first_screen_title),
-                actions = { HomeAddItem(
-                    onFolderAddClick = { openAddDialogType(AddDialogType.AddFolder) },
-                    onAddClick = { openAddDialogType(AddDialogType.AddVegeItem) }
-                ) },
+                actions = {
+                    HomeAddItem(
+                        onFolderAddClick = { openAddDialogType(AddDialogType.AddFolder) },
+                        onAddClick = { openAddDialogType(AddDialogType.AddVegeItem) }
+                    )
+                },
                 isVisibleBackButton = false
             )
         }
@@ -153,76 +155,76 @@ private fun HomeScreen(
                             .fillMaxSize()
                     )
                 }
-                    LazyVerticalGrid(
-                        modifier = Modifier
-                            .padding(top = it.calculateTopPadding(), bottom = 8.dp),
-                        columns = GridCells.Fixed(2),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        if (vegetablesState.vegetableFolders.isNotEmpty()) {
-                            item(
-                                span = { GridItemSpan(maxLineSpan) },
-                            ) {
-                                Column {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Icon(
-                                            painter = painterResource(id = R.drawable.ic_folder),
-                                            contentDescription = null,
-                                        )
-                                        Spacer(modifier = Modifier.width(4.dp))
-                                        Text(stringResource(id = R.string.home_folder))
-                                    }
-                                    Spacer(modifier = Modifier.height(2.dp))
-                                    HorizontalDivider(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        thickness = 3.dp
+                LazyVerticalGrid(
+                    modifier = Modifier
+                        .padding(top = it.calculateTopPadding(), bottom = 8.dp),
+                    columns = GridCells.Fixed(2),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    if (vegetablesState.vegetableFolders.isNotEmpty()) {
+                        item(
+                            span = { GridItemSpan(maxLineSpan) }
+                        ) {
+                            Column {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_folder),
+                                        contentDescription = null
                                     )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(stringResource(id = R.string.home_folder))
                                 }
-                            }
-                        }
-                        items(vegetablesState.vegetableFolders) { folder ->
-                            VegeFolderCard(
-                                vegetableFolder = folder,
-                                onFolderClick = { onFolderClick(folder) },
-                                selectMenu = uiState.selectMenu,
-                                onItemDeleteClick = { onDeleteFolderItem(it) }
-                            )
-                        }
-                        if (vegetablesState.vegetables.isNotEmpty()) {
-                            item(
-                                span = { GridItemSpan(maxLineSpan) },
-                            ) {
-                                Column {
-                                    Text(stringResource(id = R.string.home_item_not_classified))
-                                    Spacer(modifier = Modifier.height(2.dp))
-                                    HorizontalDivider(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        thickness = 3.dp
-                                    )
-                                }
-                            }
-                        }
-                        vegetablesState.vegetables.zip(vegetablesState.vegetableDetails).forEach { vegetable ->
-                            item(
-                                key = "${vegetable.first.id}, ${vegetable.first.name}",
-                                span = { GridItemSpan(maxLineSpan) },
-                            ) {
-                                VegeItemListCard(
-                                    vegetable = vegetable.first,
-                                    vegetableDetail = vegetable.second,
-                                    onVegeItemClick = { onVegeItemClick(it) },
-                                    selectMenu = uiState.selectMenu,
-                                    onItemDeleteClick = { item ->
-                                        openDeleteDialog(item)
-                                    },
-                                    onSelectVegeStatus = onSelectVegeStatus
+                                Spacer(modifier = Modifier.height(2.dp))
+                                HorizontalDivider(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    thickness = 3.dp
                                 )
                             }
                         }
                     }
+                    items(vegetablesState.vegetableFolders) { folder ->
+                        VegeFolderCard(
+                            vegetableFolder = folder,
+                            onFolderClick = { onFolderClick(folder) },
+                            selectMenu = uiState.selectMenu,
+                            onItemDeleteClick = { onDeleteFolderItem(it) }
+                        )
+                    }
+                    if (vegetablesState.vegetables.isNotEmpty()) {
+                        item(
+                            span = { GridItemSpan(maxLineSpan) }
+                        ) {
+                            Column {
+                                Text(stringResource(id = R.string.home_item_not_classified))
+                                Spacer(modifier = Modifier.height(2.dp))
+                                HorizontalDivider(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    thickness = 3.dp
+                                )
+                            }
+                        }
+                    }
+                    vegetablesState.vegetables.zip(vegetablesState.vegetableDetails).forEach { vegetable ->
+                        item(
+                            key = "${vegetable.first.id}, ${vegetable.first.name}",
+                            span = { GridItemSpan(maxLineSpan) }
+                        ) {
+                            VegeItemListCard(
+                                vegetable = vegetable.first,
+                                vegetableDetail = vegetable.second,
+                                onVegeItemClick = { onVegeItemClick(it) },
+                                selectMenu = uiState.selectMenu,
+                                onItemDeleteClick = { item ->
+                                    openDeleteDialog(item)
+                                },
+                                onSelectVegeStatus = onSelectVegeStatus
+                            )
+                        }
+                    }
+                }
             }
         }
     }
@@ -237,7 +239,7 @@ private fun HomeScreen(
                 onConfirmClick = { onAddDialogConfirmClick(AddDialogType.AddVegeItem) },
                 onCancelClick = onDismiss,
                 onSelectVegeCategory = onSelectVegeCategory,
-                errorEvent = insertErrorEvent,
+                errorEvent = insertErrorEvent
             )
         }
         AddDialogType.AddFolder -> {
@@ -250,11 +252,10 @@ private fun HomeScreen(
                 onConfirmClick = { onAddDialogConfirmClick(AddDialogType.AddFolder) },
                 onCancelClick = onDismiss,
                 onSelectVegeCategory = onSelectVegeCategory,
-                errorEvent = insertErrorEvent,
+                errorEvent = insertErrorEvent
             )
         }
         else -> {
-
         }
     }
     if (uiState.isOpenDeleteDialog) {
@@ -311,7 +312,7 @@ class HomePreviewParameterProvider : PreviewParameterProvider<HomePreviewParamet
                 vegetablesState = HomeVegetablesState.initial().copy(
                     vegetables = HomeScreenDummy.vegeList(),
                     vegetableDetails = ManageScreenDummy.getVegetableDetailList(),
-                    vegetableFolders = HomeScreenDummy.vegeFolderList(),
+                    vegetableFolders = HomeScreenDummy.vegeFolderList()
                 )
             ),
             Params(
@@ -321,7 +322,7 @@ class HomePreviewParameterProvider : PreviewParameterProvider<HomePreviewParamet
                 vegetablesState = HomeVegetablesState.initial().copy(
                     vegetables = HomeScreenDummy.vegeList(),
                     vegetableDetails = ManageScreenDummy.getVegetableDetailList(),
-                    vegetableFolders = HomeScreenDummy.vegeFolderList(),
+                    vegetableFolders = HomeScreenDummy.vegeFolderList()
                 )
             ),
             Params(
@@ -331,7 +332,7 @@ class HomePreviewParameterProvider : PreviewParameterProvider<HomePreviewParamet
                 vegetablesState = HomeVegetablesState.initial().copy(
                     vegetables = HomeScreenDummy.vegeList(),
                     vegetableDetails = ManageScreenDummy.getVegetableDetailList(),
-                    vegetableFolders = HomeScreenDummy.vegeFolderList(),
+                    vegetableFolders = HomeScreenDummy.vegeFolderList()
                 )
             )
         )

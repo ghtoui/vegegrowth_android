@@ -16,7 +16,7 @@ import com.moritoui.vegegrowthapp.data.room.model.VegetableFolderEntity
     entities = [
         VegetableEntity::class,
         VegetableDetailEntity::class,
-        VegetableFolderEntity::class,
+        VegetableFolderEntity::class
     ],
     version = 3,
     exportSchema = true,
@@ -41,11 +41,11 @@ val MIGRATION_1_2 = object : Migration(1, 2) {
     override fun migrate(db: SupportSQLiteDatabase) {
         db.execSQL(
             "CREATE TABLE IF NOT EXISTS vegetable_folder_resources (" +
-                    "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
-                    "folder_name TEXT NOT NULL," +
-                    "folder_number INTEGER NOT NULL," +
-                    "vegetable_category TEXT NOT NULL" +
-                    ");"
+                "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
+                "folder_name TEXT NOT NULL," +
+                "folder_number INTEGER NOT NULL," +
+                "vegetable_category TEXT NOT NULL" +
+                ");"
         )
         db.execSQL(
             "CREATE UNIQUE INDEX IF NOT EXISTS `index_vegetable_folder_resources_folder_name` ON `vegetable_folder_resources` (`folder_name`)"

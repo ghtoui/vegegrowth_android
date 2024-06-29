@@ -111,7 +111,7 @@ fun VegeItemListCard(
                             name = vegetable.name,
                             uuid = vegetable.uuid,
                             category = vegetable.category,
-                            status = it,
+                            status = it
                         )
                     )
                 }
@@ -153,9 +153,7 @@ private fun VegetableInfo(modifier: Modifier = Modifier, vegetable: VegeItem, ve
 }
 
 @Composable
-private fun VegetableCategoryIcon(
-    category: VegeCategory
-) {
+private fun VegetableCategoryIcon(category: VegeCategory) {
     val iconTint: Color = category.getTint(otherColor = LocalContentColor.current)
     val categoryIcon = category.getIcon()
 
@@ -169,12 +167,7 @@ private fun VegetableCategoryIcon(
 }
 
 @Composable
-private fun VegetableEditMenu(
-    modifier: Modifier = Modifier,
-    selectMenu: SelectMenu,
-    onItemDeleteClick: (() -> Unit)? = null,
-    onSelectVegeStatus: ((VegeStatus) -> Unit)? = null,
-) {
+private fun VegetableEditMenu(modifier: Modifier = Modifier, selectMenu: SelectMenu, onItemDeleteClick: (() -> Unit)? = null, onSelectVegeStatus: ((VegeStatus) -> Unit)? = null) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     when (selectMenu) {
         SelectMenu.Edit -> {
@@ -286,7 +279,7 @@ fun VegeFolderCard(
             Spacer(modifier = Modifier.weight(1f))
             VegetableEditMenu(
                 selectMenu = selectMenu,
-                onItemDeleteClick = { onItemDeleteClick(vegetableFolder) },
+                onItemDeleteClick = { onItemDeleteClick(vegetableFolder) }
             )
         }
     }

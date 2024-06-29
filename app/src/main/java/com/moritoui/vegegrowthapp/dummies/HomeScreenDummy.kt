@@ -13,7 +13,7 @@ object HomeScreenDummy {
             VegeCategory.Leaf,
             uuid = "",
             VegeStatus.End,
-            folderId = null,
+            folderId = null
         ),
         VegeItem(
             id = 1,
@@ -21,7 +21,7 @@ object HomeScreenDummy {
             VegeCategory.Flower,
             uuid = "",
             VegeStatus.Favorite,
-            folderId = null,
+            folderId = null
         ),
         VegeItem(
             id = 2,
@@ -29,7 +29,7 @@ object HomeScreenDummy {
             VegeCategory.Other,
             uuid = "",
             VegeStatus.Default,
-            folderId = null,
+            folderId = null
         ),
         VegeItem(
             id = 3,
@@ -37,7 +37,7 @@ object HomeScreenDummy {
             VegeCategory.None,
             uuid = "",
             VegeStatus.End,
-            folderId = null,
+            folderId = null
         )
     )
     fun vegeFolderList(): List<VegetableFolderEntity> = listOf(
@@ -45,25 +45,25 @@ object HomeScreenDummy {
             id = 0,
             folderNumber = 0,
             folderName = "test0",
-            vegetableCategory = VegeCategory.None,
+            vegetableCategory = VegeCategory.None
         ),
         VegetableFolderEntity(
             id = 1,
             folderNumber = 1,
             folderName = "test1",
-            vegetableCategory = VegeCategory.Leaf,
+            vegetableCategory = VegeCategory.Leaf
         ),
         VegetableFolderEntity(
             id = 2,
             folderNumber = 2,
             folderName = "test2",
-            vegetableCategory = VegeCategory.Flower,
+            vegetableCategory = VegeCategory.Flower
         ),
         VegetableFolderEntity(
             id = 3,
             folderNumber = 3,
             folderName = "test3",
-            vegetableCategory = VegeCategory.None,
-        ),
+            vegetableCategory = VegeCategory.None
+        )
     )
 }

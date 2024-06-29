@@ -210,7 +210,7 @@ fun ConfirmDeleteItemDialog(
     deleteFolder: VegetableFolderEntity?,
     onDismissRequest: () -> Unit,
     onConfirmClick: () -> Unit,
-    onCancelClick: () -> Unit
+    onCancelClick: () -> Unit,
 ) {
     AlertDialog(
         modifier = modifier,
@@ -284,7 +284,7 @@ private fun ConfirmDeleteItemDialogPreview() {
             onDismissRequest = {},
             onConfirmClick = {},
             onCancelClick = {},
-            deleteFolder = null,
+            deleteFolder = null
         )
     }
 }
