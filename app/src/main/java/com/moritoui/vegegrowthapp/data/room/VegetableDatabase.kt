@@ -1,5 +1,6 @@
 package com.moritoui.vegegrowthapp.data.room
 
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
@@ -17,8 +18,11 @@ import com.moritoui.vegegrowthapp.data.room.model.VegetableFolderEntity
         VegetableDetailEntity::class,
         VegetableFolderEntity::class,
     ],
-    version = 2,
+    version = 3,
     exportSchema = true,
+    autoMigrations = [
+        AutoMigration(from = 2, to = 3)
+    ]
 )
 abstract class VegetableDatabase : RoomDatabase() {
     abstract fun vegetableDao(): VegetableDao

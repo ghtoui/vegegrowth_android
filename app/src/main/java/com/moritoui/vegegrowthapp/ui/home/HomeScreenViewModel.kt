@@ -1,6 +1,5 @@
 package com.moritoui.vegegrowthapp.ui.home
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.moritoui.vegegrowthapp.data.room.model.VegetableFolderEntity
@@ -213,8 +212,7 @@ class HomeScreenViewModel @Inject constructor(
                 deleteVegeItemUseCase(deleteItem)
             }
             if (deleteFolder != null) {
-//                deleteVegeFolderUseCase(deleteFolder)
-                Log.d("test", "$deleteFolder")
+                deleteVegeFolderUseCase(deleteFolder)
             }
             _uiState.update {
                 it.copy(
