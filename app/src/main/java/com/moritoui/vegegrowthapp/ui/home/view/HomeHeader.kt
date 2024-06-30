@@ -16,6 +16,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.moritoui.vegegrowthapp.R
@@ -84,7 +85,7 @@ fun ItemListTopBar(
                         }
                     ) {
                         Icon(
-                            menuIcon,
+                            painterResource(id = menuIcon),
                             contentDescription = stringResource(R.string.drop_down_menu_button),
                             tint = menuIconTint ?: LocalContentColor.current
                         )
@@ -129,7 +130,7 @@ private fun SelectMenuHeader(selectMenu: SelectMenu, onMenuClick: () -> Unit) {
         SelectMenu.None -> {
             IconButton(onClick = onMenuClick) {
                 Icon(
-                    menuIcon,
+                    painterResource(id = menuIcon),
                     contentDescription = stringResource(R.string.drop_down_menu_button),
                     tint = menuIconTint ?: LocalContentColor.current
                 )

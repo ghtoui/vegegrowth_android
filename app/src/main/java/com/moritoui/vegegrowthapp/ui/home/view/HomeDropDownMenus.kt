@@ -1,14 +1,11 @@
 package com.moritoui.vegegrowthapp.ui.home.view
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -24,14 +21,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.moritoui.vegegrowthapp.R
 import com.moritoui.vegegrowthapp.model.FilterStatus
 import com.moritoui.vegegrowthapp.model.VegeCategory
-import com.moritoui.vegegrowthapp.model.getIcon
+import com.moritoui.vegegrowthapp.model.getIconId
 import com.moritoui.vegegrowthapp.model.getText
 
 @Composable
@@ -44,13 +40,13 @@ fun CategoryDropMenu(selectCategory: VegeCategory, onDropDownMenuClick: (VegeCat
     ) {
         IconButton(onClick = { expanded = true }) {
             Icon(
-                Icons.Filled.MoreVert,
+                painterResource(id = R.drawable.ic_more_vert),
                 contentDescription = stringResource(R.string.menu_select)
             )
         }
-        if (selectCategory.getIcon() != null) {
+        if (selectCategory.getIconId() != null) {
             Icon(
-                painter = painterResource(id = selectCategory.getIcon()!!),
+                painter = painterResource(id = selectCategory.getIconId()!!),
                 contentDescription = null
             )
             Spacer(modifier = Modifier.width(4.dp))
@@ -81,14 +77,23 @@ fun CategoryDropMenu(selectCategory: VegeCategory, onDropDownMenuClick: (VegeCat
 }
 
 @Composable
-fun ItemListDropDownMenuItem(modifier: Modifier = Modifier, icon: ImageVector, text: String, iconTint: Color = LocalContentColor.current, onClick: () -> Unit) {
+fun ItemListDropDownMenuItem(
+    modifier: Modifier = Modifier,
+    @DrawableRes iconId: Int,
+    text: String,
+    iconTint: Color = LocalContentColor.current,
+    onClick: () -> Unit) {
     DropdownMenuItem(
         text = {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                Icon(icon, contentDescription = null, tint = iconTint)
+                Icon(
+                    painterResource(id = iconId),
+                    contentDescription = null,
+                    tint = iconTint
+                )
                 Text(text)
             }
         },
@@ -105,13 +110,13 @@ fun SelectDropDownMenu(modifier: Modifier = Modifier, selectMenuExpanded: Boolea
         modifier = modifier
     ) {
         ItemListDropDownMenuItem(
-            icon = Icons.Filled.Delete,
+            iconId = R.drawable.ic_delete,
             text = stringResource(R.string.delete_text),
             iconTint = Color.Red,
             onClick = onDeleteIconClick
         )
         ItemListDropDownMenuItem(
-            icon = Icons.Filled.Edit,
+            iconId = R.drawable.ic_edit,
             text = stringResource(R.string.edit_button),
             onClick = onEditIconClick
         )

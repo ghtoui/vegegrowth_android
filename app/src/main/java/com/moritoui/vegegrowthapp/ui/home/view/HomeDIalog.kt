@@ -8,10 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
@@ -123,7 +119,7 @@ fun AddTextCategoryDialog(
 fun EditAlertWindow(selectStatus: VegeStatus, isOpenDialog: Boolean, onMenuItemIconClick: (VegeStatus) -> Unit, onConfirmClick: () -> Unit, modifier: Modifier = Modifier) {
     var expanded by rememberSaveable { mutableStateOf(false) }
 
-    val selectIcon = VegeStatusMethod.getIcon(selectStatus)
+    val selectIcon = VegeStatusMethod.getIconId(selectStatus)
     val selectIconTint = VegeStatusMethod.getIconTint(selectStatus)
     val selectText = VegeStatusMethod.getText(selectStatus)
 
@@ -148,12 +144,12 @@ fun EditAlertWindow(selectStatus: VegeStatus, isOpenDialog: Boolean, onMenuItemI
                         }
                     ) {
                         Icon(
-                            Icons.Filled.MoreVert,
+                            painterResource(id = R.drawable.ic_more_vert),
                             contentDescription = stringResource(R.string.drop_down_menu_button)
                         )
                     }
                     Icon(
-                        selectIcon,
+                        painterResource(id = selectIcon),
                         tint = selectIconTint ?: LocalContentColor.current,
                         contentDescription = null
                     )
@@ -168,7 +164,7 @@ fun EditAlertWindow(selectStatus: VegeStatus, isOpenDialog: Boolean, onMenuItemI
                     ) {
                         VegeStatus.values().forEach { status ->
                             ItemListDropDownMenuItem(
-                                icon = Icons.Filled.Edit,
+                                iconId = R.drawable.ic_edit,
                                 text = stringResource(R.string.edit_button),
                                 onClick = {
                                     onMenuItemIconClick(status)
@@ -232,7 +228,7 @@ fun ConfirmDeleteItemDialog(
                     )
                 }
                 Icon(
-                    Icons.Filled.Delete,
+                    painterResource(id = R.drawable.ic_delete),
                     contentDescription = stringResource(id = R.string.delete_text)
                 )
             }

@@ -10,9 +10,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
@@ -43,7 +40,7 @@ import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegeItemDetail
 import com.moritoui.vegegrowthapp.model.VegeStatus
 import com.moritoui.vegegrowthapp.model.VegeStatusMethod
-import com.moritoui.vegegrowthapp.model.getIcon
+import com.moritoui.vegegrowthapp.model.getIconId
 import com.moritoui.vegegrowthapp.model.getTint
 import com.moritoui.vegegrowthapp.previews.DarkLightPreview
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
@@ -58,7 +55,7 @@ fun VegeItemListCard(
     onSelectVegeStatus: (VegeItem) -> Unit,
     onVegeItemClick: (Int) -> Unit,
 ) {
-    val statusIcon = VegeStatusMethod.getIcon(vegetable.status)
+    val statusIcon = VegeStatusMethod.getIconId(vegetable.status)
     val statusIconTint = VegeStatusMethod.getIconTint(vegetable.status) ?: LocalContentColor.current
 
     Card(
@@ -94,7 +91,7 @@ fun VegeItemListCard(
             )
             Spacer(modifier = Modifier.width(8.dp))
             Icon(
-                statusIcon,
+                painterResource(id = statusIcon),
                 contentDescription = null,
                 tint = statusIconTint,
                 modifier = Modifier.size(24.dp)
@@ -155,7 +152,7 @@ private fun VegetableInfo(modifier: Modifier = Modifier, vegetable: VegeItem, ve
 @Composable
 private fun VegetableCategoryIcon(category: VegeCategory) {
     val iconTint: Color = category.getTint(otherColor = LocalContentColor.current)
-    val categoryIcon = category.getIcon()
+    val categoryIcon = category.getIconId()
 
     if (categoryIcon != null) {
         Icon(
@@ -175,7 +172,7 @@ private fun VegetableEditMenu(modifier: Modifier = Modifier, selectMenu: SelectM
             Box {
                 IconButton(onClick = { expanded = true }) {
                     Icon(
-                        Icons.Filled.Edit,
+                        painterResource(id = R.drawable.ic_edit),
                         contentDescription = stringResource(id = R.string.delete_text),
                         modifier = Modifier.size(24.dp)
                     )
@@ -188,7 +185,7 @@ private fun VegetableEditMenu(modifier: Modifier = Modifier, selectMenu: SelectM
                 ) {
                     VegeStatus.values().forEach { status ->
                         ItemListDropDownMenuItem(
-                            icon = VegeStatusMethod.getIcon(status),
+                            iconId = VegeStatusMethod.getIconId(status),
                             text = stringResource(VegeStatusMethod.getText(status)),
                             iconTint =
                             VegeStatusMethod.getIconTint(status) ?: LocalContentColor.current,
@@ -209,7 +206,7 @@ private fun VegetableEditMenu(modifier: Modifier = Modifier, selectMenu: SelectM
                 onClick = onItemDeleteClick
             ) {
                 Icon(
-                    Icons.Filled.Delete,
+                    painterResource(id = R.drawable.ic_delete),
                     contentDescription = stringResource(id = R.string.delete_text),
                     tint = Color.Red,
                     modifier = Modifier.size(24.dp)

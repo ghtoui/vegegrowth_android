@@ -20,8 +20,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -304,7 +302,7 @@ fun MemoTopBar(modifier: Modifier = Modifier, onEditClick: () -> Unit) {
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Icon(
-                    Icons.Filled.Edit,
+                    painterResource(id = R.drawable.ic_edit),
                     contentDescription = "メモ編集"
                 )
                 Text(
