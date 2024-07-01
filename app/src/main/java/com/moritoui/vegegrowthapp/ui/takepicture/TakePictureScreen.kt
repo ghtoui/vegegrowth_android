@@ -18,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -25,7 +26,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,6 +41,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.moritoui.vegegrowthapp.R
 import com.moritoui.vegegrowthapp.navigation.GoToManageItem
@@ -52,7 +53,7 @@ import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 
 @Composable
 fun TakePictureScreen(navController: NavController, viewModel: TakePictureScreenViewModel = hiltViewModel()) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     TakePictureScreen(
         uiState = uiState,
         onGoToManageClick = { navController.navigateToManage(viewModel.args) },
@@ -81,7 +82,7 @@ private fun TakePictureScreen(
     onTakePictureButtonClick: (ImageProxy?) -> Unit,
     onSizeTextChange: (String) -> Unit,
     onConfirmClick: () -> Unit,
-    onDismissClick: () -> Unit
+    onDismissClick: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -97,18 +98,21 @@ private fun TakePictureScreen(
                 }
             }
         }
-    ) { it ->
+    ) { innerPadding ->
         Column(
             modifier =
             Modifier
                 .fillMaxSize()
-                .padding(it)
+                .padding(innerPadding)
                 .padding(start = 24.dp, top = 24.dp, end = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
             PictureView(image = uiState.takePicImage?.asImageBitmap())
-            TakeButton(onClick = goToCameraButtonClick)
+            TakeButton(
+                isTakenPicture = uiState.takePicImage == null,
+                onClick = goToCameraButtonClick
+            )
             if (uiState.takePicImage != null) {
                 RegisterButton(onClick = onRegisterButtonClick)
             }
@@ -160,9 +164,13 @@ fun PictureView(image: ImageBitmap?, modifier: Modifier = Modifier.aspectRatio(1
 }
 
 @Composable
-fun TakeButton(onClick: () -> Unit) {
+fun TakeButton(isTakenPicture: Boolean, onClick: () -> Unit) {
     Button(
-        onClick = { onClick() }
+        onClick = { onClick() },
+        colors = when (isTakenPicture) {
+            false -> ButtonDefaults.filledTonalButtonColors()
+            true -> ButtonDefaults.buttonColors()
+        }
     ) {
         Text(
             text = stringResource(R.string.take_picture_button)
@@ -190,7 +198,7 @@ fun RegisterAlertWindow(
     isBeforeInputText: Boolean,
     onValueChange: (String) -> Unit,
     onConfirmClick: () -> Unit,
-    onDismissClick: () -> Unit
+    onDismissClick: () -> Unit,
 ) {
     if (isOpenDialog) {
         AlertDialog(
@@ -249,28 +257,28 @@ fun RegisterAlertWindow(
                 }
             },
             confirmButton = {
-                if (isSuccessInputText && !isBeforeInputText) {
-                    TextButton(
-                        onClick = { onConfirmClick() }
-                    ) {
-                        Text(stringResource(id = R.string.register_button), color = Color.Blue)
-                    }
-                } else {
-                    TextButton(
-                        onClick = { }
-                    ) {
-                        Text(
-                            stringResource(id = R.string.register_button),
-                            color = Color.Gray
+                TextButton(
+                    onClick = {
+                        when (isSuccessInputText && !isBeforeInputText) {
+                            true -> onConfirmClick()
+                            false -> {}
+                        }
+                    },
+                    colors = when (isSuccessInputText && !isBeforeInputText) {
+                        true -> ButtonDefaults.textButtonColors()
+                        false -> ButtonDefaults.textButtonColors().copy(
+                            contentColor = Color.Gray
                         )
                     }
+                ) {
+                    Text(stringResource(id = R.string.register_button))
                 }
             },
             dismissButton = {
                 TextButton(
                     onClick = { onDismissClick() }
                 ) {
-                    Text(stringResource(id = R.string.take_picture_back), color = Color.Blue)
+                    Text(stringResource(id = R.string.take_picture_back))
                 }
             }
         )

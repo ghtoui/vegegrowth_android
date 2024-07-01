@@ -16,31 +16,26 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.moritoui.vegegrowthapp.R
 
 @Composable
-fun VegeGrowthLoading(modifier: Modifier = Modifier, isLoading: Boolean) {
+fun VegeGrowthLoading(modifier: Modifier = Modifier) {
     val composition by rememberLottieComposition(
         LottieCompositionSpec.RawRes(R.raw.vegetable_loading)
     )
-    when (isLoading) {
-        true -> {
-            Box(
-                modifier =
-                modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                LottieAnimation(
-                    modifier = Modifier.size(100.dp),
-                    composition = composition,
-                    iterations = LottieConstants.IterateForever
-                )
-            }
-        }
-        false -> return
+    Box(
+        modifier =
+        modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        LottieAnimation(
+            modifier = Modifier.size(100.dp),
+            composition = composition,
+            iterations = LottieConstants.IterateForever
+        )
     }
 }
 
 @PreviewLightDark
 @Composable
 private fun VegeGrowthLoadingPreview() {
-    VegeGrowthLoading(isLoading = true)
+    VegeGrowthLoading()
 }

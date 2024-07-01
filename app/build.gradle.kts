@@ -18,8 +18,8 @@ android {
         applicationId = "com.moritoui.vegegrowthapp"
         minSdk = 28
         targetSdk = 34
-        versionCode = 13
-        versionName = "2.3"
+        versionCode = 14
+        versionName = "2.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -76,6 +76,13 @@ android {
 // Allow references to generated code
 kapt {
     correctErrorTypes = true
+
+    arguments {
+        /**
+         * schema定義を出力しておくと、AutoMigrationできるようになる
+         */
+        arg("room.schemaLocation", "$projectDir/schemas")
+    }
 }
 
 val ktlint by configurations.creating
@@ -121,17 +128,17 @@ tasks.register<JavaExec>("ktlintFormat") {
 }
 
 dependencies {
+    implementation(platform("androidx.compose:compose-bom:2024.06.00"))
     implementation("androidx.core:core-ktx:1.13.1")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.1")
     implementation("androidx.activity:activity-compose:1.9.0")
-    implementation(platform("androidx.compose:compose-bom:2024.05.00"))
+
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material3:material3-window-size-class:1.2.1")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.1")
     implementation("androidx.navigation:navigation-compose:2.7.7")
+
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
@@ -141,6 +148,11 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    // lifecycle
+    val lifecycleVersion = "2.8.2"
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:$lifecycleVersion")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycleVersion")
 
     // CameraX
     val cameraxVersion = "1.3.3"

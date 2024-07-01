@@ -28,7 +28,7 @@ constructor(
     @ApplicationContext private val context: Context,
     private val vegetableDao: VegetableDao,
     private val vegetableDetailDao: VegetableDetailDao,
-    private val migratePreferences: DataStore<MigratePreferences>
+    private val migratePreferences: DataStore<MigratePreferences>,
 ) : DataMigrationRepository {
     override var isDataMigrating: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
@@ -40,10 +40,13 @@ constructor(
      */
     override suspend fun dataMigration() {
         val isMigrate: Boolean = migratePreferences.data.first().isMigrated
+        if (isMigrate) {
+            return
+        }
         val vegeItemListRepository =
             VegeItemListRepositoryImpl(FileManagerImpl(context), vegetableDao)
         var vegeItemList = vegeItemListRepository.sortItemList()
-        if (vegeItemList.isEmpty() || isMigrate) {
+        if (vegeItemList.isEmpty()) {
             return
         }
 

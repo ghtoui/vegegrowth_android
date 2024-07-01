@@ -22,12 +22,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
+import com.moritoui.vegegrowthapp.ui.folder.folderScreenRoute
 import com.moritoui.vegegrowthapp.ui.home.homeScreenRoute
 import com.moritoui.vegegrowthapp.ui.manage.manageScreenRoute
 import com.moritoui.vegegrowthapp.ui.takepicture.takePictureScreenRoute
 
 sealed class Screen(val route: String) {
     object HomeScreen : Screen("homeScreen")
+
+    object FolderScreen : Screen("folderScreen")
 
     object TakePictureScreen : Screen("takePictureScreen")
 
@@ -76,6 +79,7 @@ fun MainNavigation(modifier: Modifier = Modifier, firebaseAnalytics: FirebaseAna
         homeScreenRoute(navController)
         takePictureScreenRoute(navController)
         manageScreenRoute(navController)
+        folderScreenRoute(navController)
     }
 }
 

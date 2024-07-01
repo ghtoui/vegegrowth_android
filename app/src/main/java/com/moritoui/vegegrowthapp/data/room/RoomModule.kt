@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.moritoui.vegegrowthapp.data.room.dao.VegetableDao
 import com.moritoui.vegegrowthapp.data.room.dao.VegetableDetailDao
+import com.moritoui.vegegrowthapp.data.room.dao.VegetableFolderDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,7 +19,7 @@ object RoomModule {
     @Provides
     fun provideDatabase(@ApplicationContext context: Context) = Room
         .databaseBuilder(context, VegetableDatabase::class.java, "vegetable_database")
-        .fallbackToDestructiveMigration()
+        .addMigrations(MIGRATION_1_2)
         .build()
 
     @Provides
@@ -26,4 +27,7 @@ object RoomModule {
 
     @Provides
     fun provideVegetableDetailDao(database: VegetableDatabase): VegetableDetailDao = database.vegetableDetailDao()
+
+    @Provides
+    fun provideVegetableFolderDao(database: VegetableDatabase): VegetableFolderDao = database.vegetableFolderDao()
 }

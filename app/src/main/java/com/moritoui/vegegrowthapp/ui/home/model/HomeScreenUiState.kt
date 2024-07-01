@@ -1,5 +1,6 @@
 package com.moritoui.vegegrowthapp.ui.home.model
 
+import com.moritoui.vegegrowthapp.data.room.model.VegetableFolderEntity
 import com.moritoui.vegegrowthapp.model.FilterStatus
 import com.moritoui.vegegrowthapp.model.SelectMenu
 import com.moritoui.vegegrowthapp.model.VegeCategory
@@ -7,7 +8,8 @@ import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegeStatus
 
 data class HomeScreenUiState(
-    val isOpenAddDialog: Boolean,
+    val openAddDialogType: AddDialogType,
+    val isOpenAddFolderDialog: Boolean,
     val isOpenDeleteDialog: Boolean,
     val inputText: String,
     val selectCategory: VegeCategory,
@@ -15,12 +17,15 @@ data class HomeScreenUiState(
     val selectMenu: SelectMenu,
     val selectStatus: VegeStatus,
     val filterStatus: FilterStatus,
-    val vegetables: List<VegeItem>,
-    val targetDeleteItem: VegeItem?
+    val selectedItem: VegeItem?,
+    val selectedFolder: VegetableFolderEntity?,
+    val isLoading: Boolean,
+    val isOpenFolderMoveBottomSheet: Boolean,
 ) {
     companion object {
         fun initialState() = HomeScreenUiState(
-            isOpenAddDialog = false,
+            openAddDialogType = AddDialogType.NotOpenDialog,
+            isOpenAddFolderDialog = false,
             isOpenDeleteDialog = false,
             inputText = "",
             selectCategory = VegeCategory.None,
@@ -28,8 +33,10 @@ data class HomeScreenUiState(
             selectMenu = SelectMenu.None,
             selectStatus = VegeStatus.Default,
             filterStatus = FilterStatus.All,
-            vegetables = emptyList(),
-            targetDeleteItem = null
+            selectedItem = null,
+            isLoading = false,
+            selectedFolder = null,
+            isOpenFolderMoveBottomSheet = false
         )
     }
 }

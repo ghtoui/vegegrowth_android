@@ -14,7 +14,7 @@ data class VegeItemDetail(
     val size: Double,
     var memo: String,
     val date: String,
-    val imagePath: String = ""
+    val imagePath: String = "",
 ) {
     fun getDiffDatetime(baseDatetime: String): String {
         val dateFormatter = DateFormatter()

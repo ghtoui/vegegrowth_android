@@ -11,5 +11,5 @@ data class VegetableWIthDetails(
     @Relation(
         parentColumn = "id",
         entityColumn = "vegetable_id"
-    ) val details: List<VegetableDetailEntity>
+    ) val details: List<VegetableDetailEntity>,
 )

@@ -27,7 +27,7 @@ data class VegetableDetailEntity(
     @ColumnInfo(name = "size") val size: Double,
     @ColumnInfo(name = "note") val note: String,
     @ColumnInfo(name = "date") val date: String,
-    @ColumnInfo(name = "uuid") val uuid: String
+    @ColumnInfo(name = "uuid") val uuid: String,
 )
 
 fun VegetableDetailEntity.toVegeItemDetail(): VegeItemDetail = VegeItemDetail(
