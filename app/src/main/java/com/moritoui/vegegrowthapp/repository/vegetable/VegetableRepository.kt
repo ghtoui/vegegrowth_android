@@ -23,4 +23,9 @@ interface VegetableRepository {
      * 保存されている全ての野菜を取得
      */
     suspend fun getVegetables(): List<VegeItem>
+
+    /**
+     * フォルダIDが一致する野菜を取得する
+     */
+    suspend fun getVegetablesFromFolderId(folderId: Int?): List<VegeItem>
 }

@@ -37,4 +37,10 @@ interface VegetableFolderDao {
      */
     @Delete
     suspend fun deleteVegetableFolder(vegetableFolderEntity: VegetableFolderEntity)
+
+    /**
+     * 選択されたフォルダーを取得
+     */
+    @Query("SELECT * FROM vegetable_folder_resources WHERE id = :id")
+    suspend fun getSelectedFolder(id: Int): VegetableFolderEntity
 }

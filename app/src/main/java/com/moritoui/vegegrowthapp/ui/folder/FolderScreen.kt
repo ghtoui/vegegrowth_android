@@ -1,24 +1,13 @@
-package com.moritoui.vegegrowthapp.ui.home
+package com.moritoui.vegegrowthapp.ui.folder
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,10 +15,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
@@ -39,11 +25,9 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.moritoui.vegegrowthapp.R
-import com.moritoui.vegegrowthapp.data.room.model.VegetableFolderEntity
 import com.moritoui.vegegrowthapp.dummies.HomeScreenDummy
 import com.moritoui.vegegrowthapp.dummies.ManageScreenDummy
 import com.moritoui.vegegrowthapp.model.FilterStatus
-import com.moritoui.vegegrowthapp.model.SelectMenu
 import com.moritoui.vegegrowthapp.model.VegeCategory
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.navigation.HomeAddItem
@@ -51,31 +35,28 @@ import com.moritoui.vegegrowthapp.navigation.NavigationAppTopBar
 import com.moritoui.vegegrowthapp.previews.DarkLightPreview
 import com.moritoui.vegegrowthapp.ui.common.VegeGrowthLoading
 import com.moritoui.vegegrowthapp.ui.common.bottomsheet.FolderMoveBottomSheet
-import com.moritoui.vegegrowthapp.ui.folder.navigateToFolder
+import com.moritoui.vegegrowthapp.ui.folder.model.FolderScreenUiState
 import com.moritoui.vegegrowthapp.ui.home.model.AddDialogType
-import com.moritoui.vegegrowthapp.ui.home.model.HomeScreenUiState
 import com.moritoui.vegegrowthapp.ui.home.model.VegetablesState
 import com.moritoui.vegegrowthapp.ui.home.view.AddTextCategoryDialog
 import com.moritoui.vegegrowthapp.ui.home.view.ConfirmDeleteItemDialog
 import com.moritoui.vegegrowthapp.ui.home.view.ItemListTopBar
-import com.moritoui.vegegrowthapp.ui.home.view.VegeFolderCard
 import com.moritoui.vegegrowthapp.ui.home.view.VegeItemListCard
 import com.moritoui.vegegrowthapp.ui.takepicture.navigateToTakePicture
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
 @Composable
-fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel(), navController: NavController) {
+fun FolderScreen(viewModel: FolderScreenViewModel = hiltViewModel(), navController: NavController) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val vegetablesState by viewModel.vegetablesState.collectAsStateWithLifecycle()
-    HomeScreen(
+    FolderScreen(
         uiState = uiState,
         vegetablesState = vegetablesState,
-        onDeleteVegeItem = viewModel::changeDeleteMode,
+        onBackNavigationButtonClick = navController::popBackStack,
         openAddDialogType = viewModel::openAddDialog,
         onCancelMenuClick = viewModel::onCancelMenuClick,
+        onDeleteVegeItem = viewModel::changeDeleteMode,
         onEditIconClick = viewModel::changeEditMode,
         onFolderMoveIconClick = viewModel::changeFolderMoveMode,
         onFilterItemClick = viewModel::setFilterItemList,
@@ -83,14 +64,11 @@ fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel(), navController: 
         onSelectVegeStatus = viewModel::selectStatus,
         onVegeItemClick = navController::navigateToTakePicture,
         changeInputText = viewModel::changeInputText,
+        closeDeleteDialog = viewModel::closeDeleteDialog,
+        openDeleteDialog = viewModel::openDeleteVegeItemDialog,
         onAddDialogConfirmClick = viewModel::onAddDialogConfirm,
         onDismiss = viewModel::closeDialog,
         onSelectVegeCategory = viewModel::selectCategory,
-        closeDeleteDialog = viewModel::closeDeleteDialog,
-        insertErrorEvent = viewModel.insertVegetableFolderEvent,
-        openDeleteDialog = viewModel::openDeleteVegeItemDialog,
-        onDeleteFolderItem = viewModel::openDeleteFolderDialog,
-        onFolderClick = navController::navigateToFolder,
         onSelectMoveFolder = viewModel::openFolderMoveBottomSheetState,
         closeFolderBottomSheet = viewModel::closeFolderMoveBottomSheetState,
         onFolderItemClick = viewModel::vegeItemMoveFolder
@@ -104,13 +82,15 @@ fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel(), navController: 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun HomeScreen(
-    uiState: HomeScreenUiState,
+private fun FolderScreen(
+    uiState: FolderScreenUiState,
     vegetablesState: VegetablesState,
+    onBackNavigationButtonClick: () -> Unit,
     openAddDialogType: (AddDialogType) -> Unit,
     onCancelMenuClick: () -> Unit,
     onDeleteVegeItem: () -> Unit,
     onEditIconClick: () -> Unit,
+    onFolderMoveIconClick: () -> Unit,
     onSelectMoveFolder: (VegeItem) -> Unit,
     onFilterItemClick: (FilterStatus) -> Unit,
     confirmItemDelete: () -> Unit,
@@ -119,13 +99,9 @@ private fun HomeScreen(
     changeInputText: (String) -> Unit,
     closeDeleteDialog: () -> Unit,
     openDeleteDialog: (VegeItem) -> Unit,
-    onDeleteFolderItem: (VegetableFolderEntity) -> Unit,
-    onFolderMoveIconClick: () -> Unit,
     onAddDialogConfirmClick: (AddDialogType) -> Unit,
     onDismiss: () -> Unit,
     onSelectVegeCategory: (VegeCategory) -> Unit,
-    insertErrorEvent: Flow<Boolean>,
-    onFolderClick: (Int) -> Unit,
     closeFolderBottomSheet: () -> Unit,
     onFolderItemClick: (VegeItem) -> Unit,
 ) {
@@ -137,14 +113,14 @@ private fun HomeScreen(
     Scaffold(
         topBar = {
             NavigationAppTopBar(
-                title = stringResource(R.string.home_screen_title),
+                title = uiState.selectedFolder?.folderName ?: "",
                 actions = {
                     HomeAddItem(
-                        onFolderAddClick = { openAddDialogType(AddDialogType.AddFolder) },
                         onAddClick = { openAddDialogType(AddDialogType.AddVegeItem) }
                     )
                 },
-                isVisibleBackButton = false
+                isVisibleBackButton = true,
+                onBackNavigationButtonClick = onBackNavigationButtonClick
             )
         }
     ) { it ->
@@ -178,77 +154,25 @@ private fun HomeScreen(
                             .fillMaxSize()
                     )
                 }
-                LazyVerticalGrid(
-                    modifier = Modifier
-                        .padding(top = it.calculateTopPadding(), bottom = 8.dp),
-                    columns = GridCells.Fixed(2),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                LazyColumn(
+                    modifier = Modifier.padding(top = it.calculateTopPadding(), bottom = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    if (vegetablesState.vegetableFolders.isNotEmpty()) {
-                        item(
-                            span = { GridItemSpan(maxLineSpan) }
-                        ) {
-                            Column {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.ic_folder),
-                                        contentDescription = null
-                                    )
-                                    Spacer(modifier = Modifier.width(4.dp))
-                                    Text(stringResource(id = R.string.home_folder))
-                                }
-                                Spacer(modifier = Modifier.height(2.dp))
-                                HorizontalDivider(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    thickness = 3.dp
-                                )
-                            }
-                        }
-                    }
-                    items(vegetablesState.vegetableFolders) { folder ->
-                        VegeFolderCard(
-                            vegetableFolder = folder,
-                            onFolderClick = { onFolderClick(folder.id) },
+                    this.items(
+                        vegetablesState.vegetables.zip(vegetablesState.vegetableDetails),
+                        key = { vegetable -> "${vegetable.first.id}, ${vegetable.first.name}" }
+                    ) { vegetable ->
+                        VegeItemListCard(
+                            vegetable = vegetable.first,
+                            vegetableDetail = vegetable.second,
+                            onVegeItemClick = { onVegeItemClick(it) },
                             selectMenu = uiState.selectMenu,
-                            onItemDeleteClick = { onDeleteFolderItem(it) }
+                            onItemDeleteClick = { item ->
+                                openDeleteDialog(item)
+                            },
+                            onSelectVegeStatus = onSelectVegeStatus,
+                            onSelectMoveFolder = onSelectMoveFolder
                         )
-                    }
-                    if (vegetablesState.vegetables.isNotEmpty()) {
-                        item(
-                            span = { GridItemSpan(maxLineSpan) }
-                        ) {
-                            Column {
-                                Text(stringResource(id = R.string.home_item_not_classified))
-                                Spacer(modifier = Modifier.height(2.dp))
-                                HorizontalDivider(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    thickness = 3.dp
-                                )
-                            }
-                        }
-                    }
-                    vegetablesState.vegetables.zip(vegetablesState.vegetableDetails).forEach { vegetable ->
-                        item(
-                            key = "${vegetable.first.id}, ${vegetable.first.name}",
-                            span = { GridItemSpan(maxLineSpan) }
-                        ) {
-                            VegeItemListCard(
-                                vegetable = vegetable.first,
-                                vegetableDetail = vegetable.second,
-                                onVegeItemClick = { onVegeItemClick(it) },
-                                selectMenu = uiState.selectMenu,
-                                onItemDeleteClick = { item ->
-                                    openDeleteDialog(item)
-                                },
-                                onSelectVegeStatus = onSelectVegeStatus,
-                                onSelectMoveFolder = { item ->
-                                    onSelectMoveFolder(item)
-                                }
-                            )
-                        }
                     }
                 }
             }
@@ -267,27 +191,13 @@ private fun HomeScreen(
                 onSelectVegeCategory = onSelectVegeCategory
             )
         }
-        AddDialogType.AddFolder -> {
-            AddTextCategoryDialog(
-                titleResId = R.string.add_folder_dialog_title,
-                selectCategory = uiState.selectCategory,
-                inputText = uiState.inputText,
-                isAddAble = uiState.isAddAble,
-                onValueChange = changeInputText,
-                onConfirmClick = { onAddDialogConfirmClick(AddDialogType.AddFolder) },
-                onCancelClick = onDismiss,
-                onSelectVegeCategory = onSelectVegeCategory,
-                errorEvent = insertErrorEvent
-            )
-        }
-        else -> {
-        }
+
+        else -> {}
     }
 
     if (uiState.isOpenDeleteDialog) {
         ConfirmDeleteItemDialog(
             deleteItem = uiState.selectedItem,
-            deleteFolder = uiState.selectedFolder,
             onDismissRequest = {
                 closeDeleteDialog()
             },
@@ -300,7 +210,6 @@ private fun HomeScreen(
             }
         )
     }
-
     if (uiState.isOpenFolderMoveBottomSheet) {
         FolderMoveBottomSheet(
             folders = vegetablesState.vegetableFolders,
@@ -337,68 +246,44 @@ private fun HomeScreen(
 
 @DarkLightPreview
 @Composable
-fun HomeScreenPreview(@PreviewParameter(HomePreviewParameterProvider::class) params: HomePreviewParameterProvider.Params) {
+fun FolderScreenPreview(@PreviewParameter(FolderPreviewParameterProvider::class) params: FolderPreviewParameterProvider.Params) {
     VegegrowthAppTheme {
-        HomeScreen(
+        FolderScreen(
             uiState = params.uiState,
             vegetablesState = params.vegetablesState,
-            openAddDialogType = {},
-            onSelectVegeCategory = {},
-            onCancelMenuClick = {},
-            onDeleteVegeItem = {},
-            onFilterItemClick = {},
-            onDismiss = {},
+            onBackNavigationButtonClick = {},
             onSelectVegeStatus = {},
-            confirmItemDelete = {},
-            onAddDialogConfirmClick = {},
-            changeInputText = {},
-            onEditIconClick = {},
-            onVegeItemClick = {},
-            closeDeleteDialog = {},
             openDeleteDialog = {},
-            insertErrorEvent = flow { },
-            onFolderClick = {},
-            onDeleteFolderItem = {},
+            onFilterItemClick = {},
+            onEditIconClick = {},
+            onDeleteVegeItem = {},
+            onSelectVegeCategory = {},
+            closeDeleteDialog = {},
+            confirmItemDelete = {},
+            onCancelMenuClick = {},
+            openAddDialogType = {},
+            changeInputText = {},
+            onVegeItemClick = {},
+            onDismiss = {},
+            onAddDialogConfirmClick = {},
             onFolderMoveIconClick = {},
             onSelectMoveFolder = {},
-            closeFolderBottomSheet = {},
-            onFolderItemClick = {}
+            onFolderItemClick = {},
+            closeFolderBottomSheet = {}
         )
     }
 }
 
-class HomePreviewParameterProvider : PreviewParameterProvider<HomePreviewParameterProvider.Params> {
-    override val values: Sequence<Params> =
-        sequenceOf(
-            Params(
-                uiState = HomeScreenUiState.initialState(),
-                vegetablesState = VegetablesState.initial().copy(
-                    vegetables = HomeScreenDummy.vegeList(),
-                    vegetableDetails = ManageScreenDummy.getVegetableDetailList(),
-                    vegetableFolders = HomeScreenDummy.vegeFolderList()
-                )
-            ),
-            Params(
-                uiState = HomeScreenUiState.initialState().copy(
-                    selectMenu = SelectMenu.Edit
-                ),
-                vegetablesState = VegetablesState.initial().copy(
-                    vegetables = HomeScreenDummy.vegeList(),
-                    vegetableDetails = ManageScreenDummy.getVegetableDetailList(),
-                    vegetableFolders = HomeScreenDummy.vegeFolderList()
-                )
-            ),
-            Params(
-                uiState = HomeScreenUiState.initialState().copy(
-                    selectMenu = SelectMenu.Delete
-                ),
-                vegetablesState = VegetablesState.initial().copy(
-                    vegetables = HomeScreenDummy.vegeList(),
-                    vegetableDetails = ManageScreenDummy.getVegetableDetailList(),
-                    vegetableFolders = HomeScreenDummy.vegeFolderList()
-                )
+class FolderPreviewParameterProvider : PreviewParameterProvider<FolderPreviewParameterProvider.Params> {
+    override val values: Sequence<Params> = sequenceOf(
+        Params(
+            uiState = FolderScreenUiState.initial(),
+            vegetablesState = VegetablesState.initial().copy(
+                vegetables = HomeScreenDummy.vegeList(),
+                vegetableDetails = ManageScreenDummy.getVegetableDetailList()
             )
         )
+    )
 
-    data class Params(val uiState: HomeScreenUiState, val vegetablesState: VegetablesState)
+    data class Params(val uiState: FolderScreenUiState, val vegetablesState: VegetablesState)
 }

@@ -15,16 +15,18 @@ import androidx.compose.ui.res.stringResource
 import com.moritoui.vegegrowthapp.R
 
 @Composable
-fun HomeAddItem(onFolderAddClick: () -> Unit, onAddClick: () -> Unit) {
+fun HomeAddItem(onFolderAddClick: (() -> Unit)? = null, onAddClick: () -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
-        IconButton(onClick = onFolderAddClick) {
-            Icon(
-                painterResource(R.drawable.ic_folder_create),
-                contentDescription = stringResource(id = R.string.description_folder_add),
-                tint = MaterialTheme.colorScheme.secondary
-            )
+        if (onFolderAddClick != null) {
+            IconButton(onClick = onFolderAddClick) {
+                Icon(
+                    painterResource(R.drawable.ic_folder_create),
+                    contentDescription = stringResource(id = R.string.description_folder_add),
+                    tint = MaterialTheme.colorScheme.secondary
+                )
+            }
         }
         IconButton(onClick = onAddClick) {
             Icon(

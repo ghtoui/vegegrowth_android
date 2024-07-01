@@ -1,5 +1,6 @@
-package com.moritoui.vegegrowthapp.ui.home
+package com.moritoui.vegegrowthapp.ui.folder
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.moritoui.vegegrowthapp.data.room.model.VegetableFolderEntity
@@ -10,27 +11,21 @@ import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegeItemDetail
 import com.moritoui.vegegrowthapp.model.VegeStatus
 import com.moritoui.vegegrowthapp.model.filterStatusMap
-import com.moritoui.vegegrowthapp.repository.datamigration.DataMigrationRepository
+import com.moritoui.vegegrowthapp.ui.folder.model.FolderScreenUiState
 import com.moritoui.vegegrowthapp.ui.home.model.AddDialogType
-import com.moritoui.vegegrowthapp.ui.home.model.HomeScreenUiState
 import com.moritoui.vegegrowthapp.ui.home.model.VegetablesState
 import com.moritoui.vegegrowthapp.usecases.AddVegeItemUseCase
 import com.moritoui.vegegrowthapp.usecases.ChangeVegeItemStatusUseCase
-import com.moritoui.vegegrowthapp.usecases.DeleteVegeFolderUseCase
 import com.moritoui.vegegrowthapp.usecases.DeleteVegeItemUseCase
+import com.moritoui.vegegrowthapp.usecases.GetSelectedVegeFolderUseCase
 import com.moritoui.vegegrowthapp.usecases.GetVegeItemDetailLastUseCase
 import com.moritoui.vegegrowthapp.usecases.GetVegeItemFromFolderIdUseCase
 import com.moritoui.vegegrowthapp.usecases.GetVegetableFolderUseCase
-import com.moritoui.vegegrowthapp.usecases.InsertVegetableFolderUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.UUID
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
@@ -41,25 +36,20 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeScreenViewModel @Inject constructor(
-    private val addVegeItemUseCase: AddVegeItemUseCase,
-    private val deleteVegeItemUseCase: DeleteVegeItemUseCase,
-    private val deleteVegeFolderUseCase: DeleteVegeFolderUseCase,
-    private val getVegeItemFromFolderIdUseCase: GetVegeItemFromFolderIdUseCase,
-    private val changeVegeItemStatusUseCase: ChangeVegeItemStatusUseCase,
+class FolderScreenViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
+    private val getVegetableFromFolderIdUseCase: GetVegeItemFromFolderIdUseCase,
     private val getVegeItemDetailLastUseCase: GetVegeItemDetailLastUseCase,
-    private val dataMigrationRepository: DataMigrationRepository,
+    private val deleteVegeItemUseCase: DeleteVegeItemUseCase,
+    private val addVegeItemUseCase: AddVegeItemUseCase,
+    private val changeVegeItemStatusUseCase: ChangeVegeItemStatusUseCase,
+    private val getSelectedVegeFolderUseCase: GetSelectedVegeFolderUseCase,
     private val getVegetableFolderUseCase: GetVegetableFolderUseCase,
-    private val insertVegetableFolderUseCase: InsertVegetableFolderUseCase,
 ) : ViewModel() {
-    // ホーム画面では未分類のフォルダーIDnullのみを表示する
-    private val folderId = null
+    private val args = checkNotNull(savedStateHandle.get<Int>("folderId"))
 
-    private val _uiState = MutableStateFlow(HomeScreenUiState.initialState())
-    val uiState: StateFlow<HomeScreenUiState> = _uiState.asStateFlow()
-
-    private val _isDataMigrating = dataMigrationRepository.isDataMigrating
-    val isDataMigrating: StateFlow<Boolean> = _isDataMigrating.asStateFlow()
+    private val _uiState = MutableStateFlow(FolderScreenUiState.initial())
+    val uiState: StateFlow<FolderScreenUiState> = _uiState.asStateFlow()
 
     private val _vegetables = MutableStateFlow<List<VegeItem>>(emptyList())
     private val _vegetableDetails = MutableStateFlow<List<VegeItemDetail?>>(emptyList())
@@ -80,15 +70,13 @@ class HomeScreenViewModel @Inject constructor(
         VegetablesState.initial()
     )
 
-    /**
-     * インサートエラーかどうか
-     */
-    private val _insertVegetableFolderEvent: MutableSharedFlow<Boolean> = MutableStateFlow(false)
-    val insertVegetableFolderEvent: SharedFlow<Boolean> = _insertVegetableFolderEvent.asSharedFlow()
-
     init {
         viewModelScope.launch {
-            dataMigrationRepository.dataMigration()
+            _uiState.update {
+                it.copy(
+                    selectedFolder = getSelectedVegeFolderUseCase(args)
+                )
+            }
         }
         monitorUiState()
     }
@@ -137,31 +125,12 @@ class HomeScreenViewModel @Inject constructor(
                         category = _uiState.value.selectCategory,
                         uuid = UUID.randomUUID().toString(),
                         status = VegeStatus.Default,
-                        folderId = null
+                        folderId = args
                     )
                 viewModelScope.launch {
                     addVegeItemUseCase(vegeItem)
                     reloadVegetables()
                     closeDialog()
-                }
-            }
-            AddDialogType.AddFolder -> {
-                val vegeFolder = VegetableFolderEntity(
-                    id = 0,
-                    folderNumber = _vegetableFolders.value.size,
-                    folderName = _uiState.value.inputText,
-                    vegetableCategory = _uiState.value.selectCategory
-                )
-                viewModelScope.launch {
-                    insertVegetableFolderUseCase(vegeFolder)
-                        .onSuccess {
-                            reloadVegetables()
-                            closeDialog()
-                        }.onFailure {
-                            _insertVegetableFolderEvent.emit(true)
-                            delay(2000)
-                            _insertVegetableFolderEvent.emit(false)
-                        }
                 }
             }
             else -> {
@@ -212,17 +181,12 @@ class HomeScreenViewModel @Inject constructor(
     fun deleteItem() {
         viewModelScope.launch {
             val deleteItem = _uiState.value.selectedItem
-            val deleteFolder = _uiState.value.selectedFolder
             if (deleteItem != null) {
                 deleteVegeItemUseCase(deleteItem)
             }
-            if (deleteFolder != null) {
-                deleteVegeFolderUseCase(deleteFolder)
-            }
             _uiState.update {
                 it.copy(
-                    selectedItem = null,
-                    selectedFolder = null
+                    selectedItem = null
                 )
             }
         }
@@ -303,29 +267,12 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     /**
-     * 削除ダイアログを開いて，削除するものをセットする
-     */
-    fun openDeleteFolderDialog(folder: VegetableFolderEntity) {
-        _uiState.update {
-            it.copy(
-                isOpenDeleteDialog = true,
-                selectedFolder = folder
-            )
-        }
-    }
-
-    private fun checkInputText(inputText: String): Boolean = when (inputText) {
-        "" -> false
-        else -> true
-    }
-
-    /**
      * 登録されている野菜のリストを更新する
      */
     fun reloadVegetables() {
         viewModelScope.launch {
             val filterStatus = _uiState.value.filterStatus
-            val filteredVegetables = getVegeItemFromFolderIdUseCase(folderId).filter { item ->
+            val filteredVegetables = getVegetableFromFolderIdUseCase(args).filter { item ->
                 if (filterStatus == FilterStatus.All) {
                     true
                 } else {
@@ -366,6 +313,11 @@ class HomeScreenViewModel @Inject constructor(
                 it.copy(isLoading = false)
             }
         }.launchIn(viewModelScope)
+    }
+
+    private fun checkInputText(inputText: String): Boolean = when (inputText) {
+        "" -> false
+        else -> true
     }
 
     /**

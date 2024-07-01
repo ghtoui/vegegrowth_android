@@ -10,7 +10,7 @@ enum class VegeCategory {
     Other,
 }
 
-fun VegeCategory.getIcon(): Int? = when (this) {
+fun VegeCategory.getIconId(): Int? = when (this) {
     VegeCategory.None -> null
     VegeCategory.Flower -> R.drawable.flower
     VegeCategory.Leaf -> R.drawable.potted_plant

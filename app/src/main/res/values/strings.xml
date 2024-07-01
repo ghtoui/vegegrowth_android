@@ -12,6 +12,12 @@
     <string name="home_folder">フォルダー</string>
     <string name="home_item_not_classified">分類されていないもの</string>
     <string name="folder_save_num">%s個</string>
+    <string name="home_screen_title">一覧画面</string>
+    <string name="delete_text">削除</string>
+    <string name="edit_button">編集</string>
+    <string name="folder_move_button">移動</string>
+    <string name="folder_move_title">フォルダーを選択してください</string>
+    <string name="folder_not_classified_label">未分類</string>
 
     <!--  撮影画面  -->
     <string name="take_picture_button">撮影</string>
@@ -22,8 +28,6 @@
     <!--  管理画面  -->
 
     <!--  未分類  -->
-    <string name="delete_text">削除</string>
-    <string name="edit_button">編集</string>
     <string name="favorite_button">お気に入り</string>
     <string name="favorite_text">お気に入り</string>
     <string name="cancel_text">キャンセル</string>
@@ -35,7 +39,6 @@
     <string name="select_none">選択なし</string>
     <string name="filter_text">並び替え</string>
     <string name="all_text">全て</string>
-    <string name="first_screen_title">一覧画面</string>
     <string name="vege_category_none_text">カテゴリーを選択してください</string>
     <string name="flower_text">花</string>
     <string name="leaf_text">葉</string>
