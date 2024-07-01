@@ -77,12 +77,7 @@ fun CategoryDropMenu(selectCategory: VegeCategory, onDropDownMenuClick: (VegeCat
 }
 
 @Composable
-fun ItemListDropDownMenuItem(
-    modifier: Modifier = Modifier,
-    @DrawableRes iconId: Int,
-    text: String,
-    iconTint: Color = LocalContentColor.current,
-    onClick: () -> Unit) {
+fun ItemListDropDownMenuItem(modifier: Modifier = Modifier, @DrawableRes iconId: Int, text: String, iconTint: Color = LocalContentColor.current, onClick: () -> Unit) {
     DropdownMenuItem(
         text = {
             Row(

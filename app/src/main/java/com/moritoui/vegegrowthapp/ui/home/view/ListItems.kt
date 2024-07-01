@@ -171,7 +171,7 @@ private fun VegetableEditMenu(
     selectMenu: SelectMenu,
     onItemDeleteClick: (() -> Unit)? = null,
     onSelectVegeStatus: ((VegeStatus) -> Unit)? = null,
-    onSelectMoveFolder: (() -> Unit)? = null
+    onSelectMoveFolder: (() -> Unit)? = null,
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     when (selectMenu) {
@@ -221,7 +221,6 @@ private fun VegetableEditMenu(
             }
         }
 
-        
         SelectMenu.MoveFolder -> {
             onSelectMoveFolder ?: return
             IconButton(

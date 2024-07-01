@@ -20,6 +20,8 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.moritoui.vegegrowthapp.R
@@ -45,10 +47,7 @@ import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 import kotlinx.coroutines.launch
 
 @Composable
-fun FolderScreen(
-    viewModel: FolderScreenViewModel = hiltViewModel(),
-    navController: NavController,
-) {
+fun FolderScreen(viewModel: FolderScreenViewModel = hiltViewModel(), navController: NavController) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val vegetablesState by viewModel.vegetablesState.collectAsStateWithLifecycle()
     FolderScreen(
@@ -72,8 +71,13 @@ fun FolderScreen(
         onSelectVegeCategory = viewModel::selectCategory,
         onSelectMoveFolder = viewModel::openFolderMoveBottomSheetState,
         closeFolderBottomSheet = viewModel::closeFolderMoveBottomSheetState,
-        onFolderItemClick = viewModel::vegeItemMoveFolder,
+        onFolderItemClick = viewModel::vegeItemMoveFolder
     )
+
+    // 画面遷移で戻ったときに処理する
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        viewModel.reloadVegetables()
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -116,7 +120,7 @@ private fun FolderScreen(
                     )
                 },
                 isVisibleBackButton = true,
-                onBackNavigationButtonClick = onBackNavigationButtonClick,
+                onBackNavigationButtonClick = onBackNavigationButtonClick
             )
         }
     ) { it ->
@@ -184,7 +188,7 @@ private fun FolderScreen(
                 onValueChange = changeInputText,
                 onConfirmClick = { onAddDialogConfirmClick(AddDialogType.AddVegeItem) },
                 onCancelClick = onDismiss,
-                onSelectVegeCategory = onSelectVegeCategory,
+                onSelectVegeCategory = onSelectVegeCategory
             )
         }
 
@@ -242,9 +246,7 @@ private fun FolderScreen(
 
 @DarkLightPreview
 @Composable
-fun FolderScreenPreview(
-    @PreviewParameter(FolderPreviewParameterProvider::class) params: FolderPreviewParameterProvider.Params
-) {
+fun FolderScreenPreview(@PreviewParameter(FolderPreviewParameterProvider::class) params: FolderPreviewParameterProvider.Params) {
     VegegrowthAppTheme {
         FolderScreen(
             uiState = params.uiState,
@@ -278,13 +280,10 @@ class FolderPreviewParameterProvider : PreviewParameterProvider<FolderPreviewPar
             uiState = FolderScreenUiState.initial(),
             vegetablesState = VegetablesState.initial().copy(
                 vegetables = HomeScreenDummy.vegeList(),
-                vegetableDetails = ManageScreenDummy.getVegetableDetailList(),
+                vegetableDetails = ManageScreenDummy.getVegetableDetailList()
             )
         )
     )
 
-    data class Params(
-        val uiState: FolderScreenUiState,
-        val vegetablesState: VegetablesState,
-    )
+    data class Params(val uiState: FolderScreenUiState, val vegetablesState: VegetablesState)
 }

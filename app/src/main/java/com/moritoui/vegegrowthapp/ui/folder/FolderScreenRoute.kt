@@ -10,7 +10,7 @@ import com.moritoui.vegegrowthapp.navigation.Screen
 fun NavGraphBuilder.folderScreenRoute(navController: NavController) {
     composable(
         "${Screen.FolderScreen.route}/{folderId}",
-        arguments = listOf(navArgument("folderId") { type = NavType.IntType} )
+        arguments = listOf(navArgument("folderId") { type = NavType.IntType })
     ) {
         FolderScreen(navController = navController)
     }

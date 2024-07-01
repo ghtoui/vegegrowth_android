@@ -186,7 +186,7 @@ class FolderScreenViewModel @Inject constructor(
             }
             _uiState.update {
                 it.copy(
-                    selectedItem = null,
+                    selectedItem = null
                 )
             }
         }
@@ -231,7 +231,7 @@ class FolderScreenViewModel @Inject constructor(
     fun closeFolderMoveBottomSheetState() {
         _uiState.update {
             it.copy(
-                isOpenFolderMoveBottomSheet = false,
+                isOpenFolderMoveBottomSheet = false
             )
         }
     }
@@ -269,7 +269,7 @@ class FolderScreenViewModel @Inject constructor(
     /**
      * 登録されている野菜のリストを更新する
      */
-    private fun reloadVegetables() {
+    fun reloadVegetables() {
         viewModelScope.launch {
             val filterStatus = _uiState.value.filterStatus
             val filteredVegetables = getVegetableFromFolderIdUseCase(args).filter { item ->
@@ -277,7 +277,7 @@ class FolderScreenViewModel @Inject constructor(
                     true
                 } else {
                     item.status == filterStatusMap[filterStatus] ||
-                            item.category == filterStatusMap[filterStatus]
+                        item.category == filterStatusMap[filterStatus]
                 }
             }
 
@@ -294,6 +294,7 @@ class FolderScreenViewModel @Inject constructor(
             }
         }
     }
+
     /**
      * 指定された野菜の最新登録情報を取得する
      */

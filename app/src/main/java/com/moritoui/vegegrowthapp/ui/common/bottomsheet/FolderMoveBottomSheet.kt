@@ -46,12 +46,12 @@ fun FolderMoveBottomSheet(
     ModalBottomSheet(
         modifier = Modifier.sizeIn(maxHeight = (LocalConfiguration.current.screenHeightDp / 2).dp),
         onDismissRequest = onDismissRequest,
-        sheetState = sheetState,
+        sheetState = sheetState
     ) {
         LazyColumn(
             modifier = modifier
                 .padding(horizontal = 24.dp)
-                .padding(bottom = 8.dp),
+                .padding(bottom = 8.dp)
         ) {
             stickyHeader {
                 Row(
@@ -83,11 +83,7 @@ fun FolderMoveBottomSheet(
 }
 
 @Composable
-private fun FolderItem(
-    modifier: Modifier = Modifier,
-    folderName: String,
-    onFolderItemClick: () -> Unit,
-) {
+private fun FolderItem(modifier: Modifier = Modifier, folderName: String, onFolderItemClick: () -> Unit) {
     Column(
         modifier = modifier.clickable {
             onFolderItemClick()

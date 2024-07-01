@@ -137,7 +137,7 @@ class HomeScreenViewModel @Inject constructor(
                         category = _uiState.value.selectCategory,
                         uuid = UUID.randomUUID().toString(),
                         status = VegeStatus.Default,
-                        folderId = null,
+                        folderId = null
                     )
                 viewModelScope.launch {
                     addVegeItemUseCase(vegeItem)
@@ -267,7 +267,7 @@ class HomeScreenViewModel @Inject constructor(
     fun closeFolderMoveBottomSheetState() {
         _uiState.update {
             it.copy(
-                isOpenFolderMoveBottomSheet = false,
+                isOpenFolderMoveBottomSheet = false
             )
         }
     }
@@ -314,10 +314,6 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
-    fun onResume() {
-        reloadVegetables()
-    }
-
     private fun checkInputText(inputText: String): Boolean = when (inputText) {
         "" -> false
         else -> true
@@ -326,7 +322,7 @@ class HomeScreenViewModel @Inject constructor(
     /**
      * 登録されている野菜のリストを更新する
      */
-    private fun reloadVegetables() {
+    fun reloadVegetables() {
         viewModelScope.launch {
             val filterStatus = _uiState.value.filterStatus
             val filteredVegetables = getVegeItemFromFolderIdUseCase(folderId).filter { item ->

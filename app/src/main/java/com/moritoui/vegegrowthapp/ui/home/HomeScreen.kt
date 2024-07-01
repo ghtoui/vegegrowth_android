@@ -81,7 +81,7 @@ fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel(), navController: 
         onFilterItemClick = viewModel::setFilterItemList,
         confirmItemDelete = viewModel::deleteItem,
         onSelectVegeStatus = viewModel::selectStatus,
-        onVegeItemClick =  navController::navigateToTakePicture ,
+        onVegeItemClick = navController::navigateToTakePicture,
         changeInputText = viewModel::changeInputText,
         onAddDialogConfirmClick = viewModel::onAddDialogConfirm,
         onDismiss = viewModel::closeDialog,
@@ -93,12 +93,12 @@ fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel(), navController: 
         onFolderClick = navController::navigateToFolder,
         onSelectMoveFolder = viewModel::openFolderMoveBottomSheetState,
         closeFolderBottomSheet = viewModel::closeFolderMoveBottomSheetState,
-        onFolderItemClick = viewModel::vegeItemMoveFolder,
+        onFolderItemClick = viewModel::vegeItemMoveFolder
     )
 
     // 画面遷移で戻ったときに処理する
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
-        viewModel.onResume()
+        viewModel.reloadVegetables()
     }
 }
 
@@ -213,7 +213,7 @@ private fun HomeScreen(
                             vegetableFolder = folder,
                             onFolderClick = { onFolderClick(folder.id) },
                             selectMenu = uiState.selectMenu,
-                            onItemDeleteClick = { onDeleteFolderItem(it) },
+                            onItemDeleteClick = { onDeleteFolderItem(it) }
                         )
                     }
                     if (vegetablesState.vegetables.isNotEmpty()) {
@@ -264,7 +264,7 @@ private fun HomeScreen(
                 onValueChange = changeInputText,
                 onConfirmClick = { onAddDialogConfirmClick(AddDialogType.AddVegeItem) },
                 onCancelClick = onDismiss,
-                onSelectVegeCategory = onSelectVegeCategory,
+                onSelectVegeCategory = onSelectVegeCategory
             )
         }
         AddDialogType.AddFolder -> {

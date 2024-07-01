@@ -20,7 +20,7 @@ data class HomeScreenUiState(
     val selectedItem: VegeItem?,
     val selectedFolder: VegetableFolderEntity?,
     val isLoading: Boolean,
-    val isOpenFolderMoveBottomSheet: Boolean
+    val isOpenFolderMoveBottomSheet: Boolean,
 ) {
     companion object {
         fun initialState() = HomeScreenUiState(

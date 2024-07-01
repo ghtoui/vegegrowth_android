@@ -15,10 +15,7 @@ import androidx.compose.ui.res.stringResource
 import com.moritoui.vegegrowthapp.R
 
 @Composable
-fun HomeAddItem(
-    onFolderAddClick: (() -> Unit)? = null,
-    onAddClick: () -> Unit
-) {
+fun HomeAddItem(onFolderAddClick: (() -> Unit)? = null, onAddClick: () -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {

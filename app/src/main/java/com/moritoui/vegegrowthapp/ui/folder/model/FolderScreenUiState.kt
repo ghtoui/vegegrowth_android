@@ -18,7 +18,7 @@ data class FolderScreenUiState(
     val selectCategory: VegeCategory,
     val inputText: String,
     val isAddAble: Boolean,
-    val isOpenFolderMoveBottomSheet: Boolean
+    val isOpenFolderMoveBottomSheet: Boolean,
 ) {
     companion object {
         fun initial(): FolderScreenUiState = FolderScreenUiState(
@@ -32,7 +32,7 @@ data class FolderScreenUiState(
             selectCategory = VegeCategory.None,
             inputText = "",
             isAddAble = false,
-            isOpenFolderMoveBottomSheet = false,
+            isOpenFolderMoveBottomSheet = false
         )
     }
 }
