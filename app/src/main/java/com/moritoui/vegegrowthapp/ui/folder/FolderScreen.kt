@@ -6,11 +6,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -29,15 +32,17 @@ import com.moritoui.vegegrowthapp.navigation.HomeAddItem
 import com.moritoui.vegegrowthapp.navigation.NavigationAppTopBar
 import com.moritoui.vegegrowthapp.previews.DarkLightPreview
 import com.moritoui.vegegrowthapp.ui.common.VegeGrowthLoading
+import com.moritoui.vegegrowthapp.ui.common.bottomsheet.FolderMoveBottomSheet
 import com.moritoui.vegegrowthapp.ui.folder.model.FolderScreenUiState
-import com.moritoui.vegegrowthapp.ui.folder.model.VegetablesState
 import com.moritoui.vegegrowthapp.ui.home.model.AddDialogType
+import com.moritoui.vegegrowthapp.ui.home.model.VegetablesState
 import com.moritoui.vegegrowthapp.ui.home.view.AddTextCategoryDialog
 import com.moritoui.vegegrowthapp.ui.home.view.ConfirmDeleteItemDialog
 import com.moritoui.vegegrowthapp.ui.home.view.ItemListTopBar
 import com.moritoui.vegegrowthapp.ui.home.view.VegeItemListCard
 import com.moritoui.vegegrowthapp.ui.takepicture.navigateToTakePicture
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
+import kotlinx.coroutines.launch
 
 @Composable
 fun FolderScreen(
@@ -54,6 +59,7 @@ fun FolderScreen(
         onCancelMenuClick = viewModel::onCancelMenuClick,
         onDeleteVegeItem = viewModel::changeDeleteMode,
         onEditIconClick = viewModel::changeEditMode,
+        onFolderMoveIconClick = viewModel::changeFolderMoveMode,
         onFilterItemClick = viewModel::setFilterItemList,
         confirmItemDelete = viewModel::deleteItem,
         onSelectVegeStatus = viewModel::selectStatus,
@@ -64,9 +70,13 @@ fun FolderScreen(
         onAddDialogConfirmClick = viewModel::onAddDialogConfirm,
         onDismiss = viewModel::closeDialog,
         onSelectVegeCategory = viewModel::selectCategory,
+        onSelectMoveFolder = viewModel::openFolderMoveBottomSheetState,
+        closeFolderBottomSheet = viewModel::closeFolderMoveBottomSheetState,
+        onFolderItemClick = viewModel::vegeItemMoveFolder,
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun FolderScreen(
     uiState: FolderScreenUiState,
@@ -76,6 +86,8 @@ private fun FolderScreen(
     onCancelMenuClick: () -> Unit,
     onDeleteVegeItem: () -> Unit,
     onEditIconClick: () -> Unit,
+    onFolderMoveIconClick: () -> Unit,
+    onSelectMoveFolder: (VegeItem) -> Unit,
     onFilterItemClick: (FilterStatus) -> Unit,
     confirmItemDelete: () -> Unit,
     onSelectVegeStatus: (VegeItem) -> Unit,
@@ -86,9 +98,13 @@ private fun FolderScreen(
     onAddDialogConfirmClick: (AddDialogType) -> Unit,
     onDismiss: () -> Unit,
     onSelectVegeCategory: (VegeCategory) -> Unit,
+    closeFolderBottomSheet: () -> Unit,
+    onFolderItemClick: (VegeItem) -> Unit,
 ) {
     var selectMenuExpanded by rememberSaveable { mutableStateOf(false) }
     var filterMenuExpanded by rememberSaveable { mutableStateOf(false) }
+    val bottomSheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
@@ -115,6 +131,7 @@ private fun FolderScreen(
                         onCancelClick = onCancelMenuClick,
                         onDeleteIconClick = onDeleteVegeItem,
                         onEditIconClick = onEditIconClick,
+                        onFolderMoveIconClick = onFolderMoveIconClick,
                         onFilterItemClick = onFilterItemClick,
                         selectMenuExpanded = selectMenuExpanded,
                         filterMenuExpanded = filterMenuExpanded,
@@ -137,7 +154,7 @@ private fun FolderScreen(
                     modifier = Modifier.padding(top = it.calculateTopPadding(), bottom = 8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(
+                    this.items(
                         vegetablesState.vegetables.zip(vegetablesState.vegetableDetails),
                         key = { vegetable -> "${vegetable.first.id}, ${vegetable.first.name}" }
                     ) { vegetable ->
@@ -149,7 +166,8 @@ private fun FolderScreen(
                             onItemDeleteClick = { item ->
                                 openDeleteDialog(item)
                             },
-                            onSelectVegeStatus = onSelectVegeStatus
+                            onSelectVegeStatus = onSelectVegeStatus,
+                            onSelectMoveFolder = onSelectMoveFolder
                         )
                     }
                 }
@@ -175,7 +193,7 @@ private fun FolderScreen(
 
     if (uiState.isOpenDeleteDialog) {
         ConfirmDeleteItemDialog(
-            deleteItem = uiState.targetDeleteItem,
+            deleteItem = uiState.selectedItem,
             onDismissRequest = {
                 closeDeleteDialog()
             },
@@ -185,6 +203,38 @@ private fun FolderScreen(
             },
             onCancelClick = {
                 closeDeleteDialog()
+            }
+        )
+    }
+    if (uiState.isOpenFolderMoveBottomSheet) {
+        FolderMoveBottomSheet(
+            folders = vegetablesState.vegetableFolders,
+            sheetState = bottomSheetState,
+            onDismissRequest = closeFolderBottomSheet,
+            onFolderItemClick = {
+                val selectedItem = uiState.selectedItem ?: return@FolderMoveBottomSheet
+                onFolderItemClick(
+                    VegeItem(
+                        id = selectedItem.id,
+                        name = selectedItem.name,
+                        uuid = selectedItem.uuid,
+                        status = selectedItem.status,
+                        category = selectedItem.category,
+                        folderId = it
+                    )
+                )
+                scope.launch { bottomSheetState.hide() }.invokeOnCompletion {
+                    if (!bottomSheetState.isVisible) {
+                        closeFolderBottomSheet()
+                    }
+                }
+            },
+            onCancelClick = {
+                scope.launch { bottomSheetState.hide() }.invokeOnCompletion {
+                    if (!bottomSheetState.isVisible) {
+                        closeFolderBottomSheet()
+                    }
+                }
             }
         )
     }
@@ -213,7 +263,11 @@ fun FolderScreenPreview(
             changeInputText = {},
             onVegeItemClick = {},
             onDismiss = {},
-            onAddDialogConfirmClick = {}
+            onAddDialogConfirmClick = {},
+            onFolderMoveIconClick = {},
+            onSelectMoveFolder = {},
+            onFolderItemClick = {},
+            closeFolderBottomSheet = {}
         )
     }
 }

@@ -39,6 +39,7 @@ fun ItemListTopBar(
     onSelectMenuClick: () -> Unit,
     onFilterMenuClick: () -> Unit,
     onFilterItemClick: (FilterStatus) -> Unit,
+    onFolderMoveIconClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val menuIcon = SelectMenuMethod.getIcon(selectMenu)
@@ -116,6 +117,10 @@ fun ItemListTopBar(
                 onEditIconClick = {
                     onEditIconClick()
                     onSelectDropDownMenuClose()
+                },
+                onFolderMoveIconClick = {
+                    onFolderMoveIconClick()
+                    onSelectDropDownMenuClose()
                 }
             )
         }
@@ -159,7 +164,8 @@ fun ItemListTopBarPreview() {
             onFilterDropDownMenuClose = {},
             onSelectDropDownMenuClose = {},
             onFilterMenuClick = {},
-            onSelectMenuClick = {}
+            onSelectMenuClick = {},
+            onFolderMoveIconClick = {}
         )
     }
 }

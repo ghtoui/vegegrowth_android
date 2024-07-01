@@ -13,7 +13,7 @@ import com.moritoui.vegegrowthapp.model.filterStatusMap
 import com.moritoui.vegegrowthapp.repository.datamigration.DataMigrationRepository
 import com.moritoui.vegegrowthapp.ui.home.model.AddDialogType
 import com.moritoui.vegegrowthapp.ui.home.model.HomeScreenUiState
-import com.moritoui.vegegrowthapp.ui.home.model.HomeVegetablesState
+import com.moritoui.vegegrowthapp.ui.home.model.VegetablesState
 import com.moritoui.vegegrowthapp.usecases.AddVegeItemUseCase
 import com.moritoui.vegegrowthapp.usecases.ChangeVegeItemStatusUseCase
 import com.moritoui.vegegrowthapp.usecases.DeleteVegeFolderUseCase
@@ -22,7 +22,6 @@ import com.moritoui.vegegrowthapp.usecases.GetVegeItemDetailLastUseCase
 import com.moritoui.vegegrowthapp.usecases.GetVegeItemFromFolderIdUseCase
 import com.moritoui.vegegrowthapp.usecases.GetVegetableFolderUseCase
 import com.moritoui.vegegrowthapp.usecases.InsertVegetableFolderUseCase
-import com.moritoui.vegegrowthapp.usecases.UpdateVegetableFolderUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.UUID
 import kotlinx.coroutines.delay
@@ -52,7 +51,6 @@ class HomeScreenViewModel @Inject constructor(
     private val dataMigrationRepository: DataMigrationRepository,
     private val getVegetableFolderUseCase: GetVegetableFolderUseCase,
     private val insertVegetableFolderUseCase: InsertVegetableFolderUseCase,
-    private val updateVegetableFolderUseCase: UpdateVegetableFolderUseCase,
 ) : ViewModel() {
     // ホーム画面では未分類のフォルダーIDnullのみを表示する
     private val folderId = null
@@ -66,12 +64,12 @@ class HomeScreenViewModel @Inject constructor(
     private val _vegetables = MutableStateFlow<List<VegeItem>>(emptyList())
     private val _vegetableDetails = MutableStateFlow<List<VegeItemDetail?>>(emptyList())
     private val _vegetableFolders = MutableStateFlow<List<VegetableFolderEntity>>(emptyList())
-    val vegetablesState: StateFlow<HomeVegetablesState> = combine(
+    val vegetablesState: StateFlow<VegetablesState> = combine(
         _vegetables,
         _vegetableDetails,
         _vegetableFolders
     ) { vegetables, vegetableDetails, vegetableFolders ->
-        HomeVegetablesState(
+        VegetablesState(
             vegetables = vegetables,
             vegetableDetails = vegetableDetails,
             vegetableFolders = vegetableFolders
@@ -79,7 +77,7 @@ class HomeScreenViewModel @Inject constructor(
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5000),
-        HomeVegetablesState.initial()
+        VegetablesState.initial()
     )
 
     /**
@@ -114,17 +112,7 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     fun selectStatus(vegeItem: VegeItem) {
-        viewModelScope.launch {
-            changeVegeItemStatusUseCase(vegeItem)
-            _vegetables.value.map { old ->
-                if (old.id == vegeItem.id) {
-                    vegeItem
-                } else {
-                    old
-                }
-            }
-            reloadVegetables()
-        }
+        changeVegeItem(vegeItem)
     }
 
     fun changeInputText(inputText: String) {
@@ -149,7 +137,7 @@ class HomeScreenViewModel @Inject constructor(
                         category = _uiState.value.selectCategory,
                         uuid = UUID.randomUUID().toString(),
                         status = VegeStatus.Default,
-                        folderId = 0,
+                        folderId = null,
                     )
                 viewModelScope.launch {
                     addVegeItemUseCase(vegeItem)
@@ -208,10 +196,23 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
+    fun changeFolderMoveMode() {
+        _uiState.update {
+            it.copy(
+                selectMenu =
+                if (_uiState.value.selectMenu == SelectMenu.Edit) {
+                    SelectMenu.None
+                } else {
+                    SelectMenu.MoveFolder
+                }
+            )
+        }
+    }
+
     fun deleteItem() {
         viewModelScope.launch {
-            val deleteItem = _uiState.value.targetDeleteItem
-            val deleteFolder = _uiState.value.targetDeleteFolder
+            val deleteItem = _uiState.value.selectedItem
+            val deleteFolder = _uiState.value.selectedFolder
             if (deleteItem != null) {
                 deleteVegeItemUseCase(deleteItem)
             }
@@ -220,8 +221,8 @@ class HomeScreenViewModel @Inject constructor(
             }
             _uiState.update {
                 it.copy(
-                    targetDeleteItem = null,
-                    targetDeleteFolder = null
+                    selectedItem = null,
+                    selectedFolder = null
                 )
             }
         }
@@ -252,6 +253,32 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
+    // フォルダ選択モーダルを開く
+    fun openFolderMoveBottomSheetState(vegeItem: VegeItem) {
+        _uiState.update {
+            it.copy(
+                isOpenFolderMoveBottomSheet = true,
+                selectedItem = vegeItem
+            )
+        }
+    }
+
+    // フォルダ選択モーダルを閉じる
+    fun closeFolderMoveBottomSheetState() {
+        _uiState.update {
+            it.copy(
+                isOpenFolderMoveBottomSheet = false,
+            )
+        }
+    }
+
+    /**
+     * フォルダ移動をする
+     */
+    fun vegeItemMoveFolder(vegeItem: VegeItem) {
+        changeVegeItem(vegeItem)
+    }
+
     /**
      * 削除ダイアログを閉じる
      */
@@ -270,7 +297,7 @@ class HomeScreenViewModel @Inject constructor(
         _uiState.update {
             it.copy(
                 isOpenDeleteDialog = true,
-                targetDeleteItem = vegeItem
+                selectedItem = vegeItem
             )
         }
     }
@@ -282,7 +309,7 @@ class HomeScreenViewModel @Inject constructor(
         _uiState.update {
             it.copy(
                 isOpenDeleteDialog = true,
-                targetDeleteFolder = folder
+                selectedFolder = folder
             )
         }
     }
@@ -339,5 +366,22 @@ class HomeScreenViewModel @Inject constructor(
                 it.copy(isLoading = false)
             }
         }.launchIn(viewModelScope)
+    }
+
+    /**
+     * 登録されている野菜の情報を更新する
+     */
+    private fun changeVegeItem(vegeItem: VegeItem) {
+        viewModelScope.launch {
+            changeVegeItemStatusUseCase(vegeItem)
+            _vegetables.value.map { old ->
+                if (old.id == vegeItem.id) {
+                    vegeItem
+                } else {
+                    old
+                }
+            }
+            reloadVegetables()
+        }
     }
 }

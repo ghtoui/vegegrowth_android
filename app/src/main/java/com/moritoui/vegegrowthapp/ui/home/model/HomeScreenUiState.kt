@@ -17,9 +17,10 @@ data class HomeScreenUiState(
     val selectMenu: SelectMenu,
     val selectStatus: VegeStatus,
     val filterStatus: FilterStatus,
-    val targetDeleteItem: VegeItem?,
-    val targetDeleteFolder: VegetableFolderEntity?,
+    val selectedItem: VegeItem?,
+    val selectedFolder: VegetableFolderEntity?,
     val isLoading: Boolean,
+    val isOpenFolderMoveBottomSheet: Boolean
 ) {
     companion object {
         fun initialState() = HomeScreenUiState(
@@ -32,9 +33,10 @@ data class HomeScreenUiState(
             selectMenu = SelectMenu.None,
             selectStatus = VegeStatus.Default,
             filterStatus = FilterStatus.All,
-            targetDeleteItem = null,
+            selectedItem = null,
             isLoading = false,
-            targetDeleteFolder = null
+            selectedFolder = null,
+            isOpenFolderMoveBottomSheet = false
         )
     }
 }

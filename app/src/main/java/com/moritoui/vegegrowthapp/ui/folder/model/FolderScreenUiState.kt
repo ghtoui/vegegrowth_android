@@ -13,11 +13,12 @@ data class FolderScreenUiState(
     val selectedFolder: VegetableFolderEntity?,
     val filterStatus: FilterStatus,
     val isOpenDeleteDialog: Boolean,
-    val targetDeleteItem: VegeItem?,
+    val selectedItem: VegeItem?,
     val openAddDialogType: AddDialogType,
     val selectCategory: VegeCategory,
     val inputText: String,
     val isAddAble: Boolean,
+    val isOpenFolderMoveBottomSheet: Boolean
 ) {
     companion object {
         fun initial(): FolderScreenUiState = FolderScreenUiState(
@@ -26,11 +27,12 @@ data class FolderScreenUiState(
             selectedFolder = null,
             filterStatus = FilterStatus.All,
             isOpenDeleteDialog = false,
-            targetDeleteItem = null,
+            selectedItem = null,
             openAddDialogType = AddDialogType.NotOpenDialog,
             selectCategory = VegeCategory.None,
             inputText = "",
             isAddAble = false,
+            isOpenFolderMoveBottomSheet = false,
         )
     }
 }

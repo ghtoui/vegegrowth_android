@@ -54,6 +54,7 @@ fun VegeItemListCard(
     onItemDeleteClick: (VegeItem) -> Unit,
     onSelectVegeStatus: (VegeItem) -> Unit,
     onVegeItemClick: (Int) -> Unit,
+    onSelectMoveFolder: (VegeItem) -> Unit,
 ) {
     val statusIcon = VegeStatusMethod.getIconId(vegetable.status)
     val statusIconTint = VegeStatusMethod.getIconTint(vegetable.status) ?: LocalContentColor.current
@@ -111,7 +112,8 @@ fun VegeItemListCard(
                             status = it
                         )
                     )
-                }
+                },
+                onSelectMoveFolder = { onSelectMoveFolder(vegetable) }
             )
         }
     }
@@ -164,7 +166,13 @@ private fun VegetableCategoryIcon(category: VegeCategory) {
 }
 
 @Composable
-private fun VegetableEditMenu(modifier: Modifier = Modifier, selectMenu: SelectMenu, onItemDeleteClick: (() -> Unit)? = null, onSelectVegeStatus: ((VegeStatus) -> Unit)? = null) {
+private fun VegetableEditMenu(
+    modifier: Modifier = Modifier,
+    selectMenu: SelectMenu,
+    onItemDeleteClick: (() -> Unit)? = null,
+    onSelectVegeStatus: ((VegeStatus) -> Unit)? = null,
+    onSelectMoveFolder: (() -> Unit)? = null
+) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     when (selectMenu) {
         SelectMenu.Edit -> {
@@ -187,8 +195,7 @@ private fun VegetableEditMenu(modifier: Modifier = Modifier, selectMenu: SelectM
                         ItemListDropDownMenuItem(
                             iconId = VegeStatusMethod.getIconId(status),
                             text = stringResource(VegeStatusMethod.getText(status)),
-                            iconTint =
-                            VegeStatusMethod.getIconTint(status) ?: LocalContentColor.current,
+                            iconTint = VegeStatusMethod.getIconTint(status) ?: LocalContentColor.current,
                             onClick = {
                                 onSelectVegeStatus(status)
                                 expanded = false
@@ -214,6 +221,20 @@ private fun VegetableEditMenu(modifier: Modifier = Modifier, selectMenu: SelectM
             }
         }
 
+        
+        SelectMenu.MoveFolder -> {
+            onSelectMoveFolder ?: return
+            IconButton(
+                modifier = modifier,
+                onClick = onSelectMoveFolder
+            ) {
+                Icon(
+                    painterResource(id = R.drawable.ic_folder_move),
+                    contentDescription = stringResource(id = R.string.folder_move_button),
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+        }
         else -> {
         }
     }
@@ -245,7 +266,8 @@ fun VegeItemListCardPreview() {
             onVegeItemClick = {},
             onSelectVegeStatus = {},
             onItemDeleteClick = {},
-            selectMenu = SelectMenu.Edit
+            selectMenu = SelectMenu.Edit,
+            onSelectMoveFolder = {}
         )
     }
 }

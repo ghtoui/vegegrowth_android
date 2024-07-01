@@ -3,6 +3,7 @@ package com.moritoui.vegegrowthapp.ui.folder
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.moritoui.vegegrowthapp.data.room.model.VegetableFolderEntity
 import com.moritoui.vegegrowthapp.model.FilterStatus
 import com.moritoui.vegegrowthapp.model.SelectMenu
 import com.moritoui.vegegrowthapp.model.VegeCategory
@@ -11,14 +12,15 @@ import com.moritoui.vegegrowthapp.model.VegeItemDetail
 import com.moritoui.vegegrowthapp.model.VegeStatus
 import com.moritoui.vegegrowthapp.model.filterStatusMap
 import com.moritoui.vegegrowthapp.ui.folder.model.FolderScreenUiState
-import com.moritoui.vegegrowthapp.ui.folder.model.VegetablesState
 import com.moritoui.vegegrowthapp.ui.home.model.AddDialogType
+import com.moritoui.vegegrowthapp.ui.home.model.VegetablesState
 import com.moritoui.vegegrowthapp.usecases.AddVegeItemUseCase
 import com.moritoui.vegegrowthapp.usecases.ChangeVegeItemStatusUseCase
 import com.moritoui.vegegrowthapp.usecases.DeleteVegeItemUseCase
 import com.moritoui.vegegrowthapp.usecases.GetSelectedVegeFolderUseCase
 import com.moritoui.vegegrowthapp.usecases.GetVegeItemDetailLastUseCase
 import com.moritoui.vegegrowthapp.usecases.GetVegeItemFromFolderIdUseCase
+import com.moritoui.vegegrowthapp.usecases.GetVegetableFolderUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.UUID
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,6 +44,7 @@ class FolderScreenViewModel @Inject constructor(
     private val addVegeItemUseCase: AddVegeItemUseCase,
     private val changeVegeItemStatusUseCase: ChangeVegeItemStatusUseCase,
     private val getSelectedVegeFolderUseCase: GetSelectedVegeFolderUseCase,
+    private val getVegetableFolderUseCase: GetVegetableFolderUseCase,
 ) : ViewModel() {
     private val args = checkNotNull(savedStateHandle.get<Int>("folderId"))
 
@@ -50,13 +53,16 @@ class FolderScreenViewModel @Inject constructor(
 
     private val _vegetables = MutableStateFlow<List<VegeItem>>(emptyList())
     private val _vegetableDetails = MutableStateFlow<List<VegeItemDetail?>>(emptyList())
+    private val _vegetableFolders = MutableStateFlow<List<VegetableFolderEntity>>(emptyList())
     val vegetablesState: StateFlow<VegetablesState> = combine(
         _vegetables,
-        _vegetableDetails
-    ) { vegetables, vegetableDetails ->
+        _vegetableDetails,
+        _vegetableFolders
+    ) { vegetables, vegetableDetails, vegetableFolders ->
         VegetablesState(
             vegetables = vegetables,
-            vegetableDetails = vegetableDetails
+            vegetableDetails = vegetableDetails,
+            vegetableFolders = vegetableFolders
         )
     }.stateIn(
         viewModelScope,
@@ -94,17 +100,7 @@ class FolderScreenViewModel @Inject constructor(
     }
 
     fun selectStatus(vegeItem: VegeItem) {
-        viewModelScope.launch {
-            changeVegeItemStatusUseCase(vegeItem)
-            _vegetables.value.map { old ->
-                if (old.id == vegeItem.id) {
-                    vegeItem
-                } else {
-                    old
-                }
-            }
-            reloadVegetables()
-        }
+        changeVegeItem(vegeItem)
     }
 
     fun changeInputText(inputText: String) {
@@ -169,15 +165,28 @@ class FolderScreenViewModel @Inject constructor(
         }
     }
 
+    fun changeFolderMoveMode() {
+        _uiState.update {
+            it.copy(
+                selectMenu =
+                if (_uiState.value.selectMenu == SelectMenu.Edit) {
+                    SelectMenu.None
+                } else {
+                    SelectMenu.MoveFolder
+                }
+            )
+        }
+    }
+
     fun deleteItem() {
         viewModelScope.launch {
-            val deleteItem = _uiState.value.targetDeleteItem
+            val deleteItem = _uiState.value.selectedItem
             if (deleteItem != null) {
                 deleteVegeItemUseCase(deleteItem)
             }
             _uiState.update {
                 it.copy(
-                    targetDeleteItem = null,
+                    selectedItem = null,
                 )
             }
         }
@@ -208,6 +217,32 @@ class FolderScreenViewModel @Inject constructor(
         }
     }
 
+    // フォルダ選択モーダルを開く
+    fun openFolderMoveBottomSheetState(vegeItem: VegeItem) {
+        _uiState.update {
+            it.copy(
+                isOpenFolderMoveBottomSheet = true,
+                selectedItem = vegeItem
+            )
+        }
+    }
+
+    // フォルダ選択モーダルを閉じる
+    fun closeFolderMoveBottomSheetState() {
+        _uiState.update {
+            it.copy(
+                isOpenFolderMoveBottomSheet = false,
+            )
+        }
+    }
+
+    /**
+     * フォルダ移動をする
+     */
+    fun vegeItemMoveFolder(vegeItem: VegeItem) {
+        changeVegeItem(vegeItem)
+    }
+
     /**
      * 削除ダイアログを閉じる
      */
@@ -226,7 +261,7 @@ class FolderScreenViewModel @Inject constructor(
         _uiState.update {
             it.copy(
                 isOpenDeleteDialog = true,
-                targetDeleteItem = vegeItem
+                selectedItem = vegeItem
             )
         }
     }
@@ -253,6 +288,10 @@ class FolderScreenViewModel @Inject constructor(
             _vegetableDetails.update {
                 filteredVegetables.map { reloadVegetableDetailLast(it) }
             }
+
+            _vegetableFolders.update {
+                getVegetableFolderUseCase()
+            }
         }
     }
     /**
@@ -278,5 +317,22 @@ class FolderScreenViewModel @Inject constructor(
     private fun checkInputText(inputText: String): Boolean = when (inputText) {
         "" -> false
         else -> true
+    }
+
+    /**
+     * 登録されている野菜の情報を更新する
+     */
+    private fun changeVegeItem(vegeItem: VegeItem) {
+        viewModelScope.launch {
+            changeVegeItemStatusUseCase(vegeItem)
+            _vegetables.value.map { old ->
+                if (old.id == vegeItem.id) {
+                    vegeItem
+                } else {
+                    old
+                }
+            }
+            reloadVegetables()
+        }
     }
 }

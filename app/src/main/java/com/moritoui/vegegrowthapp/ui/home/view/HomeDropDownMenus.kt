@@ -103,7 +103,14 @@ fun ItemListDropDownMenuItem(
 }
 
 @Composable
-fun SelectDropDownMenu(modifier: Modifier = Modifier, selectMenuExpanded: Boolean, onDismissRequest: () -> Unit, onDeleteIconClick: () -> Unit, onEditIconClick: () -> Unit) {
+fun SelectDropDownMenu(
+    modifier: Modifier = Modifier,
+    selectMenuExpanded: Boolean,
+    onDismissRequest: () -> Unit,
+    onDeleteIconClick: () -> Unit,
+    onEditIconClick: () -> Unit,
+    onFolderMoveIconClick: () -> Unit,
+) {
     DropdownMenu(
         expanded = selectMenuExpanded,
         onDismissRequest = onDismissRequest,
@@ -119,6 +126,11 @@ fun SelectDropDownMenu(modifier: Modifier = Modifier, selectMenuExpanded: Boolea
             iconId = R.drawable.ic_edit,
             text = stringResource(R.string.edit_button),
             onClick = onEditIconClick
+        )
+        ItemListDropDownMenuItem(
+            iconId = R.drawable.ic_folder_move,
+            text = stringResource(R.string.folder_move_button),
+            onClick = onFolderMoveIconClick
         )
     }
 }
