@@ -314,6 +314,10 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
+    fun onResume() {
+        reloadVegetables()
+    }
+
     private fun checkInputText(inputText: String): Boolean = when (inputText) {
         "" -> false
         else -> true
