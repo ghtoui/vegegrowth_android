@@ -17,5 +17,7 @@ fun NavGraphBuilder.folderScreenRoute(navController: NavController) {
 }
 
 fun NavController.navigateToFolder(folderId: Int) {
-    navigate("${Screen.FolderScreen.route}/$folderId")
+    navigate("${Screen.FolderScreen.route}/$folderId") {
+        launchSingleTop = true
+    }
 }
