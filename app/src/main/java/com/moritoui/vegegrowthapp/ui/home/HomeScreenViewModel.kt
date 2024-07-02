@@ -25,9 +25,9 @@ import com.moritoui.vegegrowthapp.usecases.InsertVegetableFolderUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.UUID
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -83,8 +83,8 @@ class HomeScreenViewModel @Inject constructor(
     /**
      * インサートエラーかどうか
      */
-    private val _insertVegetableFolderEvent: MutableSharedFlow<Boolean> = MutableStateFlow(false)
-    val insertVegetableFolderEvent: SharedFlow<Boolean> = _insertVegetableFolderEvent.asSharedFlow()
+    private val _insertVegetableFolderEvent: MutableSharedFlow<Boolean> = MutableSharedFlow()
+    val insertVegetableFolderEvent: Flow<Boolean> = _insertVegetableFolderEvent.asSharedFlow()
 
     init {
         viewModelScope.launch {
@@ -109,6 +109,7 @@ class HomeScreenViewModel @Inject constructor(
                 selectCategory = VegeCategory.None
             )
         }
+
     }
 
     fun selectStatus(vegeItem: VegeItem) {
