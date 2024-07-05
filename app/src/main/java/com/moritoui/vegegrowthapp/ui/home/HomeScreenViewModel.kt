@@ -109,7 +109,6 @@ class HomeScreenViewModel @Inject constructor(
                 selectCategory = VegeCategory.None
             )
         }
-
     }
 
     fun selectStatus(vegeItem: VegeItem) {

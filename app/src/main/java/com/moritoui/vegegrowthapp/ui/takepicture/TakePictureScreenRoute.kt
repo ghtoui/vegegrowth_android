@@ -19,5 +19,7 @@ fun NavGraphBuilder.takePictureScreenRoute(navController: NavController) {
 }
 
 fun NavController.navigateToTakePicture(vegetableId: Int) {
-    navigate("${Screen.TakePictureScreen.route}/$vegetableId")
+    navigate("${Screen.TakePictureScreen.route}/$vegetableId") {
+        launchSingleTop = true
+    }
 }
