@@ -19,5 +19,7 @@ fun NavGraphBuilder.manageScreenRoute(navController: NavController) {
 }
 
 fun NavController.navigateToManage(vegetableId: Int) {
-    navigate("${Screen.ManageScreen.route}/$vegetableId")
+    navigate("${Screen.ManageScreen.route}/$vegetableId") {
+        launchSingleTop = true
+    }
 }
