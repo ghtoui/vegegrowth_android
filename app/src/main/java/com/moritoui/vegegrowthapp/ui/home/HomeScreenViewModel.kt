@@ -24,6 +24,7 @@ import com.moritoui.vegegrowthapp.usecases.GetVegetableFolderUseCase
 import com.moritoui.vegegrowthapp.usecases.InsertVegetableFolderUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.UUID
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -33,6 +34,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
@@ -91,6 +93,7 @@ class HomeScreenViewModel @Inject constructor(
             dataMigrationRepository.dataMigration()
         }
         monitorUiState()
+        reloadVegetableDetailLast()
     }
 
     fun closeDialog() {
@@ -338,10 +341,6 @@ class HomeScreenViewModel @Inject constructor(
                 filteredVegetables
             }
 
-            _vegetableDetails.update {
-                filteredVegetables.map { reloadVegetableDetailLast(it) }
-            }
-
             _vegetableFolders.update {
                 getVegetableFolderUseCase()
             }
@@ -351,7 +350,20 @@ class HomeScreenViewModel @Inject constructor(
     /**
      * 指定された野菜の最新登録情報を取得する
      */
-    private suspend fun reloadVegetableDetailLast(vegeItem: VegeItem): VegeItemDetail? = getVegeItemDetailLastUseCase(vegeItem.id)
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun reloadVegetableDetailLast() {
+        viewModelScope.launch {
+            _vegetables.flatMapLatest { vegetables ->
+                combine(vegetables.map { vegetable ->
+                    getVegeItemDetailLastUseCase(vegetable.id)
+                }) {
+                    it.toList()
+                }
+            }.collect {
+                _vegetableDetails.value = it
+            }
+        }
+    }
 
     /**
      * uiStateの変更を監視する

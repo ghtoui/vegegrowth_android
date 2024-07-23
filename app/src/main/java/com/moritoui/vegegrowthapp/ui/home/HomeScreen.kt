@@ -34,8 +34,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.moritoui.vegegrowthapp.R
@@ -95,11 +93,6 @@ fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel(), navController: 
         closeFolderBottomSheet = viewModel::closeFolderMoveBottomSheetState,
         onFolderItemClick = viewModel::vegeItemMoveFolder
     )
-
-    // 画面遷移で戻ったときに処理する
-    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
-        viewModel.reloadVegetables()
-    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

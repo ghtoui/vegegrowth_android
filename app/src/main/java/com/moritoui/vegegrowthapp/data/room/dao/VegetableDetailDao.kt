@@ -5,6 +5,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
 import com.moritoui.vegegrowthapp.data.room.model.VegetableDetailEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface VegetableDetailDao {
@@ -19,5 +20,5 @@ interface VegetableDetailDao {
      */
     @Transaction
     @Query("SELECT * FROM vegetable_detail_resources WHERE vegetable_id = :id ORDER BY date DESC LIMIT 1")
-    suspend fun getVegetableDetailsLast(id: Int): VegetableDetailEntity?
+    fun getVegetableDetailsLast(id: Int): Flow<VegetableDetailEntity?>
 }
