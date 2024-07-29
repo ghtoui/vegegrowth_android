@@ -39,7 +39,7 @@ CI/CDツールであるCircleCIを取り入れることで、コードチェッ�
    3. 写真の拡大表示(モーダル表示)
    4. メモの編集
 
-https://github.com/ghtoui/vegegrowth_android/assets/92294389/1546a1f2-d84f-4ddc-8b3a-05de72ffc704
+<img src="./others/feature_graphics.png" />
 
 ## UI実装
 
