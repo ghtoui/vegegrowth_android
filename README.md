@@ -11,7 +11,7 @@
 
 - 育てる植物を追加して、写真とグラフで大きさを管理するアプリ
 
-<img height="300" src="https://github.com/ghtoui/vegegrowth_android/assets/92294389/8906bb75-824d-44ee-acea-c1b855dd7c26" /> </br>
+<img height="300" src="./others/feature_graphics.png" /> </br>
 <a href='https://play.google.com/store/apps/details?id=com.moritoui.vegegrowthapp'><img alt='Google Play で手に入れよう' src='https://play.google.com/intl/ja/badges/static/images/badges/ja_badge_web_generic.png' width="200"/></a>
 
 ## 開発背景
@@ -38,8 +38,6 @@ CI/CDツールであるCircleCIを取り入れることで、コードチェッ�
    2. 画像下にあるボトムバーをタップしての移動
    3. 写真の拡大表示(モーダル表示)
    4. メモの編集
-
-<img src="./others/feature_graphics.png" />
 
 ## UI実装
 
