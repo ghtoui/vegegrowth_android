@@ -1,6 +1,11 @@
 <resources>
     <!--  共通  -->
     <string name="app_name">vegegrowthApp</string>
+    <string name="one_number">1</string>
+
+    <!--  説明書画面  -->
+    <string name="manual_add_button">画面上部の＋から登録する植物の情報を入力します．</string>
+    <string name="manual_next_button">次へ</string>
 
     <!--  ホーム画面  -->
     <string name="register_button">登録</string>

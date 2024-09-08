@@ -85,8 +85,15 @@ fun MainNavigation(modifier: Modifier = Modifier, firebaseAnalytics: FirebaseAna
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NavigationAppTopBar(isVisibleBackButton: Boolean = true, onBackNavigationButtonClick: () -> Unit = {}, title: String, actions: @Composable () -> Unit = { }) {
+fun NavigationAppTopBar(
+    modifier: Modifier = Modifier,
+    isVisibleBackButton: Boolean = true,
+    onBackNavigationButtonClick: () -> Unit = {},
+    title: String,
+    actions: @Composable () -> Unit = { }
+) {
     TopAppBar(
+        modifier = modifier,
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.secondaryContainer,
             titleContentColor = MaterialTheme.colorScheme.secondary
