@@ -13,6 +13,7 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -21,7 +22,10 @@ import androidx.compose.ui.unit.dp
 import com.moritoui.vegegrowthapp.R
 import com.moritoui.vegegrowthapp.ui.startup.view.FirstPage
 import com.moritoui.vegegrowthapp.ui.startup.view.PagerTopBar
+import com.moritoui.vegegrowthapp.ui.startup.view.SecondPage
+import com.moritoui.vegegrowthapp.ui.startup.view.ThirdPage
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
+import kotlinx.coroutines.launch
 
 @Composable
 fun StartupScreen() {
@@ -37,9 +41,11 @@ private fun StartupScreen(
 ) {
     val pageList: List<@Composable () -> Unit> = listOf(
         { FirstPage()},
-        { FirstPage()},
+        { SecondPage() },
+        { ThirdPage() },
     )
     val pagerState = rememberPagerState(pageCount = {pageList.size})
+    val scope = rememberCoroutineScope()
 
     Column(
         modifier = modifier
@@ -52,7 +58,10 @@ private fun StartupScreen(
             pageCount = pagerState.pageCount,
         )
         Spacer(modifier = Modifier.height(20.dp))
-        HorizontalPager(state = pagerState) { page ->
+        HorizontalPager(
+            state = pagerState,
+            userScrollEnabled = false,
+        ) { page ->
             ElevatedCard(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -63,7 +72,11 @@ private fun StartupScreen(
         }
         Spacer(modifier = Modifier.height(10.dp))
         Button(
-            onClick = {}
+            onClick = {
+                scope.launch {
+                    pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                }
+            }
         ) {
             Text(
                 text = stringResource(id = R.string.manual_next_button)

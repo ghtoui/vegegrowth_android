@@ -2,18 +2,20 @@ package com.moritoui.vegegrowthapp.ui.startup.view
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -31,7 +33,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.moritoui.vegegrowthapp.R
 import com.moritoui.vegegrowthapp.navigation.HomeAddItem
-import com.moritoui.vegegrowthapp.navigation.NavigationAppTopBar
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 import java.time.LocalDateTime
 
@@ -39,64 +40,59 @@ import java.time.LocalDateTime
 fun FirstPage(
     modifier: Modifier = Modifier
 ) {
-    Card(
-        modifier = modifier
-            .padding(24.dp),
-        colors = CardDefaults.cardColors().copy(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        )
-    ) {
-        Column {
+    Column {
+        Row(
+            modifier = Modifier
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(30.dp)
+                    .border(
+                        BorderStroke(
+                            width = 2.dp,
+                            color = MaterialTheme.colorScheme.primary,
+                        ),
+                        shape = CircleShape,
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(stringResource(id = R.string.one_number))
+            }
+            Text(
+                modifier = Modifier.padding(horizontal = 8.dp),
+                text = stringResource(id = R.string.manual_add_button),
+            )
+        }
+        Box {
             Row(
                 modifier = Modifier
-                    .padding(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
+                    .fillMaxWidth()
+                    .padding(24.dp)
+                    .background(MaterialTheme.colorScheme.secondaryContainer),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(30.dp)
-                        .border(
-                            BorderStroke(
-                                width = 2.dp,
-                                color = MaterialTheme.colorScheme.primary,
-                            ),
-                            shape = CircleShape,
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(stringResource(id = R.string.one_number))
-                }
+                Spacer(modifier = Modifier.width(10.dp))
                 Text(
-                    modifier = Modifier.padding(horizontal = 8.dp),
-                    text = stringResource(id = R.string.manual_add_button),
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    text = stringResource(R.string.home_screen_title),
+                    style = MaterialTheme.typography.titleLarge
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                HomeAddItem(
+                    onFolderAddClick = {},
+                    onAddClick = {}
                 )
             }
-            Box {
-                NavigationAppTopBar(
-                    modifier = Modifier.padding(24.dp),
-                    title = stringResource(R.string.home_screen_title),
-                    actions = {
-                        HomeAddItem(
-                            onFolderAddClick = {},
-                            onAddClick = {}
-                        )
-                    },
-                    isVisibleBackButton = false
-                )
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.CenterEnd)
-                        .size(100.dp)
-                        .offset(x = -25.dp)
-                        .border(
-                            BorderStroke(
-                                width = 4.dp,
-                                color = MaterialTheme.colorScheme.primary,
-                            ),
-                            shape = CircleShape,
-                        )
-                )
-            }
+            Icon(
+                modifier = Modifier
+                    .padding(top = 60.dp, end = 2.dp, bottom = 10.dp)
+                    .size(70.dp)
+                    .align(Alignment.CenterEnd),
+                painter = painterResource(id = R.drawable.ic_touch),
+                contentDescription = null
+            )
         }
     }
 }
@@ -115,40 +111,32 @@ private fun FirstPagePreview() {
 fun SecondPage(
     modifier: Modifier = Modifier
 ) {
-    Card(
-        modifier = modifier
-            .padding(24.dp),
-        colors = CardDefaults.cardColors().copy(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        )
-    ) {
-        Column {
-            Row(
+    Column {
+        Row(
+            modifier = Modifier
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(
                 modifier = Modifier
-                    .padding(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(30.dp)
-                        .border(
-                            BorderStroke(
-                                width = 2.dp,
-                                color = MaterialTheme.colorScheme.primary,
-                            ),
-                            shape = CircleShape,
+                    .size(30.dp)
+                    .border(
+                        BorderStroke(
+                            width = 2.dp,
+                            color = MaterialTheme.colorScheme.primary,
                         ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(stringResource(id = R.string.two_number))
-                }
-                Text(
-                    modifier = Modifier.padding(horizontal = 8.dp),
-                    text = stringResource(id = R.string.manual_tap_item),
-                )
+                        shape = CircleShape,
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(stringResource(id = R.string.two_number))
             }
-            ListItemManual()
+            Text(
+                modifier = Modifier.padding(horizontal = 8.dp),
+                text = stringResource(id = R.string.manual_tap_item),
+            )
         }
+        ListItemManual()
     }
 }
 
@@ -216,5 +204,80 @@ private fun ListItemManual(
             painter = painterResource(id = R.drawable.ic_touch),
             contentDescription = null
         )
+    }
+}
+
+@Composable
+fun ThirdPage(
+    modifier: Modifier = Modifier
+) {
+    Column {
+        Row(
+            modifier = Modifier
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(30.dp)
+                    .border(
+                        BorderStroke(
+                            width = 2.dp,
+                            color = MaterialTheme.colorScheme.primary,
+                        ),
+                        shape = CircleShape,
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(stringResource(id = R.string.third_number))
+            }
+            Text(
+                modifier = Modifier.padding(horizontal = 8.dp),
+                text = stringResource(id = R.string.manual_take_picture),
+            )
+        }
+        Column(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                modifier = Modifier.height(200.dp),
+                painter = painterResource(id = R.drawable.flower_sample_image),
+                contentDescription = null,
+                contentScale = ContentScale.Crop
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            Button(
+                onClick = {},
+                enabled = false
+            ) {
+                Text(stringResource(id = R.string.take_picture_button))
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+            Box {
+                Button(onClick = {}) {
+                    Text(stringResource(id = R.string.register_button))
+                }
+                Icon(
+                    modifier = Modifier
+                        .padding(top = 30.dp, bottom = 10.dp)
+                        .size(70.dp)
+                        .align(Alignment.BottomCenter),
+                    painter = painterResource(id = R.drawable.ic_touch),
+                    contentDescription = null
+                )
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun ThirdPagePreview () {
+    VegegrowthAppTheme {
+        Surface {
+            ThirdPage()
+        }
     }
 }
