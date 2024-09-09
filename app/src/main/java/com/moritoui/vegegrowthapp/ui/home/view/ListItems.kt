@@ -81,7 +81,7 @@ fun VegeItemListCard(
                 model = vegetableDetail?.imagePath,
                 contentDescription = "最後に撮影された写真",
                 error = painterResource(id = R.drawable.no_image),
-                placeholder = painterResource(R.drawable.loading_image),
+                placeholder = painterResource(R.drawable.no_image),
                 contentScale = ContentScale.Crop
             )
             Spacer(modifier = Modifier.width(8.dp))
