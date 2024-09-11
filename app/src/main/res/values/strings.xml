@@ -1,6 +1,22 @@
 <resources>
     <!--  共通  -->
     <string name="app_name">vegegrowthApp</string>
+    <string name="first_number">1</string>
+    <string name="second_number">2</string>
+    <string name="third_number">3</string>
+    <string name="fourth_number">4</string>
+
+    <!--  説明書画面  -->
+    <string name="manual_add_button">画面上部の＋から登録する植物の情報を入力します．</string>
+    <string name="manual_next_button">次へ</string>
+    <string name="manual_finish_button">完了</string>
+    <string name="manual_tap_item">登録したアイテムをタップで選択します．</string>
+    <string name="manual_take_picture">植物を撮影して，植物の情報を登録します．</string>
+    <string name="manual_daria_name">ダリア</string>
+    <string name="manual_manage_description">登録した植物の詳細情報を見ることができます．</string>
+    <string name="manual_manage_size">大きさをグラフで確認</string>
+    <string name="manual_manage_picture">撮影した写真を確認</string>
+    <string name="manual_manage_memo">メモを登録することもできます</string>
 
     <!--  ホーム画面  -->
     <string name="register_button">登録</string>
