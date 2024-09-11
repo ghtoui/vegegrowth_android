@@ -1,4 +1,4 @@
-package com.moritoui.vegegrowthapp.ui.startup.view
+package com.moritoui.vegegrowthapp.ui.manual.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

@@ -1,4 +1,4 @@
-package com.moritoui.vegegrowthapp.navigation
+package com.moritoui.vegegrowthapp.ui.main
 
 import android.os.Bundle
 import androidx.compose.animation.core.tween
@@ -15,30 +15,31 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
+import com.moritoui.vegegrowthapp.navigation.Screen
 import com.moritoui.vegegrowthapp.ui.folder.folderScreenRoute
 import com.moritoui.vegegrowthapp.ui.home.homeScreenRoute
 import com.moritoui.vegegrowthapp.ui.manage.manageScreenRoute
+import com.moritoui.vegegrowthapp.ui.manual.manualScreenRoute
 import com.moritoui.vegegrowthapp.ui.takepicture.takePictureScreenRoute
 
-sealed class Screen(val route: String) {
-    object HomeScreen : Screen("homeScreen")
-
-    object FolderScreen : Screen("folderScreen")
-
-    object TakePictureScreen : Screen("takePictureScreen")
-
-    object ManageScreen : Screen("manageScreen")
-}
-
 @Composable
-fun MainNavigation(modifier: Modifier = Modifier, firebaseAnalytics: FirebaseAnalytics, navController: NavHostController = rememberNavController()) {
+fun MainScreen(
+    modifier: Modifier = Modifier,
+    firebaseAnalytics: FirebaseAnalytics,
+    navController: NavHostController = rememberNavController(),
+    viewModel: MainScreenViewModel = hiltViewModel(),
+) {
+    val isInitial by viewModel.isInitial.collectAsStateWithLifecycle()
     LaunchedEffect(navController) {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             val route = destination.route
@@ -50,7 +51,11 @@ fun MainNavigation(modifier: Modifier = Modifier, firebaseAnalytics: FirebaseAna
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = Screen.HomeScreen.route,
+        startDestination = if (isInitial) {
+            Screen.ManualScreen.route
+        } else {
+            Screen.HomeScreen.route
+        },
         enterTransition = {
             slideInHorizontally(
                 initialOffsetX = { screenWidth -> screenWidth },
@@ -80,6 +85,7 @@ fun MainNavigation(modifier: Modifier = Modifier, firebaseAnalytics: FirebaseAna
         takePictureScreenRoute(navController)
         manageScreenRoute(navController)
         folderScreenRoute(navController)
+        manualScreenRoute(navController)
     }
 }
 

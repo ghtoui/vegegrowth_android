@@ -31,7 +31,6 @@ import com.moritoui.vegegrowthapp.model.FilterStatus
 import com.moritoui.vegegrowthapp.model.VegeCategory
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.navigation.HomeAddItem
-import com.moritoui.vegegrowthapp.navigation.NavigationAppTopBar
 import com.moritoui.vegegrowthapp.previews.DarkLightPreview
 import com.moritoui.vegegrowthapp.ui.common.VegeGrowthLoading
 import com.moritoui.vegegrowthapp.ui.common.bottomsheet.FolderMoveBottomSheet
@@ -42,6 +41,7 @@ import com.moritoui.vegegrowthapp.ui.home.view.AddTextCategoryDialog
 import com.moritoui.vegegrowthapp.ui.home.view.ConfirmDeleteItemDialog
 import com.moritoui.vegegrowthapp.ui.home.view.ItemListTopBar
 import com.moritoui.vegegrowthapp.ui.home.view.VegeItemListCard
+import com.moritoui.vegegrowthapp.ui.main.NavigationAppTopBar
 import com.moritoui.vegegrowthapp.ui.takepicture.navigateToTakePicture
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 import kotlinx.coroutines.launch

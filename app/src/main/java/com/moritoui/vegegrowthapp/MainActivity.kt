@@ -21,8 +21,8 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.analytics.logEvent
 import com.google.firebase.ktx.Firebase
-import com.moritoui.vegegrowthapp.navigation.MainNavigation
 import com.moritoui.vegegrowthapp.ui.admob.AdmobBanner
+import com.moritoui.vegegrowthapp.ui.main.MainScreen
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -52,7 +52,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     Column {
-                        MainNavigation(
+                        MainScreen(
                             modifier = Modifier.weight(1f),
                             firebaseAnalytics
                         )

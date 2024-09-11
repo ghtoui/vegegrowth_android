@@ -1,4 +1,4 @@
-package com.moritoui.vegegrowthapp.ui.startup.view
+package com.moritoui.vegegrowthapp.ui.manual.view
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
