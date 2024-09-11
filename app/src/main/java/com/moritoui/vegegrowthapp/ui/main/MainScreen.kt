@@ -33,12 +33,7 @@ import com.moritoui.vegegrowthapp.ui.manual.manualScreenRoute
 import com.moritoui.vegegrowthapp.ui.takepicture.takePictureScreenRoute
 
 @Composable
-fun MainScreen(
-    modifier: Modifier = Modifier,
-    firebaseAnalytics: FirebaseAnalytics,
-    navController: NavHostController = rememberNavController(),
-    viewModel: MainScreenViewModel = hiltViewModel(),
-) {
+fun MainScreen(modifier: Modifier = Modifier, firebaseAnalytics: FirebaseAnalytics, navController: NavHostController = rememberNavController(), viewModel: MainScreenViewModel = hiltViewModel()) {
     val isInitial by viewModel.isInitial.collectAsStateWithLifecycle()
     LaunchedEffect(navController) {
         navController.addOnDestinationChangedListener { _, destination, _ ->
@@ -91,13 +86,7 @@ fun MainScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NavigationAppTopBar(
-    modifier: Modifier = Modifier,
-    isVisibleBackButton: Boolean = true,
-    onBackNavigationButtonClick: () -> Unit = {},
-    title: String,
-    actions: @Composable () -> Unit = { }
-) {
+fun NavigationAppTopBar(modifier: Modifier = Modifier, isVisibleBackButton: Boolean = true, onBackNavigationButtonClick: () -> Unit = {}, title: String, actions: @Composable () -> Unit = { }) {
     TopAppBar(
         modifier = modifier,
         colors = TopAppBarDefaults.topAppBarColors(

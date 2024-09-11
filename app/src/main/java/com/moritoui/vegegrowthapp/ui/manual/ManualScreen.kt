@@ -42,17 +42,14 @@ fun ManualScreen(navController: NavController) {
 }
 
 @Composable
-private fun ManualScreen(
-    modifier: Modifier = Modifier,
-    navigateToHome: () -> Unit,
-) {
+private fun ManualScreen(modifier: Modifier = Modifier, navigateToHome: () -> Unit) {
     val pageList: List<@Composable () -> Unit> = listOf(
-        { FirstPage()},
+        { FirstPage() },
         { SecondPage() },
         { ThirdPage() },
-        { FourthPage() },
+        { FourthPage() }
     )
-    val pagerState = rememberPagerState(pageCount = {pageList.size})
+    val pagerState = rememberPagerState(pageCount = { pageList.size })
     val scope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
 
@@ -64,12 +61,12 @@ private fun ManualScreen(
         Spacer(modifier = Modifier.height(50.dp))
         PagerTopBar(
             currentPage = pagerState.currentPage,
-            pageCount = pagerState.pageCount,
+            pageCount = pagerState.pageCount
         )
         Spacer(modifier = Modifier.height(20.dp))
         HorizontalPager(
             state = pagerState,
-            userScrollEnabled = false,
+            userScrollEnabled = false
         ) { page ->
             ElevatedCard(
                 modifier = Modifier
@@ -112,9 +109,8 @@ private fun ManualScreenPreview() {
         Surface {
             ManualScreen(
                 modifier = Modifier,
-                navigateToHome = {},
+                navigateToHome = {}
             )
         }
     }
 }
-

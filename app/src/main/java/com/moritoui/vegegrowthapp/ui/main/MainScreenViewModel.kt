@@ -9,9 +9,7 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
-class MainScreenViewModel @Inject constructor(
-
-) : ViewModel() {
+class MainScreenViewModel @Inject constructor() : ViewModel() {
     private val _isInitial = MutableStateFlow(false)
     val isInitial: StateFlow<Boolean> = _isInitial.asStateFlow()
 

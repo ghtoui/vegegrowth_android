@@ -63,14 +63,7 @@ val LocalScrollbarStyle = staticCompositionLocalOf { defaultScrollbarStyle() }
  * Can be passed as a parameter of scrollbar through [LocalScrollbarStyle]
  */
 @Immutable
-data class ScrollbarStyle(
-    val minimalHeight: Dp,
-    val thickness: Dp,
-    val shape: Shape,
-    val hoverDurationMillis: Int,
-    val unhoverColor: Color,
-    val hoverColor: Color
-)
+data class ScrollbarStyle(val minimalHeight: Dp, val thickness: Dp, val shape: Shape, val hoverDurationMillis: Int, val unhoverColor: Color, val hoverColor: Color)
 
 /**
  * Simple default [ScrollbarStyle] without applying MaterialTheme.
@@ -120,7 +113,7 @@ fun VerticalScrollbar(
     modifier: Modifier = Modifier,
     reverseLayout: Boolean = false,
     style: ScrollbarStyle = LocalScrollbarStyle.current,
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) = Scrollbar(
     adapter,
     modifier,
@@ -166,7 +159,7 @@ fun HorizontalScrollbar(
     modifier: Modifier = Modifier,
     reverseLayout: Boolean = false,
     style: ScrollbarStyle = LocalScrollbarStyle.current,
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) = Scrollbar(
     adapter,
     modifier,
@@ -178,85 +171,79 @@ fun HorizontalScrollbar(
 
 // TODO(demin): do we need to stop dragging if cursor is beyond constraints?
 @Composable
-private fun Scrollbar(
-    adapter: ScrollbarAdapter,
-    modifier: Modifier = Modifier,
-    reverseLayout: Boolean,
-    style: ScrollbarStyle,
-    interactionSource: MutableInteractionSource,
-    isVertical: Boolean
-) = with(LocalDensity.current) {
-    val dragInteraction = remember { mutableStateOf<DragInteraction.Start?>(null) }
-    DisposableEffect(interactionSource) {
-        onDispose {
-            dragInteraction.value?.let { interaction ->
-                interactionSource.tryEmit(DragInteraction.Cancel(interaction))
-                dragInteraction.value = null
+private fun Scrollbar(adapter: ScrollbarAdapter, modifier: Modifier = Modifier, reverseLayout: Boolean, style: ScrollbarStyle, interactionSource: MutableInteractionSource, isVertical: Boolean) =
+    with(LocalDensity.current) {
+        val dragInteraction = remember { mutableStateOf<DragInteraction.Start?>(null) }
+        DisposableEffect(interactionSource) {
+            onDispose {
+                dragInteraction.value?.let { interaction ->
+                    interactionSource.tryEmit(DragInteraction.Cancel(interaction))
+                    dragInteraction.value = null
+                }
             }
         }
-    }
 
-    var containerSize by remember { mutableStateOf(0) }
-    val isHovered by interactionSource.collectIsHoveredAsState()
+        var containerSize by remember { mutableStateOf(0) }
+        val isHovered by interactionSource.collectIsHoveredAsState()
 
-    val isHighlighted by remember {
-        derivedStateOf {
-            isHovered || dragInteraction.value is DragInteraction.Start
+        val isHighlighted by remember {
+            derivedStateOf {
+                isHovered || dragInteraction.value is DragInteraction.Start
+            }
         }
-    }
 
-    val minimalHeight = style.minimalHeight.toPx()
-    val sliderAdapter = remember(adapter, containerSize, minimalHeight, reverseLayout) {
-        SliderAdapter(adapter, containerSize, minimalHeight, reverseLayout)
-    }
-
-    val scrollThickness = style.thickness.roundToPx()
-    val measurePolicy = if (isVertical) {
-        remember(sliderAdapter, scrollThickness) {
-            verticalMeasurePolicy(sliderAdapter, { containerSize = it }, scrollThickness)
+        val minimalHeight = style.minimalHeight.toPx()
+        val sliderAdapter = remember(adapter, containerSize, minimalHeight, reverseLayout) {
+            SliderAdapter(adapter, containerSize, minimalHeight, reverseLayout)
         }
-    } else {
-        remember(sliderAdapter, scrollThickness) {
-            horizontalMeasurePolicy(sliderAdapter, { containerSize = it }, scrollThickness)
+
+        val scrollThickness = style.thickness.roundToPx()
+        val measurePolicy = if (isVertical) {
+            remember(sliderAdapter, scrollThickness) {
+                verticalMeasurePolicy(sliderAdapter, { containerSize = it }, scrollThickness)
+            }
+        } else {
+            remember(sliderAdapter, scrollThickness) {
+                horizontalMeasurePolicy(sliderAdapter, { containerSize = it }, scrollThickness)
+            }
         }
+
+        val color by animateColorAsState(
+            if (isHighlighted) style.hoverColor else style.unhoverColor,
+            animationSpec = TweenSpec(durationMillis = style.hoverDurationMillis)
+        )
+
+        val isVisible = sliderAdapter.size < containerSize
+
+        Layout(
+            {
+                Box(
+                    Modifier
+                        .background(if (isVisible) color else Color.Transparent, style.shape)
+                        .scrollbarDrag(
+                            interactionSource = interactionSource,
+                            draggedInteraction = dragInteraction,
+                            onStarted = { sliderAdapter.rawPosition = sliderAdapter.position },
+                            onDelta = { offset ->
+                                sliderAdapter.rawPosition += if (isVertical) offset.y else offset.x
+                            },
+                            onFinished = { sliderAdapter.rawPosition = sliderAdapter.position }
+                        )
+                )
+            },
+            modifier
+                .hoverable(interactionSource = interactionSource)
+                .scrollOnPressOutsideSlider(isVertical, sliderAdapter, adapter, containerSize),
+            measurePolicy
+        )
     }
-
-    val color by animateColorAsState(
-        if (isHighlighted) style.hoverColor else style.unhoverColor,
-        animationSpec = TweenSpec(durationMillis = style.hoverDurationMillis)
-    )
-
-    val isVisible = sliderAdapter.size < containerSize
-
-    Layout(
-        {
-            Box(
-                Modifier
-                    .background(if (isVisible) color else Color.Transparent, style.shape)
-                    .scrollbarDrag(
-                        interactionSource = interactionSource,
-                        draggedInteraction = dragInteraction,
-                        onStarted = { sliderAdapter.rawPosition = sliderAdapter.position },
-                        onDelta = { offset ->
-                            sliderAdapter.rawPosition += if (isVertical) offset.y else offset.x
-                        },
-                        onFinished = { sliderAdapter.rawPosition = sliderAdapter.position }
-                    )
-            )
-        },
-        modifier
-            .hoverable(interactionSource = interactionSource)
-            .scrollOnPressOutsideSlider(isVertical, sliderAdapter, adapter, containerSize),
-        measurePolicy
-    )
-}
 
 private fun Modifier.scrollbarDrag(
     interactionSource: MutableInteractionSource,
     draggedInteraction: MutableState<DragInteraction.Start?>,
     onStarted: () -> Unit,
     onDelta: (Offset) -> Unit,
-    onFinished: () -> Unit
+    onFinished: () -> Unit,
 ): Modifier = composed {
     val currentInteractionSource by rememberUpdatedState(interactionSource)
     val currentDraggedInteraction by rememberUpdatedState(draggedInteraction)
@@ -288,12 +275,7 @@ private fun Modifier.scrollbarDrag(
     }
 }
 
-private fun Modifier.scrollOnPressOutsideSlider(
-    isVertical: Boolean,
-    sliderAdapter: SliderAdapter,
-    scrollbarAdapter: ScrollbarAdapter,
-    containerSize: Int
-) = composed {
+private fun Modifier.scrollOnPressOutsideSlider(isVertical: Boolean, sliderAdapter: SliderAdapter, scrollbarAdapter: ScrollbarAdapter, containerSize: Int) = composed {
     var targetOffset: Offset? by remember { mutableStateOf(null) }
 
     if (targetOffset != null) {
@@ -335,9 +317,7 @@ private fun Modifier.scrollOnPressOutsideSlider(
  * [scrollState]
  */
 @Composable
-fun rememberScrollbarAdapter(
-    scrollState: ScrollState
-): ScrollbarAdapter = remember(scrollState) {
+fun rememberScrollbarAdapter(scrollState: ScrollState): ScrollbarAdapter = remember(scrollState) {
     ScrollbarAdapter(scrollState)
 }
 
@@ -346,12 +326,8 @@ fun rememberScrollbarAdapter(
  * [scrollState]
  */
 @Composable
-fun rememberScrollbarAdapter(
-    scrollState: LazyListState,
-): ScrollbarAdapter {
-    return remember(scrollState) {
-        ScrollbarAdapter(scrollState)
-    }
+fun rememberScrollbarAdapter(scrollState: LazyListState): ScrollbarAdapter = remember(scrollState) {
+    ScrollbarAdapter(scrollState)
 }
 
 /**
@@ -373,21 +349,16 @@ fun rememberScrollbarAdapter(
  *         )
  *     }
  */
-fun ScrollbarAdapter(
-    scrollState: ScrollState
-): ScrollbarAdapter = ScrollableScrollbarAdapter(scrollState)
+fun ScrollbarAdapter(scrollState: ScrollState): ScrollbarAdapter = ScrollableScrollbarAdapter(scrollState)
 
-private class ScrollableScrollbarAdapter(
-    private val scrollState: ScrollState
-) : ScrollbarAdapter {
+private class ScrollableScrollbarAdapter(private val scrollState: ScrollState) : ScrollbarAdapter {
     override val scrollOffset: Float get() = scrollState.value.toFloat()
 
     override suspend fun scrollTo(containerSize: Int, scrollOffset: Float) {
         scrollState.scrollTo(scrollOffset.roundToInt())
     }
 
-    override fun maxScrollOffset(containerSize: Int) =
-        scrollState.maxValue.toFloat()
+    override fun maxScrollOffset(containerSize: Int) = scrollState.maxValue.toFloat()
 }
 
 /**
@@ -411,18 +382,14 @@ private class ScrollableScrollbarAdapter(
  *         )
  *     }
  */
-fun ScrollbarAdapter(
-    scrollState: LazyListState
-): ScrollbarAdapter = LazyScrollbarAdapter(
+fun ScrollbarAdapter(scrollState: LazyListState): ScrollbarAdapter = LazyScrollbarAdapter(
     scrollState
 )
 
-private class LazyScrollbarAdapter(
-    private val scrollState: LazyListState
-) : ScrollbarAdapter {
+private class LazyScrollbarAdapter(private val scrollState: LazyListState) : ScrollbarAdapter {
     override val scrollOffset: Float
         get() = scrollState.firstVisibleItemIndex * averageItemSize +
-                scrollState.firstVisibleItemScrollOffset
+            scrollState.firstVisibleItemScrollOffset
 
     override suspend fun scrollTo(containerSize: Int, scrollOffset: Float) {
         val distance = scrollOffset - this@LazyScrollbarAdapter.scrollOffset
@@ -464,8 +431,7 @@ private class LazyScrollbarAdapter(
         scrollState.scrollToItem(index = index, scrollOffset = offset)
     }
 
-    override fun maxScrollOffset(containerSize: Int) =
-        (averageItemSize * itemCount - containerSize).coerceAtLeast(0f)
+    override fun maxScrollOffset(containerSize: Int) = (averageItemSize * itemCount - containerSize).coerceAtLeast(0f)
 
     private val itemCount get() = scrollState.layoutInfo.totalItemsCount
 
@@ -509,12 +475,7 @@ interface ScrollbarAdapter {
     fun maxScrollOffset(containerSize: Int): Float
 }
 
-private class SliderAdapter(
-    val adapter: ScrollbarAdapter,
-    val containerSize: Int,
-    val minHeight: Float,
-    val reverseLayout: Boolean
-) {
+private class SliderAdapter(val adapter: ScrollbarAdapter, val containerSize: Int, val minHeight: Float, val reverseLayout: Boolean) {
     private val contentSize get() = adapter.maxScrollOffset(containerSize) + containerSize
     private val visiblePart get() = containerSize.toFloat() / contentSize
 
@@ -566,11 +527,7 @@ private class SliderAdapter(
     val bounds get() = position..position + size
 }
 
-private fun verticalMeasurePolicy(
-    sliderAdapter: SliderAdapter,
-    setContainerSize: (Int) -> Unit,
-    scrollThickness: Int
-) = MeasurePolicy { measurables, constraints ->
+private fun verticalMeasurePolicy(sliderAdapter: SliderAdapter, setContainerSize: (Int) -> Unit, scrollThickness: Int) = MeasurePolicy { measurables, constraints ->
     setContainerSize(constraints.maxHeight)
     val height = sliderAdapter.size.toInt()
     val placeable = measurables.first().measure(
@@ -584,11 +541,7 @@ private fun verticalMeasurePolicy(
     }
 }
 
-private fun horizontalMeasurePolicy(
-    sliderAdapter: SliderAdapter,
-    setContainerSize: (Int) -> Unit,
-    scrollThickness: Int
-) = MeasurePolicy { measurables, constraints ->
+private fun horizontalMeasurePolicy(sliderAdapter: SliderAdapter, setContainerSize: (Int) -> Unit, scrollThickness: Int) = MeasurePolicy { measurables, constraints ->
     setContainerSize(constraints.maxWidth)
     val width = sliderAdapter.size.toInt()
     val placeable = measurables.first().measure(

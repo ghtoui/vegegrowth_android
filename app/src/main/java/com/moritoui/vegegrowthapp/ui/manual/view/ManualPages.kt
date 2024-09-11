@@ -51,9 +51,7 @@ import java.time.LocalDateTime
 import kotlinx.coroutines.launch
 
 @Composable
-fun FirstPage(
-    modifier: Modifier = Modifier
-) {
+fun FirstPage(modifier: Modifier = Modifier) {
     Column {
         CircleNumber(
             text = stringResource(id = R.string.manual_add_button),
@@ -102,9 +100,7 @@ private fun FirstPagePreview() {
 }
 
 @Composable
-fun SecondPage(
-    modifier: Modifier = Modifier
-) {
+fun SecondPage(modifier: Modifier = Modifier) {
     Column {
         CircleNumber(
             text = stringResource(id = R.string.manual_tap_item),
@@ -125,9 +121,7 @@ private fun SecondPagePreview() {
 }
 
 @Composable
-private fun ListItemManual(
-    modifier: Modifier = Modifier
-) {
+private fun ListItemManual(modifier: Modifier = Modifier) {
     Box {
         Card(
             modifier = modifier
@@ -182,9 +176,7 @@ private fun ListItemManual(
 }
 
 @Composable
-fun ThirdPage(
-    modifier: Modifier = Modifier
-) {
+fun ThirdPage(modifier: Modifier = Modifier) {
     Column {
         CircleNumber(
             text = stringResource(id = R.string.manual_take_picture),
@@ -228,7 +220,7 @@ fun ThirdPage(
 
 @Preview
 @Composable
-private fun ThirdPagePreview () {
+private fun ThirdPagePreview() {
     VegegrowthAppTheme {
         Surface {
             ThirdPage()
@@ -237,9 +229,7 @@ private fun ThirdPagePreview () {
 }
 
 @Composable
-fun FourthPage(
-    modifier: Modifier = Modifier
-) {
+fun FourthPage(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
     ) {
@@ -256,7 +246,7 @@ fun FourthPage(
             Row {
                 Text(
                     modifier = Modifier.padding(top = 8.dp),
-                    text = stringResource(id = R.string.manual_manage_size),
+                    text = stringResource(id = R.string.manual_manage_size)
                 )
                 DrawLineChart(
                     modifier = Modifier.height(150.dp),
@@ -268,7 +258,7 @@ fun FourthPage(
             Row {
                 Text(
                     modifier = Modifier.padding(top = 12.dp),
-                    text = stringResource(id = R.string.manual_manage_picture),
+                    text = stringResource(id = R.string.manual_manage_picture)
                 )
                 ManualImageCarousel(
                     modifier = Modifier.height(200.dp)
@@ -278,14 +268,14 @@ fun FourthPage(
             Row {
                 Text(
                     modifier = Modifier
-                        .width((LocalConfiguration.current.screenWidthDp/3).dp),
+                        .width((LocalConfiguration.current.screenWidthDp / 3).dp),
                     text = stringResource(id = R.string.manual_manage_memo)
                 )
                 DetailData(
                     modifier = Modifier
                         .height(150.dp),
                     memoData = "肥料をあげました．",
-                    onEditClick = {},
+                    onEditClick = {}
                 )
             }
         }
@@ -294,7 +284,7 @@ fun FourthPage(
 
 @Preview
 @Composable
-private fun FourthPagePreview () {
+private fun FourthPagePreview() {
     VegegrowthAppTheme {
         Surface {
             FourthPage()
@@ -304,10 +294,8 @@ private fun FourthPagePreview () {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun ManualImageCarousel(
-    modifier: Modifier = Modifier
-) {
-    val pagerState = rememberPagerState(pageCount = {3})
+private fun ManualImageCarousel(modifier: Modifier = Modifier) {
+    val pagerState = rememberPagerState(pageCount = { 3 })
     val scope = rememberCoroutineScope()
     Column(
         modifier = modifier,
@@ -336,7 +324,7 @@ private fun ManualImageCarousel(
                         .aspectRatio(1f / 1f)
                         .padding(8.dp),
                     painter = painterResource(id = R.drawable.flower_sample_image),
-                    contentDescription = null,
+                    contentDescription = null
                 )
             }
         }
@@ -370,14 +358,11 @@ private fun ManualImageCarousel(
 }
 
 @Composable
-private fun CircleNumber(
-    numberText: String,
-    text: String,
-) {
+private fun CircleNumber(numberText: String, text: String) {
     Row(
         modifier = Modifier
             .padding(8.dp),
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
@@ -385,9 +370,9 @@ private fun CircleNumber(
                 .border(
                     BorderStroke(
                         width = 2.dp,
-                        color = MaterialTheme.colorScheme.primary,
+                        color = MaterialTheme.colorScheme.primary
                     ),
-                    shape = CircleShape,
+                    shape = CircleShape
                 ),
             contentAlignment = Alignment.Center
         ) {
@@ -395,7 +380,7 @@ private fun CircleNumber(
         }
         Text(
             modifier = Modifier.padding(horizontal = 8.dp),
-            text = text,
+            text = text
         )
     }
 }
@@ -422,12 +407,12 @@ private fun getManualVegeDetailList(): List<VegeItemDetail> {
         Pair(12.0, "2024-09-07 10:10:10"),
         Pair(12.5, "2024-09-08 10:10:10"),
         Pair(15.0, "2024-09-10 10:10:10"),
-        Pair(18.0, "2024-09-11 10:10:10"),
+        Pair(18.0, "2024-09-11 10:10:10")
     )
     return sizeList.map {
         baseVegeItemDetail.copy(
             size = it.first,
-            date = it.second,
+            date = it.second
         )
     }
 }

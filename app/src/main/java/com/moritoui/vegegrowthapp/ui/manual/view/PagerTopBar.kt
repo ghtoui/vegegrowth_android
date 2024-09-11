@@ -25,11 +25,7 @@ import com.moritoui.vegegrowthapp.R
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 
 @Composable
-fun PagerTopBar(
-    modifier: Modifier = Modifier,
-    currentPage: Int,
-    pageCount: Int,
-) {
+fun PagerTopBar(modifier: Modifier = Modifier, currentPage: Int, pageCount: Int) {
     val selectedPointSize = 24.dp
     val defaultPointSize = 12.dp
     val defaultPointSpace = 40.dp
@@ -81,10 +77,10 @@ fun PagerTopBar(
                     Box(
                         modifier = Modifier
                             .size(defaultPointSize)
-                        .background(
-                            color = MaterialTheme.colorScheme.secondary,
-                            shape = CircleShape
-                        )
+                            .background(
+                                color = MaterialTheme.colorScheme.secondary,
+                                shape = CircleShape
+                            )
                     )
                 }
             }
