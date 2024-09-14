@@ -45,8 +45,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.moritoui.vegegrowthapp.R
 import com.moritoui.vegegrowthapp.navigation.GoToManageItem
-import com.moritoui.vegegrowthapp.ui.main.NavigationAppTopBar
 import com.moritoui.vegegrowthapp.ui.manage.navigateToManage
+import com.moritoui.vegegrowthapp.ui.navigation.NavigationAppTopBar
 import com.moritoui.vegegrowthapp.ui.takepicture.model.TakePictureScreenUiState
 import com.moritoui.vegegrowthapp.ui.takepicture.view.CameraScreen
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
@@ -89,7 +89,6 @@ private fun TakePictureScreen(
             NavigationAppTopBar(
                 onBackNavigationButtonClick = onNavigationIconClick,
                 title = uiState.vegeName,
-                isVisibleBackButton = true
             ) {
                 if (uiState.isVisibleNavigateButton) {
                     GoToManageItem(
