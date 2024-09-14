@@ -205,7 +205,7 @@ private fun HomeScreen(
                         onSelectVegeStatus = onSelectVegeStatus,
                         onVegeItemClick = onVegeItemClick,
                         onSelectMoveFolder = onSelectMoveFolder,
-                        selectMenu = uiState.selectMenu,
+                        selectMenu = uiState.selectMenu
                     )
                 }
             }

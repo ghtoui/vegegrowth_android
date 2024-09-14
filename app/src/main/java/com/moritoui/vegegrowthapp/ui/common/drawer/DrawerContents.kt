@@ -24,10 +24,7 @@ import com.moritoui.vegegrowthapp.R
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 
 @Composable
-fun DrawerContents(
-    modifier: Modifier = Modifier,
-    onManualClick: () -> Unit,
-) {
+fun DrawerContents(modifier: Modifier = Modifier, onManualClick: () -> Unit) {
     ModalDrawerSheet {
         Row(
             verticalAlignment = Alignment.CenterVertically
@@ -36,7 +33,7 @@ fun DrawerContents(
                 modifier = Modifier.size(72.dp),
                 painter = painterResource(id = R.mipmap.ic_launcher_foreground),
                 contentDescription = null,
-                contentScale = ContentScale.Crop,
+                contentScale = ContentScale.Crop
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(text = stringResource(id = R.string.app_name))

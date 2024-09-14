@@ -24,11 +24,7 @@ import com.moritoui.vegegrowthapp.ui.manual.manualScreenRoute
 import com.moritoui.vegegrowthapp.ui.takepicture.takePictureScreenRoute
 
 @Composable
-fun MainScreen(
-    modifier: Modifier = Modifier,
-    firebaseAnalytics: FirebaseAnalytics, navController: NavHostController = rememberNavController(),
-    viewModel: MainScreenViewModel = hiltViewModel()
-) {
+fun MainScreen(modifier: Modifier = Modifier, firebaseAnalytics: FirebaseAnalytics, navController: NavHostController = rememberNavController(), viewModel: MainScreenViewModel = hiltViewModel()) {
     val mainState by viewModel.mainState.collectAsStateWithLifecycle()
     if (mainState.isLoading) {
         return

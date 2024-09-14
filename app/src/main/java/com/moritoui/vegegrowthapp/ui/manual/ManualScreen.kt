@@ -14,9 +14,7 @@ import com.moritoui.vegegrowthapp.ui.navigation.NavigationAppTopBar
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 
 @Composable
-fun ManualScreen(
-    navController: NavController,
-) {
+fun ManualScreen(navController: NavController) {
     ManualScreen(
         modifier = Modifier,
         backNavigation = navController::popBackStack
@@ -24,10 +22,7 @@ fun ManualScreen(
 }
 
 @Composable
-private fun ManualScreen(
-    modifier: Modifier = Modifier,
-    backNavigation: () -> Unit,
-) {
+private fun ManualScreen(modifier: Modifier = Modifier, backNavigation: () -> Unit) {
     Scaffold(
         topBar = {
             NavigationAppTopBar(

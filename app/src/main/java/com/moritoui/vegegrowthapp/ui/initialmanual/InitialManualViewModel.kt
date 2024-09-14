@@ -9,9 +9,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class InitialManualViewModel @Inject constructor(
-    private val appSettingsPreferences: DataStore<AppSettingsPreferences>,
-) : ViewModel() {
+class InitialManualViewModel @Inject constructor(private val appSettingsPreferences: DataStore<AppSettingsPreferences>) : ViewModel() {
     fun finishReadManual() {
         viewModelScope.launch {
             appSettingsPreferences.updateData {

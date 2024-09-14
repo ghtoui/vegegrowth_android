@@ -25,10 +25,7 @@ import com.moritoui.vegegrowthapp.R
 import kotlinx.coroutines.launch
 
 @Composable
-fun ManualContent(
-    modifier: Modifier = Modifier,
-    finishReadManual: () -> Unit,
-) {
+fun ManualContent(modifier: Modifier = Modifier, finishReadManual: () -> Unit) {
     val pageList: List<@Composable () -> Unit> = listOf(
         { FirstPage() },
         { SecondPage() },
@@ -55,13 +52,13 @@ fun ManualContent(
                 .weight(1f)
                 .fillMaxSize()
                 .padding(horizontal = 24.dp)
-                .verticalScroll(scrollState),
+                .verticalScroll(scrollState)
         ) {
             HorizontalPager(
                 modifier = Modifier
                     .weight(1f),
                 state = pagerState,
-                userScrollEnabled = false,
+                userScrollEnabled = false
             ) { page ->
                 pageList[page].invoke()
             }

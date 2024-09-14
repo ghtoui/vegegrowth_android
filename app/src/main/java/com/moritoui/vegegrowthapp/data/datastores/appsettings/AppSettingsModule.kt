@@ -16,9 +16,7 @@ import javax.inject.Singleton
 class AppSettingsModule {
     @Singleton
     @Provides
-    fun provideAppSettingsPreferencesDataStore(
-        @ApplicationContext context: Context
-    ) : DataStore<AppSettingsPreferences> = DataStoreFactory.create(
+    fun provideAppSettingsPreferencesDataStore(@ApplicationContext context: Context): DataStore<AppSettingsPreferences> = DataStoreFactory.create(
         serializer = AppSettingsPreferencesSerializer(),
         produceFile = { context.preferencesDataStoreFile("appSettings.pb") }
     )

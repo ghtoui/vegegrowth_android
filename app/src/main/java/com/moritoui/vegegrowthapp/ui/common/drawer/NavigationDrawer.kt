@@ -12,12 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 
 @Composable
-fun VegeGrowthNavigationDrawer(
-    modifier: Modifier = Modifier,
-    drawerState: DrawerState,
-    onManualClick: () -> Unit,
-    content: @Composable () -> Unit
-) {
+fun VegeGrowthNavigationDrawer(modifier: Modifier = Modifier, drawerState: DrawerState, onManualClick: () -> Unit, content: @Composable () -> Unit) {
     ModalNavigationDrawer(
         modifier = modifier,
         drawerState = drawerState,
@@ -28,7 +23,7 @@ fun VegeGrowthNavigationDrawer(
             )
         },
         scrimColor = MaterialTheme.colorScheme.surfaceContainer,
-        content = content,
+        content = content
     )
 }
 

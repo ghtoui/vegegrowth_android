@@ -11,10 +11,7 @@ import com.moritoui.vegegrowthapp.ui.manual.view.ManualContent
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 
 @Composable
-fun InitialManualScreen(
-    navController: NavController,
-    viewModel: InitialManualViewModel = hiltViewModel(),
-) {
+fun InitialManualScreen(navController: NavController, viewModel: InitialManualViewModel = hiltViewModel()) {
     InitialManualScreen(
         modifier = Modifier,
         navigateToHome = navController::navigateToHome,
@@ -23,11 +20,7 @@ fun InitialManualScreen(
 }
 
 @Composable
-private fun InitialManualScreen(
-    modifier: Modifier = Modifier,
-    navigateToHome: () -> Unit,
-    finishReadManual: () -> Unit,
-) {
+private fun InitialManualScreen(modifier: Modifier = Modifier, navigateToHome: () -> Unit, finishReadManual: () -> Unit) {
     ManualContent(
         modifier = modifier,
         finishReadManual = {

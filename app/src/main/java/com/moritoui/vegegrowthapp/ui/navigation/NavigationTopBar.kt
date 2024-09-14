@@ -41,9 +41,7 @@ fun NavigationAppTopBar(
 }
 
 @Composable
-fun BackNavigationIconButton(
-    onBackNavigationButtonClick: () -> Unit
-) {
+fun BackNavigationIconButton(onBackNavigationButtonClick: () -> Unit) {
     IconButton(onClick = onBackNavigationButtonClick) {
         Icon(
             Icons.AutoMirrored.Filled.ArrowBack,
@@ -61,5 +59,3 @@ fun NavigationAppTopBarPreview() {
         onBackNavigationButtonClick = {}
     )
 }
-
-

@@ -47,7 +47,7 @@ fun FolderMoveBottomSheet(
         modifier = modifier,
         onDismissRequest = onDismissRequest,
         sheetState = sheetState,
-        containerColor = MaterialTheme.colorScheme.background,
+        containerColor = MaterialTheme.colorScheme.background
     ) {
         LazyColumn(
             modifier = Modifier
