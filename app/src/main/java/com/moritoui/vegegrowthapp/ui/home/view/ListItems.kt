@@ -69,7 +69,7 @@ fun VegeItemListCard(
             defaultElevation = 4.dp
         ),
         colors = CardDefaults.cardColors().copy(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
         ),
     ) {
         Row(
@@ -132,7 +132,8 @@ private fun VegetableInfo(modifier: Modifier = Modifier, vegetable: VegeItem, ve
             Spacer(modifier = Modifier.width(4.dp))
             Text(
                 vegetable.name,
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.primary,
             )
         }
         if (vegetableDetail != null) {
@@ -287,7 +288,7 @@ fun VegeFolderCard(
         shape = RoundedCornerShape(24.dp),
         onClick = { onFolderClick(vegetableFolder) },
         colors = CardDefaults.cardColors().copy(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
         )
     ) {
         Row(
@@ -299,7 +300,10 @@ fun VegeFolderCard(
         ) {
             VegetableCategoryIcon(category = vegetableFolder.vegetableCategory)
             Spacer(modifier = Modifier.width(8.dp))
-            Text(vegetableFolder.folderName)
+            Text(
+                text = vegetableFolder.folderName,
+                color = MaterialTheme.colorScheme.primary,
+            )
             Spacer(modifier = Modifier.weight(1f))
             VegetableEditMenu(
                 selectMenu = selectMenu,
