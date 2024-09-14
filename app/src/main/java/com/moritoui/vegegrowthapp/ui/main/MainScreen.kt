@@ -53,7 +53,7 @@ fun MainScreen(
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = if (mainState.isInitialStartApp) {
+        startDestination = if (!mainState.isInitialStartApp) {
             Screen.ManualScreen.route
         } else {
             Screen.HomeScreen.route
