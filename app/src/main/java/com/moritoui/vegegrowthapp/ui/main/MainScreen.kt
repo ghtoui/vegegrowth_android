@@ -4,20 +4,10 @@ import android.os.Bundle
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -28,16 +18,13 @@ import com.google.firebase.analytics.logEvent
 import com.moritoui.vegegrowthapp.navigation.Screen
 import com.moritoui.vegegrowthapp.ui.folder.folderScreenRoute
 import com.moritoui.vegegrowthapp.ui.home.homeScreenRoute
+import com.moritoui.vegegrowthapp.ui.initialmanual.initialManualScreenRoute
 import com.moritoui.vegegrowthapp.ui.manage.manageScreenRoute
 import com.moritoui.vegegrowthapp.ui.manual.manualScreenRoute
 import com.moritoui.vegegrowthapp.ui.takepicture.takePictureScreenRoute
 
 @Composable
-fun MainScreen(
-    modifier: Modifier = Modifier,
-    firebaseAnalytics: FirebaseAnalytics, navController: NavHostController = rememberNavController(),
-    viewModel: MainScreenViewModel = hiltViewModel()
-) {
+fun MainScreen(modifier: Modifier = Modifier, firebaseAnalytics: FirebaseAnalytics, navController: NavHostController = rememberNavController(), viewModel: MainScreenViewModel = hiltViewModel()) {
     val mainState by viewModel.mainState.collectAsStateWithLifecycle()
     if (mainState.isLoading) {
         return
@@ -54,7 +41,7 @@ fun MainScreen(
         modifier = modifier,
         navController = navController,
         startDestination = if (mainState.isInitialStartApp) {
-            Screen.ManualScreen.route
+            Screen.InitialManualScreen.route
         } else {
             Screen.HomeScreen.route
         },
@@ -87,49 +74,9 @@ fun MainScreen(
         takePictureScreenRoute(navController)
         manageScreenRoute(navController)
         folderScreenRoute(navController)
+        initialManualScreenRoute(navController)
         manualScreenRoute(navController)
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun NavigationAppTopBar(modifier: Modifier = Modifier, isVisibleBackButton: Boolean = true, onBackNavigationButtonClick: () -> Unit = {}, title: String, actions: @Composable () -> Unit = { }) {
-    TopAppBar(
-        modifier = modifier,
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-            titleContentColor = MaterialTheme.colorScheme.secondary
-        ),
-        title = {
-            Text(
-                text = title
-            )
-        },
-        navigationIcon = {
-            if (isVisibleBackButton) {
-                IconButton(onClick = onBackNavigationButtonClick) {
-                    Icon(
-                        Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "戻る",
-                        tint = MaterialTheme.colorScheme.secondary
-                    )
-                }
-            }
-        },
-        actions = {
-            actions()
-        }
-    )
-}
-
-@Preview
-@Composable
-fun NavigationAppTopBarPreview() {
-    NavigationAppTopBar(
-        title = "preview",
-        isVisibleBackButton = true,
-        onBackNavigationButtonClick = {}
-    )
 }
 
 private fun firebaseEventSend(firebaseAnalytics: FirebaseAnalytics, screenName: String) {

@@ -9,4 +9,5 @@ sealed class Screen(val route: String) {
 
     object ManageScreen : Screen("manageScreen")
     object ManualScreen : Screen("manualScreen")
+    object InitialManualScreen : Screen("initialManualScreen")
 }

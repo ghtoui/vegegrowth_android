@@ -15,9 +15,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainScreenViewModel @Inject constructor(
-    private val appSettingsPreferences: DataStore<AppSettingsPreferences>
-) : ViewModel() {
+class MainScreenViewModel @Inject constructor(private val appSettingsPreferences: DataStore<AppSettingsPreferences>) : ViewModel() {
     private val _mainState = MutableStateFlow(MainState.initial())
     val mainState: StateFlow<MainState> = _mainState.asStateFlow()
 
@@ -35,7 +33,7 @@ class MainScreenViewModel @Inject constructor(
             _mainState.update {
                 it.copy(
                     isInitialStartApp = appSettingsPreferences.data.first().isInitialStartApp,
-                    isLoading = false,
+                    isLoading = false
                 )
             }
         }

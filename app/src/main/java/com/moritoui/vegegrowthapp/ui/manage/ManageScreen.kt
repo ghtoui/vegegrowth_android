@@ -1,6 +1,5 @@
 package com.moritoui.vegegrowthapp.ui.manage
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -21,10 +20,10 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -46,11 +45,11 @@ import com.moritoui.vegegrowthapp.R
 import com.moritoui.vegegrowthapp.dummies.ManageScreenDummy
 import com.moritoui.vegegrowthapp.model.VegeItemDetail
 import com.moritoui.vegegrowthapp.ui.common.VegeGrowthLoading
-import com.moritoui.vegegrowthapp.ui.main.NavigationAppTopBar
 import com.moritoui.vegegrowthapp.ui.manage.model.ManageScreenUiState
 import com.moritoui.vegegrowthapp.ui.manage.view.DrawLineChart
 import com.moritoui.vegegrowthapp.ui.manage.view.ImageBottomSheet
 import com.moritoui.vegegrowthapp.ui.manage.view.MemoEditorDialog
+import com.moritoui.vegegrowthapp.ui.navigation.NavigationAppTopBar
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 import kotlinx.coroutines.launch
 
@@ -70,7 +69,6 @@ fun ManageScreen(navController: NavController, viewModel: ManageScreenViewModel 
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ManageScreen(
     uiState: ManageScreenUiState,
@@ -165,7 +163,6 @@ private fun ManageScreen(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ImageCarousel(
     pagerCount: Int,
@@ -292,7 +289,7 @@ fun MemoTopBar(modifier: Modifier = Modifier, onEditClick: () -> Unit) {
             text = "メモ"
         )
         Spacer(Modifier.weight(1f))
-        IconButton(
+        TextButton(
             modifier = Modifier.width(96.dp),
             onClick = { onEditClick() }
         ) {

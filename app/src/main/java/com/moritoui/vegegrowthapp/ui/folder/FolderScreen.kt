@@ -41,7 +41,7 @@ import com.moritoui.vegegrowthapp.ui.home.view.AddTextCategoryDialog
 import com.moritoui.vegegrowthapp.ui.home.view.ConfirmDeleteItemDialog
 import com.moritoui.vegegrowthapp.ui.home.view.ItemListTopBar
 import com.moritoui.vegegrowthapp.ui.home.view.VegeItemListCard
-import com.moritoui.vegegrowthapp.ui.main.NavigationAppTopBar
+import com.moritoui.vegegrowthapp.ui.navigation.NavigationAppTopBar
 import com.moritoui.vegegrowthapp.ui.takepicture.navigateToTakePicture
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 import kotlinx.coroutines.launch
@@ -119,7 +119,6 @@ private fun FolderScreen(
                         onAddClick = { openAddDialogType(AddDialogType.AddVegeItem) }
                     )
                 },
-                isVisibleBackButton = true,
                 onBackNavigationButtonClick = onBackNavigationButtonClick
             )
         }

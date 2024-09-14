@@ -1,6 +1,6 @@
 <resources>
     <!--  共通  -->
-    <string name="app_name">vegegrowthApp</string>
+    <string name="app_name">植物成長管理アプリ</string>
     <string name="first_number">1</string>
     <string name="second_number">2</string>
     <string name="third_number">3</string>
@@ -18,6 +18,7 @@
     <string name="manual_manage_size">大きさをグラフで確認</string>
     <string name="manual_manage_picture">撮影した写真を確認</string>
     <string name="manual_manage_memo">メモを登録することもできます</string>
+    <string name="manual_title">アプリの使い方</string>
 
     <!--  ホーム画面  -->
     <string name="register_button">登録</string>
@@ -35,6 +36,7 @@
     <string name="folder_move_button">移動</string>
     <string name="folder_move_title">フォルダーを選択してください</string>
     <string name="folder_not_classified_label">未分類</string>
+    <string name="home_drawer_manual">アプリの使い方</string>
 
     <!--  撮影画面  -->
     <string name="take_picture_button">撮影</string>
@@ -73,4 +75,5 @@
     <!--  読み上げ用のテキスト  -->
     <string name="description_folder_add">フォルダー追加</string>
     <string name="description_item_add">追加</string>
+    <string name="description_menu_icon">メニュー</string>
 </resources>

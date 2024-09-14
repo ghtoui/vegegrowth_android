@@ -3,11 +3,9 @@ package com.moritoui.vegegrowthapp.data.datastores.appsettings
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class AppSettingsPreferences(
-    val isInitialStartApp: Boolean
-) {
+data class AppSettingsPreferences(val isInitialStartApp: Boolean) {
     companion object {
-        fun initial() : AppSettingsPreferences = AppSettingsPreferences(
+        fun initial(): AppSettingsPreferences = AppSettingsPreferences(
             isInitialStartApp = true
         )
     }

@@ -46,8 +46,7 @@ fun ItemListTopBar(
     val menuIconTint = SelectMenuMethod.getIconTint(selectMenu)
 
     Row(
-        modifier =
-        modifier
+        modifier = modifier
             .wrapContentSize(Alignment.TopStart),
         verticalAlignment = Alignment.CenterVertically
     ) {
