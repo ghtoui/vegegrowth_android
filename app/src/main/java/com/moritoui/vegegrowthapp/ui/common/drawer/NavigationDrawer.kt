@@ -2,6 +2,7 @@ package com.moritoui.vegegrowthapp.ui.common.drawer
 
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberDrawerState
@@ -26,6 +27,7 @@ fun VegeGrowthNavigationDrawer(
                 onManualClick = onManualClick
             )
         },
+        scrimColor = MaterialTheme.colorScheme.surface,
         content = content,
     )
 }

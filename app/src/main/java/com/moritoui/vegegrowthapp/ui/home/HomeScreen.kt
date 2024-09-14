@@ -49,6 +49,7 @@ import com.moritoui.vegegrowthapp.ui.home.view.AddTextCategoryDialog
 import com.moritoui.vegegrowthapp.ui.home.view.ConfirmDeleteItemDialog
 import com.moritoui.vegegrowthapp.ui.home.view.ItemListTopBar
 import com.moritoui.vegegrowthapp.ui.home.view.VegeList
+import com.moritoui.vegegrowthapp.ui.manual.navigateToManual
 import com.moritoui.vegegrowthapp.ui.navigation.NavigationAppTopBar
 import com.moritoui.vegegrowthapp.ui.takepicture.navigateToTakePicture
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
@@ -84,6 +85,7 @@ fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel(), navController: 
         onSelectMoveFolder = viewModel::openFolderMoveBottomSheetState,
         closeFolderBottomSheet = viewModel::closeFolderMoveBottomSheetState,
         onFolderItemClick = viewModel::vegeItemMoveFolder,
+        onManualClick = navController::navigateToManual
     )
 
     // 画面遷移で戻ったときに処理する
@@ -118,6 +120,7 @@ private fun HomeScreen(
     onFolderClick: (Int) -> Unit,
     closeFolderBottomSheet: () -> Unit,
     onFolderItemClick: (VegeItem) -> Unit,
+    onManualClick: () -> Unit,
 ) {
     var selectMenuExpanded by rememberSaveable { mutableStateOf(false) }
     var filterMenuExpanded by rememberSaveable { mutableStateOf(false) }
@@ -129,6 +132,7 @@ private fun HomeScreen(
         drawerState = drawerState,
         onManualClick = {
             scope.launch {
+                onManualClick()
                 drawerState.apply {
                     close()
                 }
@@ -316,6 +320,7 @@ fun HomeScreenPreview(@PreviewParameter(HomePreviewParameterProvider::class) par
             onSelectMoveFolder = {},
             closeFolderBottomSheet = {},
             onFolderItemClick = {},
+            onManualClick = {}
         )
     }
 }

@@ -51,7 +51,7 @@ fun DrawerContents(
                 ) {
                     Icon(painter = painterResource(id = R.drawable.ic_description), contentDescription = null)
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text(text = stringResource(id = R.string.home_drawer_manual_read_again))
+                    Text(text = stringResource(id = R.string.home_drawer_manual))
                 }
             },
             selected = false,

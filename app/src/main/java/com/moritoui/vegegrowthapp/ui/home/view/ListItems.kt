@@ -67,7 +67,10 @@ fun VegeItemListCard(
         onClick = { onVegeItemClick(vegetable.id) },
         elevation = CardDefaults.elevatedCardElevation(
             defaultElevation = 4.dp
-        )
+        ),
+        colors = CardDefaults.cardColors().copy(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer
+        ),
     ) {
         Row(
             modifier = modifier
@@ -282,7 +285,10 @@ fun VegeFolderCard(
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(24.dp),
-        onClick = { onFolderClick(vegetableFolder) }
+        onClick = { onFolderClick(vegetableFolder) },
+        colors = CardDefaults.cardColors().copy(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer
+        )
     ) {
         Row(
             modifier = Modifier

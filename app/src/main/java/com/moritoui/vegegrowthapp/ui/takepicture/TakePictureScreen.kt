@@ -89,13 +89,14 @@ private fun TakePictureScreen(
             NavigationAppTopBar(
                 onBackNavigationButtonClick = onNavigationIconClick,
                 title = uiState.vegeName,
-            ) {
-                if (uiState.isVisibleNavigateButton) {
-                    GoToManageItem(
-                        onNavigateClick = onGoToManageClick
-                    )
+                actions = {
+                    if (uiState.isVisibleNavigateButton) {
+                        GoToManageItem(
+                            onNavigateClick = onGoToManageClick
+                        )
+                    }
                 }
-            }
+            )
         }
     ) { innerPadding ->
         Column(
