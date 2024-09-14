@@ -9,6 +9,7 @@
     <!--  説明書画面  -->
     <string name="manual_add_button">画面上部の＋から登録する植物の情報を入力します．</string>
     <string name="manual_next_button">次へ</string>
+    <string name="manual_previous_button">戻る</string>
     <string name="manual_finish_button">完了</string>
     <string name="manual_tap_item">登録したアイテムをタップで選択します．</string>
     <string name="manual_take_picture">植物を撮影して，植物の情報を登録します．</string>

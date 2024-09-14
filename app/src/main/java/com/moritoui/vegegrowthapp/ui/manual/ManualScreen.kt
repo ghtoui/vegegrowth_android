@@ -1,11 +1,14 @@
 package com.moritoui.vegegrowthapp.ui.manual
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -22,6 +25,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.moritoui.vegegrowthapp.R
 import com.moritoui.vegegrowthapp.ui.home.navigateToHome
@@ -34,15 +38,23 @@ import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 import kotlinx.coroutines.launch
 
 @Composable
-fun ManualScreen(navController: NavController) {
+fun ManualScreen(
+    navController: NavController,
+    viewModel: ManualViewModel = hiltViewModel(),
+) {
     ManualScreen(
         modifier = Modifier,
-        navigateToHome = navController::navigateToHome
+        navigateToHome = navController::navigateToHome,
+        finishReadManual = viewModel::finishReadManual
     )
 }
 
 @Composable
-private fun ManualScreen(modifier: Modifier = Modifier, navigateToHome: () -> Unit) {
+private fun ManualScreen(
+    modifier: Modifier = Modifier,
+    navigateToHome: () -> Unit,
+    finishReadManual: () -> Unit,
+) {
     val pageList: List<@Composable () -> Unit> = listOf(
         { FirstPage() },
         { SecondPage() },
@@ -65,6 +77,9 @@ private fun ManualScreen(modifier: Modifier = Modifier, navigateToHome: () -> Un
         )
         Spacer(modifier = Modifier.height(20.dp))
         HorizontalPager(
+            modifier = Modifier
+                .fillMaxSize()
+                .weight(1f),
             state = pagerState,
             userScrollEnabled = false
         ) { page ->
@@ -81,23 +96,40 @@ private fun ManualScreen(modifier: Modifier = Modifier, navigateToHome: () -> Un
             }
         }
         Spacer(modifier = Modifier.height(10.dp))
-        Button(
-            onClick = {
-                if (pagerState.currentPage == pagerState.pageCount - 1) {
-                    navigateToHome()
+        Row {
+            if (pagerState.currentPage != 0) {
+                Button(
+                    onClick = {
+                        scope.launch {
+                            pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                        }
+                    }
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.manual_previous_button)
+                    )
                 }
-                scope.launch {
-                    pagerState.animateScrollToPage(pagerState.currentPage + 1)
-                }
+                Spacer(modifier = Modifier.width(20.dp))
             }
-        ) {
-            Text(
-                text = if (pagerState.currentPage == pagerState.pageCount - 1) {
-                    stringResource(id = R.string.manual_finish_button)
-                } else {
-                    stringResource(id = R.string.manual_next_button)
+            Button(
+                onClick = {
+                    if (pagerState.currentPage == pagerState.pageCount - 1) {
+                        navigateToHome()
+                        finishReadManual()
+                    }
+                    scope.launch {
+                        pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                    }
                 }
-            )
+            ) {
+                Text(
+                    text = if (pagerState.currentPage == pagerState.pageCount - 1) {
+                        stringResource(id = R.string.manual_finish_button)
+                    } else {
+                        stringResource(id = R.string.manual_next_button)
+                    }
+                )
+            }
         }
     }
 }
@@ -109,7 +141,8 @@ private fun ManualScreenPreview() {
         Surface {
             ManualScreen(
                 modifier = Modifier,
-                navigateToHome = {}
+                navigateToHome = {},
+                finishReadManual = {}
             )
         }
     }

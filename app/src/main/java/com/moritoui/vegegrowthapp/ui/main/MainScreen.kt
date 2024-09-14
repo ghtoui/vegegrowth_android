@@ -33,8 +33,15 @@ import com.moritoui.vegegrowthapp.ui.manual.manualScreenRoute
 import com.moritoui.vegegrowthapp.ui.takepicture.takePictureScreenRoute
 
 @Composable
-fun MainScreen(modifier: Modifier = Modifier, firebaseAnalytics: FirebaseAnalytics, navController: NavHostController = rememberNavController(), viewModel: MainScreenViewModel = hiltViewModel()) {
-    val isInitial by viewModel.isInitial.collectAsStateWithLifecycle()
+fun MainScreen(
+    modifier: Modifier = Modifier,
+    firebaseAnalytics: FirebaseAnalytics, navController: NavHostController = rememberNavController(),
+    viewModel: MainScreenViewModel = hiltViewModel()
+) {
+    val mainState by viewModel.mainState.collectAsStateWithLifecycle()
+    if (mainState.isLoading) {
+        return
+    }
     LaunchedEffect(navController) {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             val route = destination.route
@@ -46,7 +53,7 @@ fun MainScreen(modifier: Modifier = Modifier, firebaseAnalytics: FirebaseAnalyti
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = if (isInitial) {
+        startDestination = if (mainState.isInitialStartApp) {
             Screen.ManualScreen.route
         } else {
             Screen.HomeScreen.route

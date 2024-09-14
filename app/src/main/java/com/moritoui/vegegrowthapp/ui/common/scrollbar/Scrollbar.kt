@@ -282,7 +282,7 @@ private fun Modifier.scrollOnPressOutsideSlider(isVertical: Boolean, sliderAdapt
         val targetPosition = if (isVertical) targetOffset!!.y else targetOffset!!.x
 
         LaunchedEffect(targetPosition) {
-            var delay = PressTimeoutMillis * 3
+            var delay = PRESS_TIMEOUT_MILLIS * 3
             while (targetPosition !in sliderAdapter.bounds) {
                 val oldSign = sign(targetPosition - sliderAdapter.position)
                 scrollbarAdapter.scrollTo(
@@ -296,7 +296,7 @@ private fun Modifier.scrollOnPressOutsideSlider(isVertical: Boolean, sliderAdapt
                 }
 
                 delay(delay)
-                delay = PressTimeoutMillis
+                delay = PRESS_TIMEOUT_MILLIS
             }
         }
     }
@@ -559,4 +559,4 @@ private fun horizontalMeasurePolicy(sliderAdapter: SliderAdapter, setContainerSi
  * The time that must elapse before a tap gesture sends onTapDown, if there's
  * any doubt that the gesture is a tap.
  */
-private const val PressTimeoutMillis: Long = 100L
+private const val PRESS_TIMEOUT_MILLIS: Long = 100L
