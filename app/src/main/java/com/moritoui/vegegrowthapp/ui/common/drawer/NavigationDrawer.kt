@@ -27,7 +27,7 @@ fun VegeGrowthNavigationDrawer(
                 onManualClick = onManualClick
             )
         },
-        scrimColor = MaterialTheme.colorScheme.surface,
+        scrimColor = MaterialTheme.colorScheme.surfaceContainer,
         content = content,
     )
 }

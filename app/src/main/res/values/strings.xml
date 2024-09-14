@@ -18,6 +18,7 @@
     <string name="manual_manage_size">大きさをグラフで確認</string>
     <string name="manual_manage_picture">撮影した写真を確認</string>
     <string name="manual_manage_memo">メモを登録することもできます</string>
+    <string name="manual_title">アプリの使い方</string>
 
     <!--  ホーム画面  -->
     <string name="register_button">登録</string>

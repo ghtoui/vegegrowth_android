@@ -18,6 +18,7 @@ import com.google.firebase.analytics.logEvent
 import com.moritoui.vegegrowthapp.navigation.Screen
 import com.moritoui.vegegrowthapp.ui.folder.folderScreenRoute
 import com.moritoui.vegegrowthapp.ui.home.homeScreenRoute
+import com.moritoui.vegegrowthapp.ui.initialmanual.initialManualScreenRoute
 import com.moritoui.vegegrowthapp.ui.manage.manageScreenRoute
 import com.moritoui.vegegrowthapp.ui.manual.manualScreenRoute
 import com.moritoui.vegegrowthapp.ui.takepicture.takePictureScreenRoute
@@ -44,7 +45,7 @@ fun MainScreen(
         modifier = modifier,
         navController = navController,
         startDestination = if (mainState.isInitialStartApp) {
-            Screen.ManualScreen.route
+            Screen.InitialManualScreen.route
         } else {
             Screen.HomeScreen.route
         },
@@ -77,6 +78,7 @@ fun MainScreen(
         takePictureScreenRoute(navController)
         manageScreenRoute(navController)
         folderScreenRoute(navController)
+        initialManualScreenRoute(navController)
         manualScreenRoute(navController)
     }
 }

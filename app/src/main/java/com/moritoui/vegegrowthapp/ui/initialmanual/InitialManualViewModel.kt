@@ -1,4 +1,4 @@
-package com.moritoui.vegegrowthapp.ui.manual
+package com.moritoui.vegegrowthapp.ui.initialmanual
 
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ManualViewModel @Inject constructor(
+class InitialManualViewModel @Inject constructor(
     private val appSettingsPreferences: DataStore<AppSettingsPreferences>,
 ) : ViewModel() {
     fun finishReadManual() {
