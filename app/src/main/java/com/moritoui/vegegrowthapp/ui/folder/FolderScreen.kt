@@ -31,7 +31,9 @@ import com.moritoui.vegegrowthapp.model.FilterStatus
 import com.moritoui.vegegrowthapp.model.VegeCategory
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.navigation.HomeAddItem
+import com.moritoui.vegegrowthapp.navigation.Screen
 import com.moritoui.vegegrowthapp.previews.DarkLightPreview
+import com.moritoui.vegegrowthapp.ui.analytics.SendScreenEvent
 import com.moritoui.vegegrowthapp.ui.common.VegeGrowthLoading
 import com.moritoui.vegegrowthapp.ui.common.bottomsheet.FolderMoveBottomSheet
 import com.moritoui.vegegrowthapp.ui.folder.model.FolderScreenUiState
@@ -78,6 +80,8 @@ fun FolderScreen(viewModel: FolderScreenViewModel = hiltViewModel(), navControll
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         viewModel.reloadVegetables()
     }
+    
+    SendScreenEvent(screen = Screen.FolderScreen)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

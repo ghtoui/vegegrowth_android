@@ -10,6 +10,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.moritoui.vegegrowthapp.R
+import com.moritoui.vegegrowthapp.navigation.Screen
+import com.moritoui.vegegrowthapp.ui.analytics.SendScreenEvent
 import com.moritoui.vegegrowthapp.ui.manual.view.ManualContent
 import com.moritoui.vegegrowthapp.ui.navigation.NavigationAppTopBar
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
@@ -20,6 +22,7 @@ fun ManualScreen(navController: NavController) {
         modifier = Modifier,
         backNavigation = navController::popBackStack
     )
+    SendScreenEvent(screen = Screen.ManualScreen)
 }
 
 

@@ -44,6 +44,8 @@ import coil.compose.AsyncImage
 import com.moritoui.vegegrowthapp.R
 import com.moritoui.vegegrowthapp.dummies.ManageScreenDummy
 import com.moritoui.vegegrowthapp.model.VegeItemDetail
+import com.moritoui.vegegrowthapp.navigation.Screen
+import com.moritoui.vegegrowthapp.ui.analytics.SendScreenEvent
 import com.moritoui.vegegrowthapp.ui.common.VegeGrowthLoading
 import com.moritoui.vegegrowthapp.ui.manage.model.ManageScreenUiState
 import com.moritoui.vegegrowthapp.ui.manage.view.DrawLineChart
@@ -67,6 +69,8 @@ fun ManageScreen(navController: NavController, viewModel: ManageScreenViewModel 
         onCancelButtonClick = viewModel::cancelEditMemo,
         onSaveButtonClick = viewModel::saveEditMemo
     )
+
+    SendScreenEvent(screen = Screen.ManageScreen)
 }
 
 @Composable

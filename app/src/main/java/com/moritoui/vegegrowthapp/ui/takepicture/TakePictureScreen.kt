@@ -45,6 +45,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.moritoui.vegegrowthapp.R
 import com.moritoui.vegegrowthapp.navigation.GoToManageItem
+import com.moritoui.vegegrowthapp.navigation.Screen
+import com.moritoui.vegegrowthapp.ui.analytics.SendScreenEvent
 import com.moritoui.vegegrowthapp.ui.manage.navigateToManage
 import com.moritoui.vegegrowthapp.ui.navigation.NavigationAppTopBar
 import com.moritoui.vegegrowthapp.ui.takepicture.model.TakePictureScreenUiState
@@ -69,6 +71,8 @@ fun TakePictureScreen(navController: NavController, viewModel: TakePictureScreen
         onConfirmClick = { viewModel.registerVegeData() },
         onDismissClick = { viewModel.closeRegisterDialog() }
     )
+    
+    SendScreenEvent(screen = Screen.TakePictureScreen)
 }
 
 @Composable

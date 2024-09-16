@@ -37,7 +37,9 @@ import com.moritoui.vegegrowthapp.model.SelectMenu
 import com.moritoui.vegegrowthapp.model.VegeCategory
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.navigation.HomeAddItem
+import com.moritoui.vegegrowthapp.navigation.Screen
 import com.moritoui.vegegrowthapp.previews.DarkLightPreview
+import com.moritoui.vegegrowthapp.ui.analytics.SendScreenEvent
 import com.moritoui.vegegrowthapp.ui.common.VegeGrowthLoading
 import com.moritoui.vegegrowthapp.ui.common.bottomsheet.FolderMoveBottomSheet
 import com.moritoui.vegegrowthapp.ui.common.drawer.VegeGrowthNavigationDrawer
@@ -95,6 +97,8 @@ fun HomeScreen(
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         viewModel.reloadVegetables()
     }
+    
+    SendScreenEvent(screen = Screen.HomeScreen)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

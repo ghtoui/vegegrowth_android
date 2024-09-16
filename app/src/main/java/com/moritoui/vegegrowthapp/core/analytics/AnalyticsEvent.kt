@@ -6,12 +6,12 @@ import com.moritoui.vegegrowthapp.model.VegeStatus
 /**
  * 分析イベント
  *
- * @param type: できるだけ，標準のイベントを設定する.適切なものがなかったらカスタムイベントを定義する．
- * @param extras: イベントに追加のコンテキストを提供するパラメータのリスト
+ * @param event: できるだけ，標準のイベントを設定する.適切なものがなかったらカスタムイベントを定義する．
+ * @param params: イベントに追加のコンテキストを提供するパラメータのリスト
  */
 data class AnalyticsEvent(
-    val type: String,
-    val extras: List<Param> = emptyList(),
+    val event: String,
+    val params: List<Param> = emptyList(),
 ) {
     /**
      * key, valueペアのイベント
@@ -26,8 +26,8 @@ data class AnalyticsEvent(
          * ダイアログを開いた
          */
         fun openDialog(dialogType: String): AnalyticsEvent = AnalyticsEvent(
-            type = Events.OPEN_DIALOG.name,
-            extras = listOf(
+            event = Events.OPEN_DIALOG.name,
+            params = listOf(
                 Param(
                     key = Params.DIALOG_NAME.name,
                     value = dialogType,
@@ -39,8 +39,8 @@ data class AnalyticsEvent(
          * ダイアログをキャンセルした
          */
         fun cancelDialog(dialogType: String): AnalyticsEvent = AnalyticsEvent(
-            type = Events.CANCEL_DIALOG.name,
-            extras = listOf(
+            event = Events.CANCEL_DIALOG.name,
+            params = listOf(
                 Param(
                     key = Params.DIALOG_NAME.name,
                     value = dialogType,
@@ -51,8 +51,8 @@ data class AnalyticsEvent(
         * ダイアログを確認した(登録)
         */
         fun confirmDialog(dialogType: String): AnalyticsEvent = AnalyticsEvent(
-            type = Events.CONFIRM_DIALOG.name,
-            extras = listOf(
+            event = Events.CONFIRM_DIALOG.name,
+            params = listOf(
                 Param(
                     key = Params.DIALOG_NAME.name,
                     value = dialogType,
@@ -64,8 +64,8 @@ data class AnalyticsEvent(
          * 管理するアイテムを作成
          */
         fun createItem(itemName: String, category: VegeCategory): AnalyticsEvent = AnalyticsEvent(
-            type = Events.CREATE_ITEM.name,
-            extras = listOf(
+            event = Events.CREATE_ITEM.name,
+            params = listOf(
                 Param(
                     key = Params.ITEM_NAME.name,
                     value = itemName,
@@ -81,8 +81,8 @@ data class AnalyticsEvent(
          * 写真を撮影した
          */
         fun takePicture(): AnalyticsEvent = AnalyticsEvent(
-            type = Events.TAKE_PICTURE.name,
-            extras = listOf(
+            event = Events.TAKE_PICTURE.name,
+            params = listOf(
                 Param(
                     key = Params.COUNT.name,
                     value = "take_picture_count",
@@ -94,8 +94,8 @@ data class AnalyticsEvent(
          * マニュアルのページを閲覧
          */
         fun lookManualPage(page: String): AnalyticsEvent = AnalyticsEvent(
-            type = Events.MANUAL.name,
-            extras = listOf(
+            event = Events.MANUAL.name,
+            params = listOf(
                 Param(
                     key = Params.PAGE.name,
                     value = page,
@@ -107,8 +107,8 @@ data class AnalyticsEvent(
          * アイテムの削除
          */
         fun deleteItem(itemName: String): AnalyticsEvent = AnalyticsEvent(
-            type = Events.DELETE_ITEM.name,
-            extras = listOf(
+            event = Events.DELETE_ITEM.name,
+            params = listOf(
                 Param(
                     key = Params.ITEM_NAME.name,
                     value = itemName,
@@ -120,8 +120,8 @@ data class AnalyticsEvent(
          * フォルダの作成
          */
         fun createFolder(folderName: String): AnalyticsEvent = AnalyticsEvent(
-            type = Events.CREATE_FOLDER.name,
-            extras = listOf(
+            event = Events.CREATE_FOLDER.name,
+            params = listOf(
                 Param(
                     key = Params.FOLDER_NAME.name,
                     value = folderName,
@@ -133,8 +133,8 @@ data class AnalyticsEvent(
          * フォルダの削除
          */
         fun deleteFolder(folderName: String): AnalyticsEvent = AnalyticsEvent(
-            type = Events.DELETE_FOLDER.name,
-            extras = listOf(
+            event = Events.DELETE_FOLDER.name,
+            params = listOf(
                 Param(
                     key = Params.FOLDER_NAME.name,
                     value = folderName,
@@ -146,8 +146,8 @@ data class AnalyticsEvent(
          * フォルダの移動
          */
         fun moveFolder(folderName: String, itemName: String): AnalyticsEvent = AnalyticsEvent(
-            type = Events.MOVE_FOLDER.name,
-            extras = listOf(
+            event = Events.MOVE_FOLDER.name,
+            params = listOf(
                 Param(
                     key = Params.FOLDER_NAME.name,
                     value = folderName,
@@ -163,8 +163,8 @@ data class AnalyticsEvent(
          * ステータスの変更
          */
         fun changeStatus(status: VegeStatus, itemName: String): AnalyticsEvent = AnalyticsEvent(
-            type = Events.CHANGE_STATUS.name,
-            extras = listOf(
+            event = Events.CHANGE_STATUS.name,
+            params = listOf(
                 Param(
                     key = Params.STATUS.name,
                     value = status.name,
