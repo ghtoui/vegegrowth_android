@@ -58,7 +58,10 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
 @Composable
-fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel(), navController: NavController) {
+fun HomeScreen(
+    viewModel: HomeScreenViewModel = hiltViewModel(),
+    navController: NavController
+) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val vegetablesState by viewModel.vegetablesState.collectAsStateWithLifecycle()
     HomeScreen(

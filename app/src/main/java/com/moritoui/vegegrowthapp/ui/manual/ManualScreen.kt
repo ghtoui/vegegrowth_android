@@ -22,6 +22,7 @@ fun ManualScreen(navController: NavController) {
     )
 }
 
+
 @Composable
 private fun ManualScreen(modifier: Modifier = Modifier, backNavigation: () -> Unit) {
     Scaffold(
