@@ -14,14 +14,17 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.moritoui.vegegrowthapp.R
+import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 import kotlinx.coroutines.launch
 
 @Composable
@@ -41,7 +44,6 @@ fun ManualContent(modifier: Modifier = Modifier, finishReadManual: () -> Unit) {
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(50.dp))
         PagerTopBar(
             currentPage = pagerState.currentPage,
             pageCount = pagerState.pageCount
@@ -52,10 +54,10 @@ fun ManualContent(modifier: Modifier = Modifier, finishReadManual: () -> Unit) {
                 .weight(1f)
                 .fillMaxSize()
                 .padding(horizontal = 24.dp)
-                .verticalScroll(scrollState)
         ) {
             HorizontalPager(
                 modifier = Modifier
+                    .verticalScroll(scrollState)
                     .weight(1f),
                 state = pagerState,
                 userScrollEnabled = false
@@ -97,6 +99,18 @@ fun ManualContent(modifier: Modifier = Modifier, finishReadManual: () -> Unit) {
                     }
                 )
             }
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun ManualContentPreview() {
+    VegegrowthAppTheme {
+        Surface {
+            ManualContent(
+                finishReadManual = {}
+            )
         }
     }
 }
