@@ -22,13 +22,16 @@ fun ManualScreen(navController: NavController, viewModel: ManualViewModel = hilt
     ManualScreen(
         modifier = Modifier,
         backNavigation = navController::popBackStack,
-        finishedLookingPage = viewModel::finishedLookingPage
+        finishedLookingPage = viewModel::finishedLookingPage,
+        finishedReadManual = viewModel::finishedReadManual
     )
     SendScreenEvent(screen = Screen.ManualScreen)
 }
 
 @Composable
-private fun ManualScreen(modifier: Modifier = Modifier, backNavigation: () -> Unit, finishedLookingPage: (Int) -> Unit) {
+private fun ManualScreen(modifier: Modifier = Modifier,
+                         backNavigation: () -> Unit, finishedLookingPage: (Int) -> Unit,
+                         finishedReadManual: () -> Unit,) {
     Scaffold(
         topBar = {
             NavigationAppTopBar(
@@ -42,7 +45,10 @@ private fun ManualScreen(modifier: Modifier = Modifier, backNavigation: () -> Un
                 .padding(innerPadding)
                 .padding(top = 10.dp),
             finishedLookingPage = finishedLookingPage,
-            finishReadManual = backNavigation
+            finishReadManual = {
+                finishedReadManual()
+                backNavigation()
+            }
         )
     }
 }
@@ -55,7 +61,8 @@ private fun ManualScreenPreview() {
             ManualScreen(
                 modifier = Modifier,
                 backNavigation = {},
-                finishedLookingPage = {}
+                finishedLookingPage = {},
+                finishedReadManual = {},
             )
         }
     }

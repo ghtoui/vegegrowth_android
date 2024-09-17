@@ -20,6 +20,7 @@ class InitialManualViewModel @Inject constructor(private val appSettingsPreferen
                 )
             }
         }
+        analytics.logEvent(AnalyticsEvent.Analytics.finishedReadManual())
     }
 
     fun finishedLookingPage(page: Int) {

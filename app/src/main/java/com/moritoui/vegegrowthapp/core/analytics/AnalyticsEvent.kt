@@ -102,6 +102,19 @@ data class AnalyticsEvent(val event: String, val params: List<Param> = emptyList
         )
 
         /**
+         * マニュアルを全て読んだ
+         */
+        fun finishedReadManual(): AnalyticsEvent = AnalyticsEvent(
+            event = Events.MANUAL.name,
+            params = listOf(
+                Param(
+                    key = Params.PAGE.name,
+                    value = "finished"
+                )
+            )
+        )
+
+        /**
          * アイテムの削除
          */
         fun deleteItem(itemName: String): AnalyticsEvent = AnalyticsEvent(

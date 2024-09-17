@@ -11,4 +11,8 @@ class ManualViewModel @Inject constructor(private val analytics: AnalyticsHelper
     fun finishedLookingPage(page: Int) {
         analytics.logEvent(AnalyticsEvent.Analytics.lookManualPage("$page"))
     }
+
+    fun finishedReadManual() {
+        analytics.logEvent(AnalyticsEvent.Analytics.finishedReadManual())
+    }
 }
