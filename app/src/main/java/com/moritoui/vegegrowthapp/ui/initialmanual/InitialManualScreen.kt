@@ -20,13 +20,12 @@ fun InitialManualScreen(navController: NavController, viewModel: InitialManualVi
         modifier = Modifier,
         navigateToHome = navController::navigateToHome,
         finishedLookingPage = viewModel::finishedLookingPage,
-        finishReadManual = viewModel::finishReadManual,
+        finishReadManual = viewModel::finishReadManual
     )
 }
 
 @Composable
-private fun InitialManualScreen(modifier: Modifier = Modifier, navigateToHome: () -> Unit, finishedLookingPage: (Int) -> Unit, finishReadManual: () -> Unit,
-                                ) {
+private fun InitialManualScreen(modifier: Modifier = Modifier, navigateToHome: () -> Unit, finishedLookingPage: (Int) -> Unit, finishReadManual: () -> Unit) {
     ManualContent(
         modifier = modifier
             .padding(top = 50.dp),
@@ -49,7 +48,7 @@ private fun InitialManualScreenPreview() {
                 modifier = Modifier,
                 navigateToHome = {},
                 finishedLookingPage = {},
-                finishReadManual = {},
+                finishReadManual = {}
             )
         }
     }

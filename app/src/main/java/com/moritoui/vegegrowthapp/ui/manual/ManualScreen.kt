@@ -29,9 +29,7 @@ fun ManualScreen(navController: NavController, viewModel: ManualViewModel = hilt
 }
 
 @Composable
-private fun ManualScreen(modifier: Modifier = Modifier,
-                         backNavigation: () -> Unit, finishedLookingPage: (Int) -> Unit,
-                         finishedReadManual: () -> Unit,) {
+private fun ManualScreen(modifier: Modifier = Modifier, backNavigation: () -> Unit, finishedLookingPage: (Int) -> Unit, finishedReadManual: () -> Unit) {
     Scaffold(
         topBar = {
             NavigationAppTopBar(
@@ -62,7 +60,7 @@ private fun ManualScreenPreview() {
                 modifier = Modifier,
                 backNavigation = {},
                 finishedLookingPage = {},
-                finishedReadManual = {},
+                finishedReadManual = {}
             )
         }
     }

@@ -85,8 +85,6 @@ class MainActivity : ComponentActivity() {
 private fun firebaseEventSend(firebaseAnalytics: FirebaseAnalytics) {
     // ユーザがアプリを起動したときにログを取る
     firebaseAnalytics.logEvent(FirebaseAnalytics.Event.APP_OPEN) {
-        Bundle().apply {
-            putString(FirebaseAnalytics.Param.METHOD, "launch_app")
-        }
+        param(FirebaseAnalytics.Param.METHOD, "launch_app")
     }
 }
