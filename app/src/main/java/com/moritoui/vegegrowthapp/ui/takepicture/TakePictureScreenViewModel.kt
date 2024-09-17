@@ -11,6 +11,8 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.analytics.logEvent
 import com.google.firebase.ktx.Firebase
+import com.moritoui.vegegrowthapp.core.analytics.AnalyticsEvent
+import com.moritoui.vegegrowthapp.core.analytics.AnalyticsHelper
 import com.moritoui.vegegrowthapp.model.DateFormatter
 import com.moritoui.vegegrowthapp.model.VegeItemDetail
 import com.moritoui.vegegrowthapp.repository.vegetabledetail.VegetableDetailRepository
@@ -37,6 +39,7 @@ class TakePictureScreenViewModel @Inject constructor(
     private val getVegetableDetailsUseCase: GetVegetableDetailsUseCase,
     private val getSelectedVegeItemUseCase: GetSelectedVegeItemUseCase,
     savedStateHandle: SavedStateHandle,
+    private val analytics: AnalyticsHelper,
 ) : ViewModel() {
     val args = checkNotNull(savedStateHandle.get<Int>("vegetableId"))
 
@@ -138,6 +141,8 @@ class TakePictureScreenViewModel @Inject constructor(
         takePicture ?: return
         val rotateTakePicture = fixRotateImage(takePic = takePicture)
         updateState(takePicImage = rotateTakePicture)
+
+        analytics.logEvent(AnalyticsEvent.Analytics.takePicture())
     }
 
     fun changeInputText(inputText: String) {
