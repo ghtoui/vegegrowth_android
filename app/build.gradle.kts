@@ -200,4 +200,8 @@ dependencies {
     val firebaseVersion = "33.1.0"
     implementation(platform("com.google.firebase:firebase-bom:$firebaseVersion"))
     implementation("com.google.firebase:firebase-analytics-ktx")
+
+    // Timber
+    val timberVersion = "5.0.1"
+    implementation("com.jakewharton.timber:timber:$timberVersion")
 }

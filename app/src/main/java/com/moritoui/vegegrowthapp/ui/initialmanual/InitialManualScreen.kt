@@ -8,6 +8,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.moritoui.vegegrowthapp.navigation.Screen
+import com.moritoui.vegegrowthapp.ui.analytics.SendScreenEvent
 import com.moritoui.vegegrowthapp.ui.home.navigateToHome
 import com.moritoui.vegegrowthapp.ui.manual.view.ManualContent
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
@@ -17,20 +19,24 @@ fun InitialManualScreen(navController: NavController, viewModel: InitialManualVi
     InitialManualScreen(
         modifier = Modifier,
         navigateToHome = navController::navigateToHome,
+        finishedLookingPage = viewModel::finishedLookingPage,
         finishReadManual = viewModel::finishReadManual
     )
 }
 
 @Composable
-private fun InitialManualScreen(modifier: Modifier = Modifier, navigateToHome: () -> Unit, finishReadManual: () -> Unit) {
+private fun InitialManualScreen(modifier: Modifier = Modifier, navigateToHome: () -> Unit, finishedLookingPage: (Int) -> Unit, finishReadManual: () -> Unit) {
     ManualContent(
         modifier = modifier
             .padding(top = 50.dp),
+        finishedLookingPage = finishedLookingPage,
         finishReadManual = {
-            navigateToHome()
             finishReadManual()
+            navigateToHome()
         }
     )
+
+    SendScreenEvent(screen = Screen.InitialManualScreen)
 }
 
 @Preview
@@ -41,6 +47,7 @@ private fun InitialManualScreenPreview() {
             InitialManualScreen(
                 modifier = Modifier,
                 navigateToHome = {},
+                finishedLookingPage = {},
                 finishReadManual = {}
             )
         }

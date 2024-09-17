@@ -37,7 +37,9 @@ import com.moritoui.vegegrowthapp.model.SelectMenu
 import com.moritoui.vegegrowthapp.model.VegeCategory
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.navigation.HomeAddItem
+import com.moritoui.vegegrowthapp.navigation.Screen
 import com.moritoui.vegegrowthapp.previews.DarkLightPreview
+import com.moritoui.vegegrowthapp.ui.analytics.SendScreenEvent
 import com.moritoui.vegegrowthapp.ui.common.VegeGrowthLoading
 import com.moritoui.vegegrowthapp.ui.common.bottomsheet.FolderMoveBottomSheet
 import com.moritoui.vegegrowthapp.ui.common.drawer.VegeGrowthNavigationDrawer
@@ -92,6 +94,8 @@ fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel(), navController: 
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         viewModel.reloadVegetables()
     }
+
+    SendScreenEvent(screen = Screen.HomeScreen)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -119,7 +123,7 @@ private fun HomeScreen(
     insertErrorEvent: Flow<Boolean>,
     onFolderClick: (Int) -> Unit,
     closeFolderBottomSheet: () -> Unit,
-    onFolderItemClick: (VegeItem) -> Unit,
+    onFolderItemClick: (VegeItem, VegetableFolderEntity?) -> Unit,
     onManualClick: () -> Unit,
 ) {
     var selectMenuExpanded by rememberSaveable { mutableStateOf(false) }
@@ -272,8 +276,9 @@ private fun HomeScreen(
                         uuid = selectedItem.uuid,
                         status = selectedItem.status,
                         category = selectedItem.category,
-                        folderId = it
-                    )
+                        folderId = it?.id
+                    ),
+                    it
                 )
                 scope.launch { bottomSheetState.hide() }.invokeOnCompletion {
                     if (!bottomSheetState.isVisible) {
@@ -319,7 +324,7 @@ fun HomeScreenPreview(@PreviewParameter(HomePreviewParameterProvider::class) par
             onFolderMoveIconClick = {},
             onSelectMoveFolder = {},
             closeFolderBottomSheet = {},
-            onFolderItemClick = {},
+            onFolderItemClick = { _, _ -> },
             onManualClick = {}
         )
     }

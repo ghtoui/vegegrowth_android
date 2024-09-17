@@ -4,4 +4,5 @@ sealed class AddDialogType {
     object AddVegeItem : AddDialogType()
     object AddFolder : AddDialogType()
     object NotOpenDialog : AddDialogType()
+    object DeleteDialog : AddDialogType()
 }
