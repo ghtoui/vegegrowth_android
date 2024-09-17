@@ -28,7 +28,11 @@ import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 import kotlinx.coroutines.launch
 
 @Composable
-fun ManualContent(modifier: Modifier = Modifier, finishReadManual: () -> Unit) {
+fun ManualContent(
+    modifier: Modifier = Modifier,
+    finishedLookingPage: (Int) -> Unit,
+    finishReadManual: () -> Unit,
+) {
     val pageList: List<@Composable () -> Unit> = listOf(
         { FirstPage() },
         { SecondPage() },
@@ -86,6 +90,8 @@ fun ManualContent(modifier: Modifier = Modifier, finishReadManual: () -> Unit) {
                     if (pagerState.currentPage == pagerState.pageCount - 1) {
                         finishReadManual()
                     }
+                    finishedLookingPage(pagerState.currentPage)
+
                     scope.launch {
                         pagerState.animateScrollToPage(pagerState.currentPage + 1)
                     }
@@ -109,6 +115,7 @@ private fun ManualContentPreview() {
     VegegrowthAppTheme {
         Surface {
             ManualContent(
+                finishedLookingPage = {},
                 finishReadManual = {}
             )
         }

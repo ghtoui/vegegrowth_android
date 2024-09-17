@@ -33,6 +33,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private lateinit var firebaseAnalytics: FirebaseAnalytics
+
     @Inject lateinit var analytics: AnalyticsHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {

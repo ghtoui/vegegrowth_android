@@ -11,7 +11,5 @@ import javax.inject.Singleton
 abstract class AnalyticsHelperModule {
     @Binds
     @Singleton
-    abstract fun provideAnalyticsHelper(
-        impl: AnalyticsHelperImpl
-    ): AnalyticsHelper
+    abstract fun provideAnalyticsHelper(impl: AnalyticsHelperImpl): AnalyticsHelper
 }

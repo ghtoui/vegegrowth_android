@@ -6,9 +6,7 @@ import com.moritoui.vegegrowthapp.navigation.Screen
 import timber.log.Timber
 import javax.inject.Inject
 
-class AnalyticsHelperImpl @Inject constructor(
-    private val firebaseAnalytics: FirebaseAnalytics
-) : AnalyticsHelper {
+class AnalyticsHelperImpl @Inject constructor(private val firebaseAnalytics: FirebaseAnalytics) : AnalyticsHelper {
     override fun logScreen(screen: Screen) {
         firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
             Timber.d("screenLog: ${screen.route}")

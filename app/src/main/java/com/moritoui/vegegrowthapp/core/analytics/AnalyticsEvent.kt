@@ -9,10 +9,7 @@ import com.moritoui.vegegrowthapp.model.VegeStatus
  * @param event: できるだけ，標準のイベントを設定する.適切なものがなかったらカスタムイベントを定義する．
  * @param params: イベントに追加のコンテキストを提供するパラメータのリスト
  */
-data class AnalyticsEvent(
-    val event: String,
-    val params: List<Param> = emptyList(),
-) {
+data class AnalyticsEvent(val event: String, val params: List<Param> = emptyList()) {
     /**
      * key, valueペアのイベント
      *
@@ -30,8 +27,8 @@ data class AnalyticsEvent(
             params = listOf(
                 Param(
                     key = Params.DIALOG_TYPE.name,
-                    value = dialogType,
-                ),
+                    value = dialogType
+                )
             )
         )
 
@@ -43,20 +40,21 @@ data class AnalyticsEvent(
             params = listOf(
                 Param(
                     key = Params.DIALOG_TYPE.name,
-                    value = dialogType,
-                ),
+                    value = dialogType
+                )
             )
         )
+
         /*
-        * ダイアログを確認した(登録)
-        */
+         * ダイアログを確認した(登録)
+         */
         fun confirmDialog(dialogType: String): AnalyticsEvent = AnalyticsEvent(
             event = Events.CONFIRM_DIALOG.name,
             params = listOf(
                 Param(
                     key = Params.DIALOG_TYPE.name,
-                    value = dialogType,
-                ),
+                    value = dialogType
+                )
             )
         )
 
@@ -68,12 +66,12 @@ data class AnalyticsEvent(
             params = listOf(
                 Param(
                     key = Params.ITEM_NAME.name,
-                    value = itemName,
+                    value = itemName
                 ),
                 Param(
                     key = Params.CATEGORY.name,
-                    value = category.name,
-                ),
+                    value = category.name
+                )
             )
         )
 
@@ -85,8 +83,8 @@ data class AnalyticsEvent(
             params = listOf(
                 Param(
                     key = Params.COUNT.name,
-                    value = "take_picture_count",
-                ),
+                    value = "take_picture_count"
+                )
             )
         )
 
@@ -98,8 +96,8 @@ data class AnalyticsEvent(
             params = listOf(
                 Param(
                     key = Params.PAGE.name,
-                    value = page,
-                ),
+                    value = page
+                )
             )
         )
 
@@ -111,8 +109,8 @@ data class AnalyticsEvent(
             params = listOf(
                 Param(
                     key = Params.ITEM_NAME.name,
-                    value = itemName,
-                ),
+                    value = itemName
+                )
             )
         )
 
@@ -124,8 +122,8 @@ data class AnalyticsEvent(
             params = listOf(
                 Param(
                     key = Params.FOLDER_NAME.name,
-                    value = folderName,
-                ),
+                    value = folderName
+                )
             )
         )
 
@@ -137,8 +135,8 @@ data class AnalyticsEvent(
             params = listOf(
                 Param(
                     key = Params.FOLDER_NAME.name,
-                    value = folderName,
-                ),
+                    value = folderName
+                )
             )
         )
 
@@ -150,12 +148,12 @@ data class AnalyticsEvent(
             params = listOf(
                 Param(
                     key = Params.FOLDER_NAME.name,
-                    value = folderName,
+                    value = folderName
                 ),
                 Param(
                     key = Params.ITEM_NAME.name,
-                    value = itemName,
-                ),
+                    value = itemName
+                )
             )
         )
 
@@ -167,12 +165,12 @@ data class AnalyticsEvent(
             params = listOf(
                 Param(
                     key = Params.STATUS.name,
-                    value = status.name,
+                    value = status.name
                 ),
                 Param(
                     key = Params.ITEM_NAME.name,
-                    value = itemName,
-                ),
+                    value = itemName
+                )
             )
         )
     }
@@ -190,7 +188,6 @@ enum class Events {
     CHANGE_STATUS,
     TAKE_PICTURE,
     MANUAL,
-
 }
 enum class Params {
     ITEM_NAME,

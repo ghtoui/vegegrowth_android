@@ -80,7 +80,7 @@ fun FolderScreen(viewModel: FolderScreenViewModel = hiltViewModel(), navControll
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         viewModel.reloadVegetables()
     }
-    
+
     SendScreenEvent(screen = Screen.FolderScreen)
 }
 

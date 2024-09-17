@@ -71,7 +71,7 @@ fun TakePictureScreen(navController: NavController, viewModel: TakePictureScreen
         onConfirmClick = { viewModel.registerVegeData() },
         onDismissClick = { viewModel.closeRegisterDialog() }
     )
-    
+
     SendScreenEvent(screen = Screen.TakePictureScreen)
 }
 

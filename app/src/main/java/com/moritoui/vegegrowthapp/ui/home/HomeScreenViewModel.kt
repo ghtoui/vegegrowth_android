@@ -129,7 +129,7 @@ class HomeScreenViewModel @Inject constructor(
         analytics.logEvent(
             AnalyticsEvent.Analytics.changeStatus(
                 status = vegeItem.status,
-                itemName = vegeItem.name,
+                itemName = vegeItem.name
             )
         )
     }
@@ -166,7 +166,7 @@ class HomeScreenViewModel @Inject constructor(
                 analytics.logEvent(
                     AnalyticsEvent.Analytics.createItem(
                         itemName = vegeItem.name,
-                        category = vegeItem.category,
+                        category = vegeItem.category
                     )
                 )
             }
@@ -308,16 +308,15 @@ class HomeScreenViewModel @Inject constructor(
     /**
      * フォルダ移動をする
      */
-    fun vegeItemMoveFolder(
-        vegeItem: VegeItem,
-        folder: VegetableFolderEntity?,
-    ) {
+    fun vegeItemMoveFolder(vegeItem: VegeItem, folder: VegetableFolderEntity?) {
         changeVegeItem(vegeItem)
 
-        analytics.logEvent(AnalyticsEvent.Analytics.moveFolder(
-            folderName = folder?.folderName ?: "フォルダ設定なし",
-            itemName = vegeItem.name,
-        ))
+        analytics.logEvent(
+            AnalyticsEvent.Analytics.moveFolder(
+                folderName = folder?.folderName ?: "フォルダ設定なし",
+                itemName = vegeItem.name
+            )
+        )
     }
 
     /**
@@ -371,7 +370,7 @@ class HomeScreenViewModel @Inject constructor(
                     true
                 } else {
                     item.status == filterStatusMap[filterStatus] ||
-                            item.category == filterStatusMap[filterStatus]
+                        item.category == filterStatusMap[filterStatus]
                 }
             }
 
@@ -429,10 +428,7 @@ class HomeScreenViewModel @Inject constructor(
     /**
      * ダイアログの種類をしてイベントを送る
      */
-    private fun dialogEvent(
-        dialogEvent: (String) -> Unit,
-        dialogType: AddDialogType,
-    ) {
+    private fun dialogEvent(dialogEvent: (String) -> Unit, dialogType: AddDialogType) {
         when (dialogType) {
             AddDialogType.AddFolder -> {
                 dialogEvent(DialogType.FOLDER.name)
