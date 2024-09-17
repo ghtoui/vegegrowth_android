@@ -7,9 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class ManualViewModel @Inject constructor(
-    private val analytics: AnalyticsHelper
-) : ViewModel() {
+class ManualViewModel @Inject constructor(private val analytics: AnalyticsHelper) : ViewModel() {
     fun finishedLookingPage(page: Int) {
         analytics.logEvent(AnalyticsEvent.Analytics.lookManualPage("$page"))
     }

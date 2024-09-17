@@ -25,6 +25,7 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.moritoui.vegegrowthapp.R
+import com.moritoui.vegegrowthapp.data.room.model.VegetableFolderEntity
 import com.moritoui.vegegrowthapp.dummies.HomeScreenDummy
 import com.moritoui.vegegrowthapp.dummies.ManageScreenDummy
 import com.moritoui.vegegrowthapp.model.FilterStatus
@@ -107,7 +108,7 @@ private fun FolderScreen(
     onDismiss: () -> Unit,
     onSelectVegeCategory: (VegeCategory) -> Unit,
     closeFolderBottomSheet: () -> Unit,
-    onFolderItemClick: (VegeItem) -> Unit,
+    onFolderItemClick: (VegeItem, VegetableFolderEntity?) -> Unit,
 ) {
     var selectMenuExpanded by rememberSaveable { mutableStateOf(false) }
     var filterMenuExpanded by rememberSaveable { mutableStateOf(false) }
@@ -227,8 +228,9 @@ private fun FolderScreen(
                         uuid = selectedItem.uuid,
                         status = selectedItem.status,
                         category = selectedItem.category,
-                        folderId = it
-                    )
+                        folderId = it?.id
+                    ),
+                    it
                 )
                 scope.launch { bottomSheetState.hide() }.invokeOnCompletion {
                     if (!bottomSheetState.isVisible) {
@@ -271,7 +273,7 @@ fun FolderScreenPreview(@PreviewParameter(FolderPreviewParameterProvider::class)
             onAddDialogConfirmClick = {},
             onFolderMoveIconClick = {},
             onSelectMoveFolder = {},
-            onFolderItemClick = {},
+            onFolderItemClick = { _, _ -> },
             closeFolderBottomSheet = {}
         )
     }

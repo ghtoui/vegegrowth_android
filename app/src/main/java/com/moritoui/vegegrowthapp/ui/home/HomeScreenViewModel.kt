@@ -328,6 +328,12 @@ class HomeScreenViewModel @Inject constructor(
                 isOpenDeleteDialog = !it.isOpenDeleteDialog
             )
         }
+
+        if (_uiState.value.selectedItem != null) {
+            analytics.logEvent(AnalyticsEvent.Analytics.cancelDialog(DialogType.DELETE_ITEM.name))
+        } else if (_uiState.value.selectedFolder != null) {
+            analytics.logEvent(AnalyticsEvent.Analytics.cancelDialog(DialogType.DELETE_FOLDER.name))
+        }
     }
 
     /**
@@ -340,6 +346,8 @@ class HomeScreenViewModel @Inject constructor(
                 selectedItem = vegeItem
             )
         }
+
+        analytics.logEvent(AnalyticsEvent.Analytics.openDialog(DialogType.DELETE_ITEM.name))
     }
 
     /**
@@ -352,6 +360,8 @@ class HomeScreenViewModel @Inject constructor(
                 selectedFolder = folder
             )
         }
+
+        analytics.logEvent(AnalyticsEvent.Analytics.openDialog(DialogType.DELETE_FOLDER.name))
     }
 
     private fun checkInputText(inputText: String): Boolean = when (inputText) {

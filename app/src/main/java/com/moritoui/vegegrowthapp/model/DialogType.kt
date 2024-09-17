@@ -5,4 +5,6 @@ enum class DialogType {
     FOLDER,
     VEGE_SIZE,
     MEMO,
+    DELETE_ITEM,
+    DELETE_FOLDER,
 }

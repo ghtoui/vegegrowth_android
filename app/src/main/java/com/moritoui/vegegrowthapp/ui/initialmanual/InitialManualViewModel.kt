@@ -11,10 +11,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class InitialManualViewModel @Inject constructor(
-    private val appSettingsPreferences: DataStore<AppSettingsPreferences>,
-    private val analytics: AnalyticsHelper,
-    ) : ViewModel() {
+class InitialManualViewModel @Inject constructor(private val appSettingsPreferences: DataStore<AppSettingsPreferences>, private val analytics: AnalyticsHelper) : ViewModel() {
     fun finishReadManual() {
         viewModelScope.launch {
             appSettingsPreferences.updateData {
@@ -25,9 +22,7 @@ class InitialManualViewModel @Inject constructor(
         }
     }
 
-    fun finishedLookingPage(
-        page: Int
-    ) {
+    fun finishedLookingPage(page: Int) {
         analytics.logEvent(AnalyticsEvent.Analytics.lookManualPage("$page"))
     }
 }

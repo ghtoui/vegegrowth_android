@@ -18,24 +18,17 @@ import com.moritoui.vegegrowthapp.ui.navigation.NavigationAppTopBar
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 
 @Composable
-fun ManualScreen(
-    navController: NavController,
-    viewModel: ManualViewModel = hiltViewModel(),
-) {
+fun ManualScreen(navController: NavController, viewModel: ManualViewModel = hiltViewModel()) {
     ManualScreen(
         modifier = Modifier,
         backNavigation = navController::popBackStack,
-        finishedLookingPage = viewModel::finishedLookingPage,
+        finishedLookingPage = viewModel::finishedLookingPage
     )
     SendScreenEvent(screen = Screen.ManualScreen)
 }
 
 @Composable
-private fun ManualScreen(
-    modifier: Modifier = Modifier,
-    backNavigation: () -> Unit,
-    finishedLookingPage: (Int) -> Unit,
-    ) {
+private fun ManualScreen(modifier: Modifier = Modifier, backNavigation: () -> Unit, finishedLookingPage: (Int) -> Unit) {
     Scaffold(
         topBar = {
             NavigationAppTopBar(
@@ -49,7 +42,7 @@ private fun ManualScreen(
                 .padding(innerPadding)
                 .padding(top = 10.dp),
             finishedLookingPage = finishedLookingPage,
-            finishReadManual = backNavigation,
+            finishReadManual = backNavigation
         )
     }
 }
@@ -62,7 +55,7 @@ private fun ManualScreenPreview() {
             ManualScreen(
                 modifier = Modifier,
                 backNavigation = {},
-                finishedLookingPage = {},
+                finishedLookingPage = {}
             )
         }
     }

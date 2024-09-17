@@ -20,7 +20,7 @@ fun InitialManualScreen(navController: NavController, viewModel: InitialManualVi
         modifier = Modifier,
         navigateToHome = navController::navigateToHome,
         finishedLookingPage = viewModel::finishedLookingPage,
-        finishReadManual = viewModel::finishReadManual,
+        finishReadManual = viewModel::finishReadManual
     )
 }
 

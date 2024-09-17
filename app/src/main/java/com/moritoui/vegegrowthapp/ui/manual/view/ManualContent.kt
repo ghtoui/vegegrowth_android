@@ -28,11 +28,7 @@ import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 import kotlinx.coroutines.launch
 
 @Composable
-fun ManualContent(
-    modifier: Modifier = Modifier,
-    finishedLookingPage: (Int) -> Unit,
-    finishReadManual: () -> Unit,
-) {
+fun ManualContent(modifier: Modifier = Modifier, finishedLookingPage: (Int) -> Unit, finishReadManual: () -> Unit) {
     val pageList: List<@Composable () -> Unit> = listOf(
         { FirstPage() },
         { SecondPage() },
