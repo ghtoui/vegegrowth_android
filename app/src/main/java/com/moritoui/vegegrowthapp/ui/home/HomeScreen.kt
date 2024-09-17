@@ -126,7 +126,7 @@ private fun HomeScreen(
     insertErrorEvent: Flow<Boolean>,
     onFolderClick: (Int) -> Unit,
     closeFolderBottomSheet: () -> Unit,
-    onFolderItemClick: (VegeItem) -> Unit,
+    onFolderItemClick: (VegeItem, VegetableFolderEntity?) -> Unit,
     onManualClick: () -> Unit,
 ) {
     var selectMenuExpanded by rememberSaveable { mutableStateOf(false) }
@@ -279,8 +279,9 @@ private fun HomeScreen(
                         uuid = selectedItem.uuid,
                         status = selectedItem.status,
                         category = selectedItem.category,
-                        folderId = it
-                    )
+                        folderId = it?.id
+                    ),
+                    it
                 )
                 scope.launch { bottomSheetState.hide() }.invokeOnCompletion {
                     if (!bottomSheetState.isVisible) {
@@ -326,7 +327,7 @@ fun HomeScreenPreview(@PreviewParameter(HomePreviewParameterProvider::class) par
             onFolderMoveIconClick = {},
             onSelectMoveFolder = {},
             closeFolderBottomSheet = {},
-            onFolderItemClick = {},
+            onFolderItemClick = { _, _ -> },
             onManualClick = {}
         )
     }

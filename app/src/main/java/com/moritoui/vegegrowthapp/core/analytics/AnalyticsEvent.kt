@@ -29,7 +29,7 @@ data class AnalyticsEvent(
             event = Events.OPEN_DIALOG.name,
             params = listOf(
                 Param(
-                    key = Params.DIALOG_NAME.name,
+                    key = Params.DIALOG_TYPE.name,
                     value = dialogType,
                 ),
             )
@@ -42,7 +42,7 @@ data class AnalyticsEvent(
             event = Events.CANCEL_DIALOG.name,
             params = listOf(
                 Param(
-                    key = Params.DIALOG_NAME.name,
+                    key = Params.DIALOG_TYPE.name,
                     value = dialogType,
                 ),
             )
@@ -54,7 +54,7 @@ data class AnalyticsEvent(
             event = Events.CONFIRM_DIALOG.name,
             params = listOf(
                 Param(
-                    key = Params.DIALOG_NAME.name,
+                    key = Params.DIALOG_TYPE.name,
                     value = dialogType,
                 ),
             )
@@ -195,7 +195,7 @@ enum class Events {
 enum class Params {
     ITEM_NAME,
     FOLDER_NAME,
-    DIALOG_NAME,
+    DIALOG_TYPE,
     STATUS,
     CATEGORY,
     COUNT,

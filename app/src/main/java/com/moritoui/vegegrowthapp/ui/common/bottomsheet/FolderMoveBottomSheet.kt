@@ -40,7 +40,7 @@ fun FolderMoveBottomSheet(
     folders: List<VegetableFolderEntity>,
     onDismissRequest: () -> Unit,
     sheetState: SheetState,
-    onFolderItemClick: (Int?) -> Unit,
+    onFolderItemClick: (VegetableFolderEntity?) -> Unit,
     onCancelClick: () -> Unit,
 ) {
     ModalBottomSheet(
@@ -77,7 +77,7 @@ fun FolderMoveBottomSheet(
             items(folders, key = { folder -> folder.id }) { folder ->
                 FolderItem(
                     folderName = folder.folderName,
-                    onFolderItemClick = { onFolderItemClick(folder.id) }
+                    onFolderItemClick = { onFolderItemClick(folder) }
                 )
             }
         }
