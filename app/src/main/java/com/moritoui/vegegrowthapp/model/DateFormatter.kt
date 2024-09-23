@@ -5,7 +5,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 class DateFormatter {
-    private val customFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+    private val customFormatter = DateTimeFormatter.ofPattern(CUSTOM_PATTERN)
 
     private fun stringToDate(stringDateTime: String): LocalDateTime = LocalDateTime.parse(stringDateTime, customFormatter)
 
@@ -21,5 +21,9 @@ class DateFormatter {
         val diffEpochTime = targetEpochTime - baseEpochTime
         // 差分の秒数 * 1000 で出るので、1000で割ってから日数で割る
         return (diffEpochTime / 1000 / 24 / 60 / 60).toString()
+    }
+
+    companion object {
+        const val CUSTOM_PATTERN = "yyyy-MM-dd HH:mm:ss"
     }
 }

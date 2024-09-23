@@ -44,6 +44,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.moritoui.vegegrowthapp.R
+import com.moritoui.vegegrowthapp.model.RegisterDateProperty
 import com.moritoui.vegegrowthapp.navigation.GoToManageItem
 import com.moritoui.vegegrowthapp.navigation.Screen
 import com.moritoui.vegegrowthapp.ui.analytics.SendScreenEvent
@@ -51,6 +52,7 @@ import com.moritoui.vegegrowthapp.ui.manage.navigateToManage
 import com.moritoui.vegegrowthapp.ui.navigation.NavigationAppTopBar
 import com.moritoui.vegegrowthapp.ui.takepicture.model.TakePictureScreenUiState
 import com.moritoui.vegegrowthapp.ui.takepicture.view.CameraScreen
+import com.moritoui.vegegrowthapp.ui.takepicture.view.DateTimeView
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 
 @Composable
@@ -213,6 +215,11 @@ fun RegisterAlertWindow(
             },
             text = {
                 Column {
+                    DateTimeView(
+                        registerDateProperty = RegisterDateProperty.Select,
+                        onDateSelected = {},
+                        onDismiss = {}
+                    )
                     if (lastSavedSize != null) {
                         Text(
                             stringResource(
@@ -235,7 +242,6 @@ fun RegisterAlertWindow(
                             )
                         }
                     )
-                    // if文で空の要素を作りたいときは、modifierで高さとかを指定しとかないと表示されない時がある
                     Row(
                         modifier =
                         Modifier
