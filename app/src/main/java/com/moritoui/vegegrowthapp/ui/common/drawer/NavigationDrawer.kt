@@ -12,14 +12,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 
 @Composable
-fun VegeGrowthNavigationDrawer(modifier: Modifier = Modifier, drawerState: DrawerState, onManualClick: () -> Unit, content: @Composable () -> Unit) {
+fun VegeGrowthNavigationDrawer(
+    modifier: Modifier = Modifier,
+    drawerState: DrawerState,
+    onManualClick: () -> Unit,
+    onRegisterDateSwitch: (Boolean) -> Unit,
+    isRegisterSelectDate: Boolean,
+    content: @Composable () -> Unit,
+) {
     ModalNavigationDrawer(
         modifier = modifier,
         drawerState = drawerState,
         drawerContent = {
             DrawerContents(
                 modifier = Modifier,
-                onManualClick = onManualClick
+                onManualClick = onManualClick,
+                onRegisterDateSwitch = onRegisterDateSwitch,
+                isRegisterSelectDate = isRegisterSelectDate,
             )
         },
         scrimColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -36,7 +45,9 @@ private fun VegeGrowthNavigationDrawerPreview() {
                 modifier = Modifier,
                 drawerState = rememberDrawerState(initialValue = DrawerValue.Closed),
                 onManualClick = {},
-                content = {}
+                onRegisterDateSwitch = {},
+                false,
+                content = {},
             )
         }
     }

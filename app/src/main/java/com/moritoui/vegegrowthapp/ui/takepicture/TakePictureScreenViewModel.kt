@@ -19,6 +19,7 @@ import com.moritoui.vegegrowthapp.repository.vegetabledetail.VegetableDetailRepo
 import com.moritoui.vegegrowthapp.ui.takepicture.model.TakePictureScreenUiState
 import com.moritoui.vegegrowthapp.usecases.GetSelectedVegeItemUseCase
 import com.moritoui.vegegrowthapp.usecases.GetVegetableDetailsUseCase
+import com.moritoui.vegegrowthapp.usecases.IsRegisterSelectDateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDateTime
 import java.util.UUID
@@ -38,8 +39,9 @@ class TakePictureScreenViewModel @Inject constructor(
     private val vegetableDetailRepository: VegetableDetailRepository,
     private val getVegetableDetailsUseCase: GetVegetableDetailsUseCase,
     private val getSelectedVegeItemUseCase: GetSelectedVegeItemUseCase,
-    savedStateHandle: SavedStateHandle,
+    private val isRegisterSelectDateUseCase: IsRegisterSelectDateUseCase,
     private val analytics: AnalyticsHelper,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     val args = checkNotNull(savedStateHandle.get<Int>("vegetableId"))
 
@@ -67,6 +69,9 @@ class TakePictureScreenViewModel @Inject constructor(
                     )
                 }
             }.launchIn(viewModelScope)
+        viewModelScope.launch {
+            updateRegisterSelectDate()
+        }
     }
 
     private fun updateState(
@@ -181,6 +186,19 @@ class TakePictureScreenViewModel @Inject constructor(
             it.copy(
                 isCameraOpen = !it.isCameraOpen
             )
+        }
+    }
+
+    /**
+     * 日付を登録するかを収集する
+     */
+    private suspend fun updateRegisterSelectDate() {
+        isRegisterSelectDateUseCase().collect { isRegisterSelectDate ->
+            _uiState.update {
+                it.copy(
+                    isRegisterSelectDate = isRegisterSelectDate
+                )
+            }
         }
     }
 

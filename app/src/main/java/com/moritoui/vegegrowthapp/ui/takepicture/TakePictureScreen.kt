@@ -44,7 +44,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.moritoui.vegegrowthapp.R
-import com.moritoui.vegegrowthapp.model.RegisterDateProperty
 import com.moritoui.vegegrowthapp.navigation.GoToManageItem
 import com.moritoui.vegegrowthapp.navigation.Screen
 import com.moritoui.vegegrowthapp.ui.analytics.SendScreenEvent
@@ -138,6 +137,7 @@ private fun TakePictureScreen(
         lastSavedSize = uiState.lastSavedSize,
         isSuccessInputText = uiState.isSuccessInputText,
         isBeforeInputText = uiState.isBeforeInputText,
+        isRegisterSelectDate = uiState.isRegisterSelectDate,
         onValueChange = onSizeTextChange,
         onConfirmClick = onConfirmClick,
         onDismissClick = onDismissClick
@@ -202,6 +202,7 @@ fun RegisterAlertWindow(
     lastSavedSize: Double?,
     isSuccessInputText: Boolean,
     isBeforeInputText: Boolean,
+    isRegisterSelectDate: Boolean,
     onValueChange: (String) -> Unit,
     onConfirmClick: () -> Unit,
     onDismissClick: () -> Unit,
@@ -216,7 +217,7 @@ fun RegisterAlertWindow(
             text = {
                 Column {
                     DateTimeView(
-                        registerDateProperty = RegisterDateProperty.Select,
+                        isRegisterSelectDate = isRegisterSelectDate,
                         onDateSelected = {},
                         onDismiss = {}
                     )

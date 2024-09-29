@@ -26,14 +26,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.moritoui.vegegrowthapp.R
 import com.moritoui.vegegrowthapp.core.extensions.toDateString
-import com.moritoui.vegegrowthapp.model.RegisterDateProperty
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DateTimeView(
     modifier: Modifier = Modifier,
-    registerDateProperty: RegisterDateProperty,
+    isRegisterSelectDate: Boolean,
     onDateSelected: (Long?) -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -42,7 +41,7 @@ fun DateTimeView(
     }
     val datePickerState = rememberDatePickerState()
 
-    if (registerDateProperty == RegisterDateProperty.Select) {
+    if (isRegisterSelectDate) {
         Column(
             modifier = modifier
                 .background(MaterialTheme.colorScheme.background)
@@ -97,7 +96,7 @@ private fun DateTimeViewPreview() {
     VegegrowthAppTheme {
         Surface {
             DateTimeView(
-                registerDateProperty = RegisterDateProperty.Select,
+                isRegisterSelectDate = true,
                 onDateSelected = { date.value = it },
                 onDismiss = {}
             )

@@ -36,7 +36,10 @@
     <string name="folder_move_button">移動</string>
     <string name="folder_move_title">フォルダーを選択してください</string>
     <string name="folder_not_classified_label">未分類</string>
-    <string name="home_drawer_manual">アプリの使い方</string>
+
+    <!--  ドロワー  -->
+    <string name="drawer_manual">アプリの使い方</string>
+    <string name="drawer_register_select_date_time">日付を指定して登録する</string>
 
     <!--  撮影画面  -->
     <string name="take_picture_button">撮影</string>
