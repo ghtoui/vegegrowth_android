@@ -127,9 +127,13 @@ class TakePictureScreenViewModel @Inject constructor(
         } else {
             dateFormatter.dateToString(LocalDateTime.now())
         }
-        // UIの部分で画像が撮影されていないとこのボタンを押せないため，nullでくることはないはず
-        val takePicImage = _uiState.value.takePicImage ?: return
-        val imagePath = vegetableDetailRepository.saveTookPicture(takePicImage)
+        // nullの時は，何も保存せずに保存していないと保存する
+        val takePicImage = _uiState.value.takePicImage
+        val imagePath = if (takePicImage != null) {
+            vegetableDetailRepository.saveTookPicture(takePicImage)
+        } else {
+            "notSaved"
+        }
 
         viewModelScope.launch {
             val selectedVegeItem = selectedVegeItem.await()

@@ -46,6 +46,7 @@
     <string name="picture_none_message">撮影した写真がここに表示されます</string>
     <string name="picture_description">撮影した画像</string>
     <string name="register_text_field_describe">撮影した野菜の大きさを入力してください</string>
+    <string name="not_picture_register_button">撮影せずに登録</string>
 
     <!--  管理画面  -->
 

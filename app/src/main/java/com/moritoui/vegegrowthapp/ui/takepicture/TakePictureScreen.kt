@@ -120,9 +120,10 @@ private fun TakePictureScreen(
                 isTakenPicture = uiState.takePicImage == null,
                 onClick = goToCameraButtonClick
             )
-            if (uiState.takePicImage != null) {
-                RegisterButton(onClick = onRegisterButtonClick)
-            }
+                RegisterButton(
+                    onClick = onRegisterButtonClick,
+                    isTookPicture = uiState.takePicImage != null,
+                )
         }
     }
 
@@ -188,12 +189,21 @@ fun TakeButton(isTakenPicture: Boolean, onClick: () -> Unit) {
 }
 
 @Composable
-fun RegisterButton(onClick: () -> Unit) {
+fun RegisterButton(
+    onClick: () -> Unit,
+    isTookPicture: Boolean,
+) {
     Button(
         onClick = { onClick() }
     ) {
         Text(
-            text = stringResource(R.string.register_button)
+            text = stringResource(
+                if (isTookPicture) {
+                    R.string.register_button
+                } else {
+                    R.string.not_picture_register_button
+                }
+            )
         )
     }
 }
