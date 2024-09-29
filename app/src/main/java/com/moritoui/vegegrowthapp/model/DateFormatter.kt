@@ -2,6 +2,7 @@ package com.moritoui.vegegrowthapp.model
 
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 class DateFormatter {
@@ -10,6 +11,8 @@ class DateFormatter {
     private fun stringToDate(stringDateTime: String): LocalDateTime = LocalDateTime.parse(stringDateTime, customFormatter)
 
     fun dateToString(dateTime: LocalDateTime): String = dateTime.format(customFormatter)
+
+    fun dateToString(dateTime: ZonedDateTime): String = dateTime.format(customFormatter)
 
     fun stringToEpochTime(stringDateTime: String): Long {
         val datetime = stringToDate(stringDateTime)

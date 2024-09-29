@@ -70,7 +70,8 @@ fun TakePictureScreen(navController: NavController, viewModel: TakePictureScreen
         },
         onSizeTextChange = { viewModel.changeInputText(it) },
         onConfirmClick = { viewModel.registerVegeData() },
-        onDismissClick = { viewModel.closeRegisterDialog() }
+        onDismissClick = { viewModel.closeRegisterDialog() },
+        onDateSelectClick = viewModel::selectRegisterDate
     )
 
     SendScreenEvent(screen = Screen.TakePictureScreen)
@@ -88,6 +89,7 @@ private fun TakePictureScreen(
     onSizeTextChange: (String) -> Unit,
     onConfirmClick: () -> Unit,
     onDismissClick: () -> Unit,
+    onDateSelectClick: (Long?) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -140,7 +142,8 @@ private fun TakePictureScreen(
         isRegisterSelectDate = uiState.isRegisterSelectDate,
         onValueChange = onSizeTextChange,
         onConfirmClick = onConfirmClick,
-        onDismissClick = onDismissClick
+        onDismissClick = onDismissClick,
+        onDateSelectClick =  onDateSelectClick,
     )
 }
 
@@ -206,6 +209,7 @@ fun RegisterAlertWindow(
     onValueChange: (String) -> Unit,
     onConfirmClick: () -> Unit,
     onDismissClick: () -> Unit,
+    onDateSelectClick: (Long?) -> Unit,
 ) {
     if (isOpenDialog) {
         AlertDialog(
@@ -218,7 +222,7 @@ fun RegisterAlertWindow(
                 Column {
                     DateTimeView(
                         isRegisterSelectDate = isRegisterSelectDate,
-                        onDateSelected = {},
+                        onDateSelectClick = onDateSelectClick,
                         onDismiss = {}
                     )
                     if (lastSavedSize != null) {
@@ -310,7 +314,8 @@ fun TakePicPreview(@PreviewParameter(TakePictureScreenPreviewParameterProvider::
             onTakePictureButtonClick = {},
             onNavigationIconClick = {},
             goToCameraButtonClick = {},
-            onGoToManageClick = {}
+            onGoToManageClick = {},
+            onDateSelectClick = {},
         )
     }
 }

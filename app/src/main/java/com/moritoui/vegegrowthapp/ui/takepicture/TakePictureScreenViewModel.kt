@@ -21,7 +21,10 @@ import com.moritoui.vegegrowthapp.usecases.GetSelectedVegeItemUseCase
 import com.moritoui.vegegrowthapp.usecases.GetVegetableDetailsUseCase
 import com.moritoui.vegegrowthapp.usecases.IsRegisterSelectDateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.Instant
 import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.util.UUID
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -119,7 +122,11 @@ class TakePictureScreenViewModel @Inject constructor(
     }
 
     fun registerVegeData() {
-        val datetime = dateFormatter.dateToString(LocalDateTime.now())
+        val datetime = if (_uiState.value.selectRegisterDate != null) {
+            dateFormatter.dateToString(_uiState.value.selectRegisterDate!!)
+        } else {
+            dateFormatter.dateToString(LocalDateTime.now())
+        }
         // UIの部分で画像が撮影されていないとこのボタンを押せないため，nullでくることはないはず
         val takePicImage = _uiState.value.takePicImage ?: return
         val imagePath = vegetableDetailRepository.saveTookPicture(takePicImage)
@@ -185,6 +192,29 @@ class TakePictureScreenViewModel @Inject constructor(
         _uiState.update {
             it.copy(
                 isCameraOpen = !it.isCameraOpen
+            )
+        }
+    }
+
+    /**
+     * 選択された登録する日付を変換する
+     *
+     * 選択されていない場合は何もしない
+     */
+    fun selectRegisterDate(registerDate: Long?) {
+        registerDate ?: return
+        val currentTime = ZonedDateTime.now()
+        val registerDate = ZonedDateTime.of(
+            Instant.ofEpochMilli(registerDate)
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate(),
+            currentTime.toLocalTime(),
+            currentTime.zone
+        )
+
+        _uiState.update {
+            it.copy(
+                selectRegisterDate = registerDate
             )
         }
     }

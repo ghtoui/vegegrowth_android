@@ -33,7 +33,7 @@ import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 fun DateTimeView(
     modifier: Modifier = Modifier,
     isRegisterSelectDate: Boolean,
-    onDateSelected: (Long?) -> Unit,
+    onDateSelectClick: (Long?) -> Unit,
     onDismiss: () -> Unit,
 ) {
     val isVisibleDatePicker = rememberSaveable {
@@ -69,7 +69,7 @@ fun DateTimeView(
                     confirmButton = {
                         TextButton(
                             onClick = {
-                                onDateSelected(datePickerState.selectedDateMillis)
+                                onDateSelectClick(datePickerState.selectedDateMillis)
                                 isVisibleDatePicker.value = !isVisibleDatePicker.value
                                 onDismiss()
                             }
@@ -97,7 +97,7 @@ private fun DateTimeViewPreview() {
         Surface {
             DateTimeView(
                 isRegisterSelectDate = true,
-                onDateSelected = { date.value = it },
+                onDateSelectClick = { date.value = it },
                 onDismiss = {}
             )
         }
