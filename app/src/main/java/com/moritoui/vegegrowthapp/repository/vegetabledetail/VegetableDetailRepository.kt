@@ -18,4 +18,9 @@ interface VegetableDetailRepository {
      * 画像の保存
      */
     fun saveTookPicture(tookPicture: Bitmap): String
+
+    /**
+     * 画像の削除
+     */
+    fun deleteImage(imagePath: String): Result<Unit>
 }

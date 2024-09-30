@@ -2,14 +2,17 @@ package com.moritoui.vegegrowthapp.model
 
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 class DateFormatter {
-    private val customFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+    private val customFormatter = DateTimeFormatter.ofPattern(CUSTOM_DATETIME_PATTERN)
 
     private fun stringToDate(stringDateTime: String): LocalDateTime = LocalDateTime.parse(stringDateTime, customFormatter)
 
     fun dateToString(dateTime: LocalDateTime): String = dateTime.format(customFormatter)
+
+    fun dateToString(dateTime: ZonedDateTime): String = dateTime.format(customFormatter)
 
     fun stringToEpochTime(stringDateTime: String): Long {
         val datetime = stringToDate(stringDateTime)
@@ -21,5 +24,10 @@ class DateFormatter {
         val diffEpochTime = targetEpochTime - baseEpochTime
         // 差分の秒数 * 1000 で出るので、1000で割ってから日数で割る
         return (diffEpochTime / 1000 / 24 / 60 / 60).toString()
+    }
+
+    companion object {
+        const val CUSTOM_DATETIME_PATTERN = "yyyy-MM-dd HH:mm:ss"
+        const val CUSTOM_DATE_PATTERN = "yyyy-MM-dd"
     }
 }

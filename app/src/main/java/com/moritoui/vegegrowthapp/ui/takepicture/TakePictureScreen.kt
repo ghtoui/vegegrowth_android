@@ -44,6 +44,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.moritoui.vegegrowthapp.R
+import com.moritoui.vegegrowthapp.core.extensions.toDateFormat
 import com.moritoui.vegegrowthapp.navigation.GoToManageItem
 import com.moritoui.vegegrowthapp.navigation.Screen
 import com.moritoui.vegegrowthapp.ui.analytics.SendScreenEvent
@@ -51,6 +52,7 @@ import com.moritoui.vegegrowthapp.ui.manage.navigateToManage
 import com.moritoui.vegegrowthapp.ui.navigation.NavigationAppTopBar
 import com.moritoui.vegegrowthapp.ui.takepicture.model.TakePictureScreenUiState
 import com.moritoui.vegegrowthapp.ui.takepicture.view.CameraScreen
+import com.moritoui.vegegrowthapp.ui.takepicture.view.DateTimeView
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 
 @Composable
@@ -69,7 +71,8 @@ fun TakePictureScreen(navController: NavController, viewModel: TakePictureScreen
         },
         onSizeTextChange = { viewModel.changeInputText(it) },
         onConfirmClick = { viewModel.registerVegeData() },
-        onDismissClick = { viewModel.closeRegisterDialog() }
+        onDismissClick = { viewModel.closeRegisterDialog() },
+        onDateSelectClick = viewModel::selectRegisterDate
     )
 
     SendScreenEvent(screen = Screen.TakePictureScreen)
@@ -87,6 +90,7 @@ private fun TakePictureScreen(
     onSizeTextChange: (String) -> Unit,
     onConfirmClick: () -> Unit,
     onDismissClick: () -> Unit,
+    onDateSelectClick: (Long?) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -117,9 +121,10 @@ private fun TakePictureScreen(
                 isTakenPicture = uiState.takePicImage == null,
                 onClick = goToCameraButtonClick
             )
-            if (uiState.takePicImage != null) {
-                RegisterButton(onClick = onRegisterButtonClick)
-            }
+            RegisterButton(
+                onClick = onRegisterButtonClick,
+                isTookPicture = uiState.takePicImage != null
+            )
         }
     }
 
@@ -136,9 +141,12 @@ private fun TakePictureScreen(
         lastSavedSize = uiState.lastSavedSize,
         isSuccessInputText = uiState.isSuccessInputText,
         isBeforeInputText = uiState.isBeforeInputText,
+        isRegisterSelectDate = uiState.isRegisterSelectDate,
         onValueChange = onSizeTextChange,
         onConfirmClick = onConfirmClick,
-        onDismissClick = onDismissClick
+        onDismissClick = onDismissClick,
+        onDateSelectClick = onDateSelectClick,
+        selectDateTime = uiState.selectRegisterDate?.toDateFormat() ?: ""
     )
 }
 
@@ -183,12 +191,18 @@ fun TakeButton(isTakenPicture: Boolean, onClick: () -> Unit) {
 }
 
 @Composable
-fun RegisterButton(onClick: () -> Unit) {
+fun RegisterButton(onClick: () -> Unit, isTookPicture: Boolean) {
     Button(
         onClick = { onClick() }
     ) {
         Text(
-            text = stringResource(R.string.register_button)
+            text = stringResource(
+                if (isTookPicture) {
+                    R.string.register_button
+                } else {
+                    R.string.not_picture_register_button
+                }
+            )
         )
     }
 }
@@ -200,9 +214,12 @@ fun RegisterAlertWindow(
     lastSavedSize: Double?,
     isSuccessInputText: Boolean,
     isBeforeInputText: Boolean,
+    isRegisterSelectDate: Boolean,
     onValueChange: (String) -> Unit,
     onConfirmClick: () -> Unit,
     onDismissClick: () -> Unit,
+    onDateSelectClick: (Long?) -> Unit,
+    selectDateTime: String,
 ) {
     if (isOpenDialog) {
         AlertDialog(
@@ -213,6 +230,12 @@ fun RegisterAlertWindow(
             },
             text = {
                 Column {
+                    DateTimeView(
+                        isRegisterSelectDate = isRegisterSelectDate,
+                        onDateSelectClick = onDateSelectClick,
+                        onDismiss = {},
+                        selectDateTime = selectDateTime
+                    )
                     if (lastSavedSize != null) {
                         Text(
                             stringResource(
@@ -235,7 +258,6 @@ fun RegisterAlertWindow(
                             )
                         }
                     )
-                    // if文で空の要素を作りたいときは、modifierで高さとかを指定しとかないと表示されない時がある
                     Row(
                         modifier =
                         Modifier
@@ -303,7 +325,8 @@ fun TakePicPreview(@PreviewParameter(TakePictureScreenPreviewParameterProvider::
             onTakePictureButtonClick = {},
             onNavigationIconClick = {},
             goToCameraButtonClick = {},
-            onGoToManageClick = {}
+            onGoToManageClick = {},
+            onDateSelectClick = {}
         )
     }
 }

@@ -5,6 +5,7 @@
     <string name="second_number">2</string>
     <string name="third_number">3</string>
     <string name="fourth_number">4</string>
+    <string name="back_button">戻る</string>
 
     <!--  説明書画面  -->
     <string name="manual_add_button">画面上部の＋から登録する植物の情報を入力します．</string>
@@ -36,15 +37,21 @@
     <string name="folder_move_button">移動</string>
     <string name="folder_move_title">フォルダーを選択してください</string>
     <string name="folder_not_classified_label">未分類</string>
-    <string name="home_drawer_manual">アプリの使い方</string>
+
+    <!--  ドロワー  -->
+    <string name="drawer_manual">アプリの使い方</string>
+    <string name="drawer_register_select_date_time">日付を指定して登録する</string>
 
     <!--  撮影画面  -->
     <string name="take_picture_button">撮影</string>
     <string name="picture_none_message">撮影した写真がここに表示されます</string>
     <string name="picture_description">撮影した画像</string>
     <string name="register_text_field_describe">撮影した野菜の大きさを入力してください</string>
+    <string name="not_picture_register_button">撮影せずに登録</string>
 
     <!--  管理画面  -->
+    <string name="manage_delete_item_dialog_title">選択したものを削除しますか？</string>
+    <string name="manage_delete_item_dialog_sub_text">大きさと写真とメモは削除されます\n元に戻すことはできません．</string>
 
     <!--  未分類  -->
     <string name="favorite_button">お気に入り</string>
@@ -72,8 +79,12 @@
     <string name="home_delete_dialog_description">削除したものは元に戻せません</string>
     <string name="vege_detail_save_last_date">最後の登録日</string>
 
+    <!--  エラー  -->
+    <string name="error_empty_list">データが存在しません．\n再度登録してください．</string>
+
     <!--  読み上げ用のテキスト  -->
     <string name="description_folder_add">フォルダー追加</string>
     <string name="description_item_add">追加</string>
     <string name="description_menu_icon">メニュー</string>
+    <string name="description_delete_button_icon">選択されたアイテムを削除します</string>
 </resources>

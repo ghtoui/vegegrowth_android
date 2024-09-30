@@ -9,6 +9,7 @@ import com.moritoui.vegegrowthapp.model.toVegetableEntity
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
 import java.io.OutputStream
 import java.util.UUID
 import javax.inject.Inject
@@ -32,5 +33,14 @@ class VegetableDetailRepositoryImpl @Inject constructor(private val vegetableDet
         val outputStream: OutputStream = FileOutputStream(imageFilePath)
         tookPicture.compress(Bitmap.CompressFormat.JPEG, 50, outputStream)
         return imageFilePath.path
+    }
+
+    override fun deleteImage(imagePath: String): Result<Unit> {
+        try {
+            File(imagePath).delete()
+            return Result.success(Unit)
+        } catch (e: IOException) {
+            throw e
+        }
     }
 }

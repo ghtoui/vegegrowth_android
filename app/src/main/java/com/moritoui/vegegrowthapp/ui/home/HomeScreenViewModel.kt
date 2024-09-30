@@ -18,6 +18,7 @@ import com.moritoui.vegegrowthapp.ui.home.model.AddDialogType
 import com.moritoui.vegegrowthapp.ui.home.model.HomeScreenUiState
 import com.moritoui.vegegrowthapp.ui.home.model.VegetablesState
 import com.moritoui.vegegrowthapp.usecases.AddVegeItemUseCase
+import com.moritoui.vegegrowthapp.usecases.ChangeRegisterSelectDateUseCase
 import com.moritoui.vegegrowthapp.usecases.ChangeVegeItemStatusUseCase
 import com.moritoui.vegegrowthapp.usecases.DeleteVegeFolderUseCase
 import com.moritoui.vegegrowthapp.usecases.DeleteVegeItemUseCase
@@ -25,6 +26,7 @@ import com.moritoui.vegegrowthapp.usecases.GetVegeItemDetailLastUseCase
 import com.moritoui.vegegrowthapp.usecases.GetVegeItemFromFolderIdUseCase
 import com.moritoui.vegegrowthapp.usecases.GetVegetableFolderUseCase
 import com.moritoui.vegegrowthapp.usecases.InsertVegetableFolderUseCase
+import com.moritoui.vegegrowthapp.usecases.IsRegisterSelectDateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.UUID
 import kotlinx.coroutines.delay
@@ -54,6 +56,8 @@ class HomeScreenViewModel @Inject constructor(
     private val dataMigrationRepository: DataMigrationRepository,
     private val getVegetableFolderUseCase: GetVegetableFolderUseCase,
     private val insertVegetableFolderUseCase: InsertVegetableFolderUseCase,
+    private val isRegisterSelectDateUseCase: IsRegisterSelectDateUseCase,
+    private val changeRegisterSelectDateUseCase: ChangeRegisterSelectDateUseCase,
     private val analytics: AnalyticsHelper,
 ) : ViewModel() {
     // ホーム画面では未分類のフォルダーIDnullのみを表示する
@@ -93,6 +97,7 @@ class HomeScreenViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             dataMigrationRepository.dataMigration()
+            updateRegisterSelectDate()
         }
         monitorUiState()
     }
@@ -394,6 +399,28 @@ class HomeScreenViewModel @Inject constructor(
 
             _vegetableFolders.update {
                 getVegetableFolderUseCase()
+            }
+        }
+    }
+
+    /**
+     * 日付選択切り替えのトグルボタンが押された
+     */
+    fun onRegisterDateSwitch(isRegisterSelectDate: Boolean) {
+        viewModelScope.launch {
+            changeRegisterSelectDateUseCase(isRegisterSelectDate)
+        }
+    }
+
+    /**
+     * 日付を登録するかを収集する
+     */
+    private suspend fun updateRegisterSelectDate() {
+        isRegisterSelectDateUseCase().collect { isRegisterSelectDate ->
+            _uiState.update {
+                it.copy(
+                    isRegisterSelectDate = isRegisterSelectDate
+                )
             }
         }
     }

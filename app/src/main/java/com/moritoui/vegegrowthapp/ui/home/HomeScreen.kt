@@ -87,7 +87,8 @@ fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel(), navController: 
         onSelectMoveFolder = viewModel::openFolderMoveBottomSheetState,
         closeFolderBottomSheet = viewModel::closeFolderMoveBottomSheetState,
         onFolderItemClick = viewModel::vegeItemMoveFolder,
-        onManualClick = navController::navigateToManual
+        onManualClick = navController::navigateToManual,
+        onRegisterDateSwitch = viewModel::onRegisterDateSwitch
     )
 
     // 画面遷移で戻ったときに処理する
@@ -125,6 +126,7 @@ private fun HomeScreen(
     closeFolderBottomSheet: () -> Unit,
     onFolderItemClick: (VegeItem, VegetableFolderEntity?) -> Unit,
     onManualClick: () -> Unit,
+    onRegisterDateSwitch: (Boolean) -> Unit,
 ) {
     var selectMenuExpanded by rememberSaveable { mutableStateOf(false) }
     var filterMenuExpanded by rememberSaveable { mutableStateOf(false) }
@@ -142,6 +144,8 @@ private fun HomeScreen(
                 }
             }
         },
+        onRegisterDateSwitch = onRegisterDateSwitch,
+        isRegisterSelectDate = uiState.isRegisterSelectDate,
         content = {
             Scaffold(
                 topBar = {
@@ -325,7 +329,8 @@ fun HomeScreenPreview(@PreviewParameter(HomePreviewParameterProvider::class) par
             onSelectMoveFolder = {},
             closeFolderBottomSheet = {},
             onFolderItemClick = { _, _ -> },
-            onManualClick = {}
+            onManualClick = {},
+            onRegisterDateSwitch = {}
         )
     }
 }

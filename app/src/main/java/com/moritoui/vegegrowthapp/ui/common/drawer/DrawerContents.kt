@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.HorizontalDivider
@@ -11,6 +12,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,7 +26,7 @@ import com.moritoui.vegegrowthapp.R
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 
 @Composable
-fun DrawerContents(modifier: Modifier = Modifier, onManualClick: () -> Unit) {
+fun DrawerContents(modifier: Modifier = Modifier, onManualClick: () -> Unit, onRegisterDateSwitch: (Boolean) -> Unit, isRegisterSelectDate: Boolean) {
     ModalDrawerSheet {
         Row(
             verticalAlignment = Alignment.CenterVertically
@@ -48,12 +50,23 @@ fun DrawerContents(modifier: Modifier = Modifier, onManualClick: () -> Unit) {
                 ) {
                     Icon(painter = painterResource(id = R.drawable.ic_description), contentDescription = null)
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text(text = stringResource(id = R.string.home_drawer_manual))
+                    Text(text = stringResource(id = R.string.drawer_manual))
                 }
             },
             selected = false,
             onClick = onManualClick
         )
+        Row(
+            modifier = Modifier.padding(start = 16.dp, end = 24.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = stringResource(id = R.string.drawer_register_select_date_time))
+            Spacer(modifier = Modifier.weight(1f))
+            Switch(
+                checked = isRegisterSelectDate,
+                onCheckedChange = onRegisterDateSwitch
+            )
+        }
     }
 }
 
@@ -64,7 +77,9 @@ private fun DrawerContentsPreview() {
         Surface {
             DrawerContents(
                 modifier = Modifier,
-                onManualClick = {}
+                onManualClick = {},
+                onRegisterDateSwitch = {},
+                isRegisterSelectDate = false
             )
         }
     }

@@ -7,6 +7,7 @@ import androidx.room.Transaction
 import androidx.room.Upsert
 import com.moritoui.vegegrowthapp.data.room.model.VegetableEntity
 import com.moritoui.vegegrowthapp.data.room.model.VegetableWIthDetails
+import kotlinx.coroutines.flow.Flow
 
 /**
  * [Vegetable] に関するDao
@@ -43,7 +44,7 @@ interface VegetableDao {
      */
     @Transaction
     @Query("SELECT * FROM vegetable_resources WHERE id = :id")
-    suspend fun getVegetableWithDetails(id: Int): VegetableWIthDetails?
+    fun getVegetableWithDetails(id: Int): Flow<VegetableWIthDetails?>
 
     /**
      * フォルダIDが一致するものを取得する
