@@ -6,7 +6,7 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 class DateFormatter {
-    private val customFormatter = DateTimeFormatter.ofPattern(CUSTOM_PATTERN)
+    private val customFormatter = DateTimeFormatter.ofPattern(CUSTOM_DATETIME_PATTERN)
 
     private fun stringToDate(stringDateTime: String): LocalDateTime = LocalDateTime.parse(stringDateTime, customFormatter)
 
@@ -27,6 +27,7 @@ class DateFormatter {
     }
 
     companion object {
-        const val CUSTOM_PATTERN = "yyyy-MM-dd HH:mm:ss"
+        const val CUSTOM_DATETIME_PATTERN = "yyyy-MM-dd HH:mm:ss"
+        const val CUSTOM_DATE_PATTERN = "yyyy-MM-dd"
     }
 }

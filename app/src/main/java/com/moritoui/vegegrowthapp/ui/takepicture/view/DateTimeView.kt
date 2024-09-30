@@ -2,7 +2,6 @@ package com.moritoui.vegegrowthapp.ui.takepicture.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.height
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -23,9 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.moritoui.vegegrowthapp.R
-import com.moritoui.vegegrowthapp.core.extensions.toDateString
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,6 +32,7 @@ fun DateTimeView(
     isRegisterSelectDate: Boolean,
     onDateSelectClick: (Long?) -> Unit,
     onDismiss: () -> Unit,
+    selectDateTime: String,
 ) {
     val isVisibleDatePicker = rememberSaveable {
         mutableStateOf(false)
@@ -47,9 +45,8 @@ fun DateTimeView(
                 .background(MaterialTheme.colorScheme.background)
         ) {
             OutlinedTextField(
-                modifier = Modifier
-                    .height(64.dp),
-                value = datePickerState.selectedDateMillis?.toDateString() ?: "",
+                modifier = Modifier,
+                value = selectDateTime,
                 onValueChange = {},
                 readOnly = true,
                 trailingIcon = {
@@ -98,7 +95,8 @@ private fun DateTimeViewPreview() {
             DateTimeView(
                 isRegisterSelectDate = true,
                 onDateSelectClick = { date.value = it },
-                onDismiss = {}
+                onDismiss = {},
+                selectDateTime = "2024-09-09"
             )
         }
     }

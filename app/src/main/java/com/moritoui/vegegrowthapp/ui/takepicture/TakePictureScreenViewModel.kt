@@ -116,11 +116,14 @@ class TakePictureScreenViewModel @Inject constructor(
     }
 
     fun closeRegisterDialog() {
-        updateState(
-            isOpenDialog = false,
-            inputText = "",
-            isBeforeInputText = true
-        )
+        _uiState.update {
+            it.copy(
+                isOpenDialog = false,
+                inputText = "",
+                isBeforeInputText = true,
+                selectRegisterDate = null,
+            )
+        }
     }
 
     fun registerVegeData() {
@@ -153,6 +156,9 @@ class TakePictureScreenViewModel @Inject constructor(
         }
         resetState()
         firebaseEventSend()
+        _uiState.update {
+            it.copy(selectRegisterDate = null)
+        }
     }
 
     fun onTakePicture(takePicture: ImageProxy?) {

@@ -44,6 +44,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.moritoui.vegegrowthapp.R
+import com.moritoui.vegegrowthapp.core.extensions.toDateFormat
 import com.moritoui.vegegrowthapp.navigation.GoToManageItem
 import com.moritoui.vegegrowthapp.navigation.Screen
 import com.moritoui.vegegrowthapp.ui.analytics.SendScreenEvent
@@ -145,6 +146,7 @@ private fun TakePictureScreen(
         onConfirmClick = onConfirmClick,
         onDismissClick = onDismissClick,
         onDateSelectClick =  onDateSelectClick,
+        selectDateTime = uiState.selectRegisterDate?.toDateFormat() ?: "",
     )
 }
 
@@ -220,6 +222,7 @@ fun RegisterAlertWindow(
     onConfirmClick: () -> Unit,
     onDismissClick: () -> Unit,
     onDateSelectClick: (Long?) -> Unit,
+    selectDateTime: String,
 ) {
     if (isOpenDialog) {
         AlertDialog(
@@ -233,7 +236,8 @@ fun RegisterAlertWindow(
                     DateTimeView(
                         isRegisterSelectDate = isRegisterSelectDate,
                         onDateSelectClick = onDateSelectClick,
-                        onDismiss = {}
+                        onDismiss = {},
+                        selectDateTime = selectDateTime,
                     )
                     if (lastSavedSize != null) {
                         Text(

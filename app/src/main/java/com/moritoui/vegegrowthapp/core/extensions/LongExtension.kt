@@ -6,6 +6,6 @@ import java.util.Date
 
 fun Long.toDateString(): String {
     val date = Date(this)
-    val format = SimpleDateFormat(DateFormatter.CUSTOM_PATTERN)
+    val format = SimpleDateFormat(DateFormatter.CUSTOM_DATE_PATTERN)
     return format.format(date)
 }
