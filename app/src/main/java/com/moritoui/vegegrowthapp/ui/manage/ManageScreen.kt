@@ -20,13 +20,17 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,28 +50,35 @@ import com.moritoui.vegegrowthapp.dummies.ManageScreenDummy
 import com.moritoui.vegegrowthapp.model.VegeItemDetail
 import com.moritoui.vegegrowthapp.navigation.Screen
 import com.moritoui.vegegrowthapp.ui.analytics.SendScreenEvent
-import com.moritoui.vegegrowthapp.ui.common.VegeGrowthLoading
 import com.moritoui.vegegrowthapp.ui.manage.model.ManageScreenUiState
+import com.moritoui.vegegrowthapp.ui.manage.view.DeleteRegisteredItemDialog
 import com.moritoui.vegegrowthapp.ui.manage.view.DrawLineChart
 import com.moritoui.vegegrowthapp.ui.manage.view.ImageBottomSheet
+import com.moritoui.vegegrowthapp.ui.manage.view.ManageLoading
 import com.moritoui.vegegrowthapp.ui.manage.view.MemoEditorDialog
 import com.moritoui.vegegrowthapp.ui.navigation.NavigationAppTopBar
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 import kotlinx.coroutines.launch
 
 @Composable
-fun ManageScreen(navController: NavController, viewModel: ManageScreenViewModel = hiltViewModel()) {
+fun ManageScreen(
+    navController: NavController,
+    viewModel: ManageScreenViewModel = hiltViewModel()
+) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     ManageScreen(
         uiState = uiState,
         onBackNavigationButtonClick = navController::popBackStack,
         onImageClick = viewModel::changeOpenImageBottomSheet,
-        imagePathList = viewModel.takePicFileList,
+        imagePathList = uiState.vegeRepositoryList.map { it.imagePath },
         onEditClick = viewModel::changeOpenMemoEditorBottomSheet,
         onDismissRequest = viewModel::changeOpenImageBottomSheet,
         onMemoTextChange = viewModel::changeMemoText,
         onCancelButtonClick = viewModel::cancelEditMemo,
-        onSaveButtonClick = viewModel::saveEditMemo
+        onSaveButtonClick = viewModel::saveEditMemo,
+        onDismissDeleteDialog = viewModel::deleteDialogClose,
+        onDeleteDialogConfirmClick = viewModel::deleteVegeItemDetail,
+        onDeleteButtonClick = viewModel::onDeleteItemButtonClick
     )
 
     SendScreenEvent(screen = Screen.ManageScreen)
@@ -84,24 +95,13 @@ private fun ManageScreen(
     onMemoTextChange: (String) -> Unit,
     onCancelButtonClick: () -> Unit,
     onSaveButtonClick: (VegeItemDetail) -> Unit,
+    onDismissDeleteDialog: () -> Unit,
+    onDeleteDialogConfirmClick: () -> Unit,
+    onDeleteButtonClick: (VegeItemDetail) -> Unit,
 ) {
-    if (uiState.vegeRepositoryList.isEmpty()) {
-        VegeGrowthLoading(
-            modifier = Modifier.fillMaxSize()
-        )
-        return
+    var isLoaded = rememberSaveable {
+        mutableStateOf(false)
     }
-
-    val pagerState =
-        rememberPagerState(
-            initialPage = uiState.vegeRepositoryList.lastIndex,
-            pageCount = { uiState.pagerCount }
-        )
-
-    val scope = rememberCoroutineScope()
-
-    val selectedVegeItemDetail = uiState.vegeRepositoryList[pagerState.currentPage]
-
     Scaffold(
         topBar = {
             NavigationAppTopBar(
@@ -110,12 +110,49 @@ private fun ManageScreen(
             )
         }
     ) { it ->
+        if (uiState.vegeRepositoryList.isEmpty()) {
+            ManageLoading(
+                modifier = Modifier.padding(top = it.calculateTopPadding()),
+                isLoaded = isLoaded.value,
+                onBackClick = onBackNavigationButtonClick
+            )
+            return@Scaffold
+        }
+
+        LaunchedEffect(Unit) {
+            isLoaded.value = true
+        }
+
+        val pagerState = rememberPagerState(
+            initialPage = uiState.vegeRepositoryList.lastIndex,
+            pageCount = { uiState.pagerCount }
+        )
+
+        val scope = rememberCoroutineScope()
+
+        val selectedVegeItemDetail = uiState.vegeRepositoryList.getOrNull(pagerState.currentPage)
+
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = it.calculateTopPadding()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            IconButton(
+                modifier = Modifier
+                    .align(Alignment.End)
+                    .padding(horizontal = 16.dp),
+                onClick = {
+                    onDeleteButtonClick(uiState.vegeRepositoryList[pagerState.currentPage])
+                }
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_delete),
+                    contentDescription = stringResource(id = R.string.description_delete_button_icon),
+                    tint = MaterialTheme.colorScheme.error,
+                )
+            }
             DrawLineChart(
                 currentIndex = pagerState.currentPage,
                 data = uiState.vegeRepositoryList,
@@ -142,28 +179,44 @@ private fun ManageScreen(
                 modifier = Modifier.height((LocalConfiguration.current.screenHeightDp / 6).dp)
             )
         }
-    }
 
-    if (uiState.isOpenImageBottomSheet) {
-        ImageBottomSheet(
-            pagerCount = uiState.pagerCount,
-            imageFilePathList = imagePathList,
-            onDismissRequest = {
-                scope.launch { pagerState.animateScrollToPage(it) }
-                onDismissRequest()
-            },
-            index = pagerState.currentPage
-        )
-    }
+        if (uiState.isOpenImageBottomSheet) {
+            ImageBottomSheet(
+                pagerCount = uiState.pagerCount,
+                imageFilePathList = imagePathList,
+                onDismissRequest = {
+                    scope.launch { pagerState.animateScrollToPage(it) }
+                    onDismissRequest()
+                },
+                index = pagerState.currentPage
+            )
+        }
 
-    if (uiState.isOpenMemoEditorBottomSheet) {
-        MemoEditorDialog(
-            inputText = uiState.inputMemoText,
-            onValueChange = onMemoTextChange,
-            onCancelButtonClick = onCancelButtonClick,
-            onSaveButtonClick = { onSaveButtonClick(selectedVegeItemDetail) },
-            modifier = Modifier.fillMaxWidth()
-        )
+        if (uiState.isOpenMemoEditorBottomSheet && selectedVegeItemDetail != null) {
+            MemoEditorDialog(
+                inputText = uiState.inputMemoText,
+                onValueChange = onMemoTextChange,
+                onCancelButtonClick = onCancelButtonClick,
+                onSaveButtonClick = { onSaveButtonClick(selectedVegeItemDetail) },
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
+        if (uiState.isOpenDeleteDialog) {
+            DeleteRegisteredItemDialog(
+                onDismissDeleteDialog = onDismissDeleteDialog,
+                onDeleteDialogConfirmClick = {
+                    if (uiState.vegeRepositoryList.lastIndex == pagerState.currentPage) {
+                        scope.launch {
+                            pagerState.scrollToPage(uiState.vegeRepositoryList.lastIndex - 1)
+                            onDeleteDialogConfirmClick()
+                        }
+                    } else {
+                        onDeleteDialogConfirmClick()
+                    }
+                }
+            )
+        }
     }
 }
 
@@ -327,7 +380,10 @@ fun ManageScreenPreview(@PreviewParameter(ManageScreenPreviewParameterProvider::
             onDismissRequest = {},
             onMemoTextChange = {},
             onCancelButtonClick = {},
-            onSaveButtonClick = {}
+            onSaveButtonClick = {},
+            onDismissDeleteDialog = {},
+            onDeleteDialogConfirmClick = {},
+            onDeleteButtonClick = {}
         )
     }
 }

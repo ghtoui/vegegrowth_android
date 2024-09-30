@@ -30,8 +30,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -55,14 +53,20 @@ class TakePictureScreenViewModel @Inject constructor(
     val uiState: StateFlow<TakePictureScreenUiState> = _uiState.asStateFlow()
 
     init {
-        _uiState
-            .onEach {
-                _uiState.update {
-                    it.copy(
-                        isLoading = true
-                    )
-                }
-                val vegetableDetails = getVegetableDetailsUseCase(args)
+        updateVegetableDetails()
+        viewModelScope.launch {
+            updateRegisterSelectDate()
+        }
+    }
+
+    private fun updateVegetableDetails() {
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(
+                    isLoading = true
+                )
+            }
+            getVegetableDetailsUseCase(args).collect { vegetableDetails ->
                 _uiState.update {
                     it.copy(
                         isVisibleNavigateButton = vegetableDetails.isNotEmpty(),
@@ -71,9 +75,7 @@ class TakePictureScreenViewModel @Inject constructor(
                         vegeName = selectedVegeItem.await().name
                     )
                 }
-            }.launchIn(viewModelScope)
-        viewModelScope.launch {
-            updateRegisterSelectDate()
+            }
         }
     }
 
