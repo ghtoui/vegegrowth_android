@@ -5,10 +5,7 @@ import com.moritoui.vegegrowthapp.data.room.model.VegetableDetailEntity
 import java.io.IOException
 import javax.inject.Inject
 
-class DeleteVegeItemDetailUseCase @Inject constructor(
-    private val vegetableDetailDao: VegetableDetailDao,
-    private val deleteImageUseCase: DeleteImageUseCase,
-) {
+class DeleteVegeItemDetailUseCase @Inject constructor(private val vegetableDetailDao: VegetableDetailDao, private val deleteImageUseCase: DeleteImageUseCase) {
     suspend operator fun invoke(vegetableDetailEntity: VegetableDetailEntity): Result<Unit> {
         try {
             deleteImageUseCase(vegetableDetailEntity.imagePath).onSuccess {

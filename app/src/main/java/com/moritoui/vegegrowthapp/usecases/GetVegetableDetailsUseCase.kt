@@ -15,11 +15,9 @@ import javax.inject.Inject
 class GetVegetableDetailsUseCase
 @Inject
 constructor(private val vegetableDao: VegetableDao) {
-    suspend operator fun invoke(vegetableId: Int): Flow<List<VegeItemDetail>> {
-        return vegetableDao.getVegetableWithDetails(vegetableId).map { vegetableDetails ->
-            vegetableDetails?.details?.map {
-                it.toVegeItemDetail()
-            }?.sortedBy { it.date } ?: emptyList()
-        }
+    suspend operator fun invoke(vegetableId: Int): Flow<List<VegeItemDetail>> = vegetableDao.getVegetableWithDetails(vegetableId).map { vegetableDetails ->
+        vegetableDetails?.details?.map {
+            it.toVegeItemDetail()
+        }?.sortedBy { it.date } ?: emptyList()
     }
 }

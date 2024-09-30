@@ -22,7 +22,7 @@ data class HomeScreenUiState(
     val isLoading: Boolean,
     val isOpenFolderMoveBottomSheet: Boolean,
     val isOpenDrawer: Boolean,
-    val isRegisterSelectDate: Boolean
+    val isRegisterSelectDate: Boolean,
 ) {
     companion object {
         fun initialState() = HomeScreenUiState(
@@ -40,7 +40,7 @@ data class HomeScreenUiState(
             selectedFolder = null,
             isOpenFolderMoveBottomSheet = false,
             isOpenDrawer = false,
-            isRegisterSelectDate = false,
+            isRegisterSelectDate = false
         )
     }
 }

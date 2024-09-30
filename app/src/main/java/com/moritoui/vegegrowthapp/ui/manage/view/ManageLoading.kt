@@ -7,11 +7,7 @@ import com.moritoui.vegegrowthapp.ui.common.EmptyListVegeGrowthLoading
 import com.moritoui.vegegrowthapp.ui.common.VegeGrowthLoading
 
 @Composable
-fun ManageLoading(
-    isLoaded: Boolean,
-    onBackClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+fun ManageLoading(isLoaded: Boolean, onBackClick: () -> Unit, modifier: Modifier = Modifier) {
     if (isLoaded) {
         EmptyListVegeGrowthLoading(
             modifier = modifier
@@ -21,7 +17,7 @@ fun ManageLoading(
     } else {
         VegeGrowthLoading(
             modifier = modifier
-                .fillMaxSize(),
+                .fillMaxSize()
         )
     }
 }

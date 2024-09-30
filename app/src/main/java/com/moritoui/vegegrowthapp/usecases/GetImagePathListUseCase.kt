@@ -8,11 +8,9 @@ import javax.inject.Inject
 class GetImagePathListUseCase
 @Inject
 constructor(private val vegetableDao: VegetableDao) {
-    suspend operator fun invoke(vegetableId: Int): Flow<List<String>> {
-        return vegetableDao.getVegetableWithDetails(vegetableId).map { vegetableDetails ->
-            vegetableDetails?.details?.map {
-                it.imagePath
-            } ?: emptyList()
-        }
+    suspend operator fun invoke(vegetableId: Int): Flow<List<String>> = vegetableDao.getVegetableWithDetails(vegetableId).map { vegetableDetails ->
+        vegetableDetails?.details?.map {
+            it.imagePath
+        } ?: emptyList()
     }
 }

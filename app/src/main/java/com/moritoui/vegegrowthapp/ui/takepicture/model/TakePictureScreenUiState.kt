@@ -30,7 +30,7 @@ data class TakePictureScreenUiState(
             lastSavedSize = null,
             isLoading = false,
             isRegisterSelectDate = false,
-            selectRegisterDate = null,
+            selectRegisterDate = null
         )
     }
 }

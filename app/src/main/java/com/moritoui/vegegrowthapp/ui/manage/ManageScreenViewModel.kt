@@ -44,7 +44,7 @@ constructor(
                 _uiState.update {
                     it.copy(
                         pagerCount = vegetableDetails.size,
-                        vegeRepositoryList = vegetableDetails,
+                        vegeRepositoryList = vegetableDetails
                     )
                 }
             }
@@ -112,7 +112,7 @@ constructor(
         _uiState.update {
             it.copy(
                 isOpenDeleteDialog = true,
-                selectedDeleteVegeDetail = selectedVegeItemDetail,
+                selectedDeleteVegeDetail = selectedVegeItemDetail
             )
         }
     }
@@ -129,7 +129,7 @@ constructor(
         _uiState.update {
             it.copy(
                 isOpenDeleteDialog = false,
-                selectedDeleteVegeDetail = null,
+                selectedDeleteVegeDetail = null
             )
         }
     }

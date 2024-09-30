@@ -88,7 +88,7 @@ fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel(), navController: 
         closeFolderBottomSheet = viewModel::closeFolderMoveBottomSheetState,
         onFolderItemClick = viewModel::vegeItemMoveFolder,
         onManualClick = navController::navigateToManual,
-        onRegisterDateSwitch = viewModel::onRegisterDateSwitch,
+        onRegisterDateSwitch = viewModel::onRegisterDateSwitch
     )
 
     // 画面遷移で戻ったときに処理する
@@ -330,7 +330,7 @@ fun HomeScreenPreview(@PreviewParameter(HomePreviewParameterProvider::class) par
             closeFolderBottomSheet = {},
             onFolderItemClick = { _, _ -> },
             onManualClick = {},
-            onRegisterDateSwitch = {},
+            onRegisterDateSwitch = {}
         )
     }
 }

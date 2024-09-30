@@ -9,10 +9,7 @@ import androidx.compose.ui.res.stringResource
 import com.moritoui.vegegrowthapp.R
 
 @Composable
-fun DeleteRegisteredItemDialog(
-    onDismissDeleteDialog: () -> Unit,
-    onDeleteDialogConfirmClick: () -> Unit,
-) {
+fun DeleteRegisteredItemDialog(onDismissDeleteDialog: () -> Unit, onDeleteDialogConfirmClick: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismissDeleteDialog,
         dismissButton = {
@@ -24,20 +21,20 @@ fun DeleteRegisteredItemDialog(
             TextButton(onClick = onDeleteDialogConfirmClick) {
                 Text(
                     text = stringResource(id = R.string.delete_text),
-                    color = MaterialTheme.colorScheme.error,
+                    color = MaterialTheme.colorScheme.error
                 )
             }
         },
         title = {
             Text(
                 text = stringResource(id = R.string.manage_delete_item_dialog_title),
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.titleLarge
             )
         },
         text = {
             Text(
                 text = stringResource(id = R.string.manage_delete_item_dialog_sub_text),
-                style = MaterialTheme.typography.labelLarge,
+                style = MaterialTheme.typography.labelLarge
             )
         }
     )

@@ -27,13 +27,7 @@ import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DateTimeView(
-    modifier: Modifier = Modifier,
-    isRegisterSelectDate: Boolean,
-    onDateSelectClick: (Long?) -> Unit,
-    onDismiss: () -> Unit,
-    selectDateTime: String,
-) {
+fun DateTimeView(modifier: Modifier = Modifier, isRegisterSelectDate: Boolean, onDateSelectClick: (Long?) -> Unit, onDismiss: () -> Unit, selectDateTime: String) {
     val isVisibleDatePicker = rememberSaveable {
         mutableStateOf(false)
     }
@@ -51,9 +45,9 @@ fun DateTimeView(
                 readOnly = true,
                 trailingIcon = {
                     IconButton(
-                        onClick = { isVisibleDatePicker.value = !isVisibleDatePicker.value },
+                        onClick = { isVisibleDatePicker.value = !isVisibleDatePicker.value }
                     ) {
-                        Icon(painter = painterResource(id = R.drawable.ic_calendar) , contentDescription = null)
+                        Icon(painter = painterResource(id = R.drawable.ic_calendar), contentDescription = null)
                     }
                 }
             )
@@ -73,7 +67,7 @@ fun DateTimeView(
                         ) {
                             Text(text = stringResource(id = R.string.register_button))
                         }
-                    },
+                    }
                 ) {
                     DatePicker(
                         datePickerState

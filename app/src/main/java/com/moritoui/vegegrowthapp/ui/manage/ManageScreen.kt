@@ -61,10 +61,7 @@ import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 import kotlinx.coroutines.launch
 
 @Composable
-fun ManageScreen(
-    navController: NavController,
-    viewModel: ManageScreenViewModel = hiltViewModel()
-) {
+fun ManageScreen(navController: NavController, viewModel: ManageScreenViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     ManageScreen(
         uiState = uiState,
@@ -132,7 +129,6 @@ private fun ManageScreen(
 
         val selectedVegeItemDetail = uiState.vegeRepositoryList.getOrNull(pagerState.currentPage)
 
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -150,7 +146,7 @@ private fun ManageScreen(
                 Icon(
                     painter = painterResource(id = R.drawable.ic_delete),
                     contentDescription = stringResource(id = R.string.description_delete_button_icon),
-                    tint = MaterialTheme.colorScheme.error,
+                    tint = MaterialTheme.colorScheme.error
                 )
             }
             DrawLineChart(

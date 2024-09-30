@@ -26,12 +26,7 @@ import com.moritoui.vegegrowthapp.R
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 
 @Composable
-fun DrawerContents(
-    modifier: Modifier = Modifier,
-    onManualClick: () -> Unit,
-    onRegisterDateSwitch: (Boolean) -> Unit,
-    isRegisterSelectDate: Boolean,
-) {
+fun DrawerContents(modifier: Modifier = Modifier, onManualClick: () -> Unit, onRegisterDateSwitch: (Boolean) -> Unit, isRegisterSelectDate: Boolean) {
     ModalDrawerSheet {
         Row(
             verticalAlignment = Alignment.CenterVertically
@@ -84,7 +79,7 @@ private fun DrawerContentsPreview() {
                 modifier = Modifier,
                 onManualClick = {},
                 onRegisterDateSwitch = {},
-                isRegisterSelectDate = false,
+                isRegisterSelectDate = false
             )
         }
     }

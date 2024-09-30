@@ -121,7 +121,7 @@ class TakePictureScreenViewModel @Inject constructor(
                 isOpenDialog = false,
                 inputText = "",
                 isBeforeInputText = true,
-                selectRegisterDate = null,
+                selectRegisterDate = null
             )
         }
     }

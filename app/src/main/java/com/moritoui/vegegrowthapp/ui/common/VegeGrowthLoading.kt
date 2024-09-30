@@ -42,10 +42,7 @@ fun VegeGrowthLoading(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun EmptyListVegeGrowthLoading(
-    onBackClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun EmptyListVegeGrowthLoading(onBackClick: () -> Unit, modifier: Modifier = Modifier) {
     val composition by rememberLottieComposition(
         LottieCompositionSpec.RawRes(R.raw.vegetable_loading)
     )

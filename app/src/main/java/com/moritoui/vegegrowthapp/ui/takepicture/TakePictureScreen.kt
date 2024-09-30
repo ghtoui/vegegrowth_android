@@ -121,10 +121,10 @@ private fun TakePictureScreen(
                 isTakenPicture = uiState.takePicImage == null,
                 onClick = goToCameraButtonClick
             )
-                RegisterButton(
-                    onClick = onRegisterButtonClick,
-                    isTookPicture = uiState.takePicImage != null,
-                )
+            RegisterButton(
+                onClick = onRegisterButtonClick,
+                isTookPicture = uiState.takePicImage != null
+            )
         }
     }
 
@@ -145,8 +145,8 @@ private fun TakePictureScreen(
         onValueChange = onSizeTextChange,
         onConfirmClick = onConfirmClick,
         onDismissClick = onDismissClick,
-        onDateSelectClick =  onDateSelectClick,
-        selectDateTime = uiState.selectRegisterDate?.toDateFormat() ?: "",
+        onDateSelectClick = onDateSelectClick,
+        selectDateTime = uiState.selectRegisterDate?.toDateFormat() ?: ""
     )
 }
 
@@ -191,10 +191,7 @@ fun TakeButton(isTakenPicture: Boolean, onClick: () -> Unit) {
 }
 
 @Composable
-fun RegisterButton(
-    onClick: () -> Unit,
-    isTookPicture: Boolean,
-) {
+fun RegisterButton(onClick: () -> Unit, isTookPicture: Boolean) {
     Button(
         onClick = { onClick() }
     ) {
@@ -237,7 +234,7 @@ fun RegisterAlertWindow(
                         isRegisterSelectDate = isRegisterSelectDate,
                         onDateSelectClick = onDateSelectClick,
                         onDismiss = {},
-                        selectDateTime = selectDateTime,
+                        selectDateTime = selectDateTime
                     )
                     if (lastSavedSize != null) {
                         Text(
@@ -329,7 +326,7 @@ fun TakePicPreview(@PreviewParameter(TakePictureScreenPreviewParameterProvider::
             onNavigationIconClick = {},
             goToCameraButtonClick = {},
             onGoToManageClick = {},
-            onDateSelectClick = {},
+            onDateSelectClick = {}
         )
     }
 }

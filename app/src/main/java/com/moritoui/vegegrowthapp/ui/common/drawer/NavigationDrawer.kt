@@ -28,7 +28,7 @@ fun VegeGrowthNavigationDrawer(
                 modifier = Modifier,
                 onManualClick = onManualClick,
                 onRegisterDateSwitch = onRegisterDateSwitch,
-                isRegisterSelectDate = isRegisterSelectDate,
+                isRegisterSelectDate = isRegisterSelectDate
             )
         },
         scrimColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -47,7 +47,7 @@ private fun VegeGrowthNavigationDrawerPreview() {
                 onManualClick = {},
                 onRegisterDateSwitch = {},
                 false,
-                content = {},
+                content = {}
             )
         }
     }

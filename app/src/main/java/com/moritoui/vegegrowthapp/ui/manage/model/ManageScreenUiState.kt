@@ -19,7 +19,7 @@ data class ManageScreenUiState(
             inputMemoText = "",
             isOpenMemoEditorBottomSheet = false,
             isOpenDeleteDialog = false,
-            selectedDeleteVegeDetail = null,
+            selectedDeleteVegeDetail = null
         )
     }
 }
