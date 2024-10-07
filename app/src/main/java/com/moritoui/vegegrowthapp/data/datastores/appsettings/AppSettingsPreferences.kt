@@ -9,7 +9,4 @@ import kotlinx.serialization.Serializable
  * @property isRegisterSelectDate 登録する日付を自分で指定するかどうか
  */
 @Serializable
-data class AppSettingsPreferences(
-    val isInitialStartApp: Boolean = true,
-    val isRegisterSelectDate: Boolean = false,
-)
+data class AppSettingsPreferences(val isInitialStartApp: Boolean = true, val isRegisterSelectDate: Boolean = false)
