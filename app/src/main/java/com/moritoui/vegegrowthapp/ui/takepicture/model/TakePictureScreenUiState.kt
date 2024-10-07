@@ -1,6 +1,7 @@
 package com.moritoui.vegegrowthapp.ui.takepicture.model
 
 import android.graphics.Bitmap
+import java.time.ZonedDateTime
 
 data class TakePictureScreenUiState(
     val vegeName: String,
@@ -13,6 +14,8 @@ data class TakePictureScreenUiState(
     val isCameraOpen: Boolean,
     val lastSavedSize: Double?,
     val isLoading: Boolean,
+    val isRegisterSelectDate: Boolean,
+    val selectRegisterDate: ZonedDateTime?,
 ) {
     companion object {
         fun initialState(): TakePictureScreenUiState = TakePictureScreenUiState(
@@ -25,7 +28,9 @@ data class TakePictureScreenUiState(
             isVisibleNavigateButton = false,
             isCameraOpen = false,
             lastSavedSize = null,
-            isLoading = false
+            isLoading = false,
+            isRegisterSelectDate = false,
+            selectRegisterDate = null
         )
     }
 }

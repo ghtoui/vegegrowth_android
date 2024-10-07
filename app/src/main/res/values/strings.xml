@@ -1,6 +1,25 @@
 <resources>
     <!--  共通  -->
-    <string name="app_name">vegegrowthApp</string>
+    <string name="app_name">植物成長管理アプリ</string>
+    <string name="first_number">1</string>
+    <string name="second_number">2</string>
+    <string name="third_number">3</string>
+    <string name="fourth_number">4</string>
+    <string name="back_button">戻る</string>
+
+    <!--  説明書画面  -->
+    <string name="manual_add_button">画面上部の＋から登録する植物の情報を入力します．</string>
+    <string name="manual_next_button">次へ</string>
+    <string name="manual_previous_button">戻る</string>
+    <string name="manual_finish_button">完了</string>
+    <string name="manual_tap_item">登録したアイテムをタップで選択します．</string>
+    <string name="manual_take_picture">植物を撮影して，植物の情報を登録します．</string>
+    <string name="manual_daria_name">ダリア</string>
+    <string name="manual_manage_description">登録した植物の詳細情報を見ることができます．</string>
+    <string name="manual_manage_size">大きさをグラフで確認</string>
+    <string name="manual_manage_picture">撮影した写真を確認</string>
+    <string name="manual_manage_memo">メモを登録することもできます</string>
+    <string name="manual_title">アプリの使い方</string>
 
     <!--  ホーム画面  -->
     <string name="register_button">登録</string>
@@ -19,13 +38,20 @@
     <string name="folder_move_title">フォルダーを選択してください</string>
     <string name="folder_not_classified_label">未分類</string>
 
+    <!--  ドロワー  -->
+    <string name="drawer_manual">アプリの使い方</string>
+    <string name="drawer_register_select_date_time">日付を指定して登録する</string>
+
     <!--  撮影画面  -->
     <string name="take_picture_button">撮影</string>
     <string name="picture_none_message">撮影した写真がここに表示されます</string>
     <string name="picture_description">撮影した画像</string>
     <string name="register_text_field_describe">撮影した野菜の大きさを入力してください</string>
+    <string name="not_picture_register_button">撮影せずに登録</string>
 
     <!--  管理画面  -->
+    <string name="manage_delete_item_dialog_title">選択したものを削除しますか？</string>
+    <string name="manage_delete_item_dialog_sub_text">大きさと写真とメモは削除されます\n元に戻すことはできません．</string>
 
     <!--  未分類  -->
     <string name="favorite_button">お気に入り</string>
@@ -53,7 +79,12 @@
     <string name="home_delete_dialog_description">削除したものは元に戻せません</string>
     <string name="vege_detail_save_last_date">最後の登録日</string>
 
+    <!--  エラー  -->
+    <string name="error_empty_list">データが存在しません．\n再度登録してください．</string>
+
     <!--  読み上げ用のテキスト  -->
     <string name="description_folder_add">フォルダー追加</string>
     <string name="description_item_add">追加</string>
+    <string name="description_menu_icon">メニュー</string>
+    <string name="description_delete_button_icon">選択されたアイテムを削除します</string>
 </resources>

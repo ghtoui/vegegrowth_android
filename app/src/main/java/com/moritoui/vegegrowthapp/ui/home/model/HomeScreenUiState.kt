@@ -21,6 +21,8 @@ data class HomeScreenUiState(
     val selectedFolder: VegetableFolderEntity?,
     val isLoading: Boolean,
     val isOpenFolderMoveBottomSheet: Boolean,
+    val isOpenDrawer: Boolean,
+    val isRegisterSelectDate: Boolean,
 ) {
     companion object {
         fun initialState() = HomeScreenUiState(
@@ -36,7 +38,9 @@ data class HomeScreenUiState(
             selectedItem = null,
             isLoading = false,
             selectedFolder = null,
-            isOpenFolderMoveBottomSheet = false
+            isOpenFolderMoveBottomSheet = false,
+            isOpenDrawer = false,
+            isRegisterSelectDate = false
         )
     }
 }

@@ -1,6 +1,7 @@
 package com.moritoui.vegegrowthapp.data.room.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
@@ -20,4 +21,10 @@ interface VegetableDetailDao {
     @Transaction
     @Query("SELECT * FROM vegetable_detail_resources WHERE vegetable_id = :id ORDER BY date DESC LIMIT 1")
     suspend fun getVegetableDetailsLast(id: Int): VegetableDetailEntity?
+
+    /**
+     * 削除する
+     */
+    @Delete
+    suspend fun deleteVegetableDetails(vegetableDetail: VegetableDetailEntity)
 }

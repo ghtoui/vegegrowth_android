@@ -25,14 +25,16 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.moritoui.vegegrowthapp.R
+import com.moritoui.vegegrowthapp.data.room.model.VegetableFolderEntity
 import com.moritoui.vegegrowthapp.dummies.HomeScreenDummy
 import com.moritoui.vegegrowthapp.dummies.ManageScreenDummy
 import com.moritoui.vegegrowthapp.model.FilterStatus
 import com.moritoui.vegegrowthapp.model.VegeCategory
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.navigation.HomeAddItem
-import com.moritoui.vegegrowthapp.navigation.NavigationAppTopBar
+import com.moritoui.vegegrowthapp.navigation.Screen
 import com.moritoui.vegegrowthapp.previews.DarkLightPreview
+import com.moritoui.vegegrowthapp.ui.analytics.SendScreenEvent
 import com.moritoui.vegegrowthapp.ui.common.VegeGrowthLoading
 import com.moritoui.vegegrowthapp.ui.common.bottomsheet.FolderMoveBottomSheet
 import com.moritoui.vegegrowthapp.ui.folder.model.FolderScreenUiState
@@ -42,6 +44,7 @@ import com.moritoui.vegegrowthapp.ui.home.view.AddTextCategoryDialog
 import com.moritoui.vegegrowthapp.ui.home.view.ConfirmDeleteItemDialog
 import com.moritoui.vegegrowthapp.ui.home.view.ItemListTopBar
 import com.moritoui.vegegrowthapp.ui.home.view.VegeItemListCard
+import com.moritoui.vegegrowthapp.ui.navigation.NavigationAppTopBar
 import com.moritoui.vegegrowthapp.ui.takepicture.navigateToTakePicture
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 import kotlinx.coroutines.launch
@@ -78,6 +81,8 @@ fun FolderScreen(viewModel: FolderScreenViewModel = hiltViewModel(), navControll
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         viewModel.reloadVegetables()
     }
+
+    SendScreenEvent(screen = Screen.FolderScreen)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -103,7 +108,7 @@ private fun FolderScreen(
     onDismiss: () -> Unit,
     onSelectVegeCategory: (VegeCategory) -> Unit,
     closeFolderBottomSheet: () -> Unit,
-    onFolderItemClick: (VegeItem) -> Unit,
+    onFolderItemClick: (VegeItem, VegetableFolderEntity?) -> Unit,
 ) {
     var selectMenuExpanded by rememberSaveable { mutableStateOf(false) }
     var filterMenuExpanded by rememberSaveable { mutableStateOf(false) }
@@ -119,7 +124,6 @@ private fun FolderScreen(
                         onAddClick = { openAddDialogType(AddDialogType.AddVegeItem) }
                     )
                 },
-                isVisibleBackButton = true,
                 onBackNavigationButtonClick = onBackNavigationButtonClick
             )
         }
@@ -224,8 +228,9 @@ private fun FolderScreen(
                         uuid = selectedItem.uuid,
                         status = selectedItem.status,
                         category = selectedItem.category,
-                        folderId = it
-                    )
+                        folderId = it?.id
+                    ),
+                    it
                 )
                 scope.launch { bottomSheetState.hide() }.invokeOnCompletion {
                     if (!bottomSheetState.isVisible) {
@@ -268,7 +273,7 @@ fun FolderScreenPreview(@PreviewParameter(FolderPreviewParameterProvider::class)
             onAddDialogConfirmClick = {},
             onFolderMoveIconClick = {},
             onSelectMoveFolder = {},
-            onFolderItemClick = {},
+            onFolderItemClick = { _, _ -> },
             closeFolderBottomSheet = {}
         )
     }

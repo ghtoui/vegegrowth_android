@@ -1,8 +1,17 @@
+- [野菜の成長管理androidアプリ](#野菜の成長管理androidアプリ)
+  - [開発背景](#開発背景)
+  - [こだわりポイント](#こだわりポイント)
+  - [デモ](#デモ)
+  - [UI実装](#ui実装)
+  - [使用した技術](#使用した技術)
+    - [プログラムメモ](#プログラムメモ)
+      - [CameraX](#camerax)
+      - [カルーセル](#カルーセル)
 # 野菜の成長管理androidアプリ
 
 - 育てる植物を追加して、写真とグラフで大きさを管理するアプリ
 
-<img height="300" src="https://github.com/ghtoui/vegegrowth_android/assets/92294389/8906bb75-824d-44ee-acea-c1b855dd7c26" /> </br>
+<img height="300" src="./others/feature_graphics.png" /> </br>
 <a href='https://play.google.com/store/apps/details?id=com.moritoui.vegegrowthapp'><img alt='Google Play で手に入れよう' src='https://play.google.com/intl/ja/badges/static/images/badges/ja_badge_web_generic.png' width="200"/></a>
 
 ## 開発背景
@@ -30,8 +39,6 @@ CI/CDツールであるCircleCIを取り入れることで、コードチェッ�
    3. 写真の拡大表示(モーダル表示)
    4. メモの編集
 
-https://github.com/ghtoui/vegegrowth_android/assets/92294389/1546a1f2-d84f-4ddc-8b3a-05de72ffc704
-
 ## UI実装
 
 |名前                      |説明                                                        |実装方法                                                                                                                                                                                                                                                   |プレビュー                                                                                                                                                                                                                    |
@@ -50,16 +57,19 @@ https://github.com/ghtoui/vegegrowth_android/assets/92294389/1546a1f2-d84f-4ddc-
 
 ## 使用した技術
 
-|名前           |説明          |
-|---------------|--------------|
-|MVVM           |アーキテクチャ|
-|CameraX        |写真撮影      |
-|Circle CI      |CI/CD         |
-|JetPack Compose|UIアプリ開発  |
-|ktlint         |フォーマッター|
-|ユニットテスト |Truth　　　　 |
-|Hilt           |依存性注入    |
-|Coil           |画像の読み込み|
+|名前           |説明                            |
+|---------------|--------------------------------|
+|MVVM           |アーキテクチャ                  |
+|CameraX        |写真撮影                        |
+|GitHub Actions |CI                              |
+|JetPack Compose|UIアプリ開発                    |
+|ktlint         |フォーマッター                  |
+|ユニットテスト |Truth　　　　                   |
+|Hilt           |依存性注入                      |
+|Coil           |画像の読み込み                  |
+|Room           |画像パスと登録野菜の詳細情報保存|
+|Firebase       |分析                            |
+|AdMob          |広告                            |
 
 ### プログラムメモ
 
@@ -74,4 +84,3 @@ JetPack Composeを使った実装事例が調べてもとても少なかった�
 Pagerを使って実装する。現在地を表すボトムバーは、要素(このアプリではBox)を横並びにPagerの要素数だけ連続させることで実装できる。要素にonClickableを付与することで、このアプリで実装しているような画像スクロール機能が実装できる。  
 カメラ画面はPreview(実際に撮影する画像のView)とボトムバーで構成されていて、ボトムバーは一般的なものに、キャンセルボタンにIcon、撮影ボタンにborderで丸型にしたBoxを使って実装した。  
 Coilを使って実装済み。Coilを使わなければ、保存パスから画像を読み込み、Bitmapに変換して画像を表示する処理が必要だったが、Coilで簡単に実装することができた。  
-

@@ -10,10 +10,9 @@ fun NavGraphBuilder.homeScreenRoute(navController: NavController) {
         HomeScreen(navController = navController)
     }
 }
-//
-// private fun setupHomeScreenTracking() {
-//    var params = Bundle()
-//    params.putString(FirebaseAnalytics.Param.SCREEN_NAME, destination.label as String?)
-//    params.putString(FirebaseAnalytics.Param.SCREEN_CLASS, destination.label as String?)
-//    firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, params)
-// }
+
+fun NavController.navigateToHome() {
+    navigate(Screen.HomeScreen.route) {
+        launchSingleTop = true
+    }
+}
