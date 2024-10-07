@@ -8,10 +8,8 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
-class AppSettingsPreferencesSerializer
-@Inject
-constructor() : Serializer<AppSettingsPreferences> {
-    override val defaultValue: AppSettingsPreferences = AppSettingsPreferences.initial()
+class AppSettingsPreferencesSerializer @Inject constructor() : Serializer<AppSettingsPreferences> {
+    override val defaultValue: AppSettingsPreferences = AppSettingsPreferences()
 
     override suspend fun readFrom(input: InputStream): AppSettingsPreferences {
         try {

@@ -21,6 +21,7 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.moritoui.vegegrowthapp.R
+import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 
 @Composable
 fun VegeGrowthLoading(modifier: Modifier = Modifier) {
@@ -78,5 +79,7 @@ fun EmptyListVegeGrowthLoading(onBackClick: () -> Unit, modifier: Modifier = Mod
 @PreviewLightDark
 @Composable
 private fun VegeGrowthLoadingPreview() {
-    EmptyListVegeGrowthLoading(onBackClick = {})
+    VegegrowthAppTheme {
+        EmptyListVegeGrowthLoading(onBackClick = {})
+    }
 }
