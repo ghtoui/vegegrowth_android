@@ -11,21 +11,25 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.analytics.logEvent
 import com.google.firebase.ktx.Firebase
+import com.moritoui.vegegrowthapp.core.analytics.AnalyticsEvent
+import com.moritoui.vegegrowthapp.core.analytics.AnalyticsHelper
 import com.moritoui.vegegrowthapp.model.DateFormatter
 import com.moritoui.vegegrowthapp.model.VegeItemDetail
 import com.moritoui.vegegrowthapp.repository.vegetabledetail.VegetableDetailRepository
 import com.moritoui.vegegrowthapp.ui.takepicture.model.TakePictureScreenUiState
 import com.moritoui.vegegrowthapp.usecases.GetSelectedVegeItemUseCase
 import com.moritoui.vegegrowthapp.usecases.GetVegetableDetailsUseCase
+import com.moritoui.vegegrowthapp.usecases.IsRegisterSelectDateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.Instant
 import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.util.UUID
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -36,6 +40,8 @@ class TakePictureScreenViewModel @Inject constructor(
     private val vegetableDetailRepository: VegetableDetailRepository,
     private val getVegetableDetailsUseCase: GetVegetableDetailsUseCase,
     private val getSelectedVegeItemUseCase: GetSelectedVegeItemUseCase,
+    private val isRegisterSelectDateUseCase: IsRegisterSelectDateUseCase,
+    private val analytics: AnalyticsHelper,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     val args = checkNotNull(savedStateHandle.get<Int>("vegetableId"))
@@ -47,14 +53,20 @@ class TakePictureScreenViewModel @Inject constructor(
     val uiState: StateFlow<TakePictureScreenUiState> = _uiState.asStateFlow()
 
     init {
-        _uiState
-            .onEach {
-                _uiState.update {
-                    it.copy(
-                        isLoading = true
-                    )
-                }
-                val vegetableDetails = getVegetableDetailsUseCase(args)
+        updateVegetableDetails()
+        viewModelScope.launch {
+            updateRegisterSelectDate()
+        }
+    }
+
+    private fun updateVegetableDetails() {
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(
+                    isLoading = true
+                )
+            }
+            getVegetableDetailsUseCase(args).collect { vegetableDetails ->
                 _uiState.update {
                     it.copy(
                         isVisibleNavigateButton = vegetableDetails.isNotEmpty(),
@@ -63,7 +75,8 @@ class TakePictureScreenViewModel @Inject constructor(
                         vegeName = selectedVegeItem.await().name
                     )
                 }
-            }.launchIn(viewModelScope)
+            }
+        }
     }
 
     private fun updateState(
@@ -103,18 +116,29 @@ class TakePictureScreenViewModel @Inject constructor(
     }
 
     fun closeRegisterDialog() {
-        updateState(
-            isOpenDialog = false,
-            inputText = "",
-            isBeforeInputText = true
-        )
+        _uiState.update {
+            it.copy(
+                isOpenDialog = false,
+                inputText = "",
+                isBeforeInputText = true,
+                selectRegisterDate = null
+            )
+        }
     }
 
     fun registerVegeData() {
-        val datetime = dateFormatter.dateToString(LocalDateTime.now())
-        // UIの部分で画像が撮影されていないとこのボタンを押せないため，nullでくることはないはず
-        val takePicImage = _uiState.value.takePicImage ?: return
-        val imagePath = vegetableDetailRepository.saveTookPicture(takePicImage)
+        val datetime = if (_uiState.value.selectRegisterDate != null) {
+            dateFormatter.dateToString(_uiState.value.selectRegisterDate!!)
+        } else {
+            dateFormatter.dateToString(LocalDateTime.now())
+        }
+        // nullの時は，何も保存せずに保存していないと保存する
+        val takePicImage = _uiState.value.takePicImage
+        val imagePath = if (takePicImage != null) {
+            vegetableDetailRepository.saveTookPicture(takePicImage)
+        } else {
+            "notSaved"
+        }
 
         viewModelScope.launch {
             val selectedVegeItem = selectedVegeItem.await()
@@ -132,12 +156,17 @@ class TakePictureScreenViewModel @Inject constructor(
         }
         resetState()
         firebaseEventSend()
+        _uiState.update {
+            it.copy(selectRegisterDate = null)
+        }
     }
 
     fun onTakePicture(takePicture: ImageProxy?) {
         takePicture ?: return
         val rotateTakePicture = fixRotateImage(takePic = takePicture)
         updateState(takePicImage = rotateTakePicture)
+
+        analytics.logEvent(AnalyticsEvent.Analytics.takePicture())
     }
 
     fun changeInputText(inputText: String) {
@@ -176,6 +205,42 @@ class TakePictureScreenViewModel @Inject constructor(
             it.copy(
                 isCameraOpen = !it.isCameraOpen
             )
+        }
+    }
+
+    /**
+     * 選択された登録する日付を変換する
+     *
+     * 選択されていない場合は何もしない
+     */
+    fun selectRegisterDate(registerDate: Long?) {
+        registerDate ?: return
+        val currentTime = ZonedDateTime.now()
+        val registerDate = ZonedDateTime.of(
+            Instant.ofEpochMilli(registerDate)
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate(),
+            currentTime.toLocalTime(),
+            currentTime.zone
+        )
+
+        _uiState.update {
+            it.copy(
+                selectRegisterDate = registerDate
+            )
+        }
+    }
+
+    /**
+     * 日付を登録するかを収集する
+     */
+    private suspend fun updateRegisterSelectDate() {
+        isRegisterSelectDateUseCase().collect { isRegisterSelectDate ->
+            _uiState.update {
+                it.copy(
+                    isRegisterSelectDate = isRegisterSelectDate
+                )
+            }
         }
     }
 

@@ -67,6 +67,9 @@ fun VegeItemListCard(
         onClick = { onVegeItemClick(vegetable.id) },
         elevation = CardDefaults.elevatedCardElevation(
             defaultElevation = 4.dp
+        ),
+        colors = CardDefaults.cardColors().copy(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
         )
     ) {
         Row(
@@ -81,7 +84,7 @@ fun VegeItemListCard(
                 model = vegetableDetail?.imagePath,
                 contentDescription = "最後に撮影された写真",
                 error = painterResource(id = R.drawable.no_image),
-                placeholder = painterResource(R.drawable.loading_image),
+                placeholder = painterResource(R.drawable.no_image),
                 contentScale = ContentScale.Crop
             )
             Spacer(modifier = Modifier.width(8.dp))
@@ -129,7 +132,8 @@ private fun VegetableInfo(modifier: Modifier = Modifier, vegetable: VegeItem, ve
             Spacer(modifier = Modifier.width(4.dp))
             Text(
                 vegetable.name,
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.primary
             )
         }
         if (vegetableDetail != null) {
@@ -282,7 +286,10 @@ fun VegeFolderCard(
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(24.dp),
-        onClick = { onFolderClick(vegetableFolder) }
+        onClick = { onFolderClick(vegetableFolder) },
+        colors = CardDefaults.cardColors().copy(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
+        )
     ) {
         Row(
             modifier = Modifier
@@ -293,7 +300,10 @@ fun VegeFolderCard(
         ) {
             VegetableCategoryIcon(category = vegetableFolder.vegetableCategory)
             Spacer(modifier = Modifier.width(8.dp))
-            Text(vegetableFolder.folderName)
+            Text(
+                text = vegetableFolder.folderName,
+                color = MaterialTheme.colorScheme.primary
+            )
             Spacer(modifier = Modifier.weight(1f))
             VegetableEditMenu(
                 selectMenu = selectMenu,

@@ -6,14 +6,17 @@ import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.toVegeTableEntity
 import java.io.File
 import java.nio.file.Files
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class VegetableRepositoryImpl @Inject constructor(private val vegetableDao: VegetableDao) : VegetableRepository {
     override suspend fun deleteVegeItem(vegeItem: VegeItem) {
-        vegetableDao.getVegetableWithDetails(vegeItem.id)?.details?.map {
-            try {
-                Files.delete(File(it.imagePath).toPath())
-            } catch (_: Exception) { }
+        vegetableDao.getVegetableWithDetails(vegeItem.id).map { vegetableDetails ->
+            vegetableDetails?.details?.map {
+                try {
+                    Files.delete(File(it.imagePath).toPath())
+                } catch (_: Exception) { }
+            }
         }
         vegetableDao.deleteVegetable(vegeItem.toVegeTableEntity())
     }

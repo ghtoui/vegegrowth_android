@@ -1,6 +1,9 @@
 package com.moritoui.vegegrowthapp.di
 
 import android.content.Context
+import com.google.firebase.Firebase
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.analytics
 import com.moritoui.vegegrowthapp.data.room.dao.VegetableDao
 import com.moritoui.vegegrowthapp.model.DateFormatter
 import com.moritoui.vegegrowthapp.model.FileManager
@@ -34,4 +37,8 @@ object Modules {
 
     @Provides
     fun provideVegeDetailRepository(fileManger: VegetableRepositoryFileManager): VegeItemDetailRepository = VegeItemDetailRepositoryImpl(fileManger)
+
+    @Provides
+    @Singleton
+    fun provideFirebaseAnalytics(): FirebaseAnalytics = Firebase.analytics
 }
