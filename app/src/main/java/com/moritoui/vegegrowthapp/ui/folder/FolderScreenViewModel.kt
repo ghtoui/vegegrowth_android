@@ -331,7 +331,7 @@ class FolderScreenViewModel @Inject constructor(
                             true
                         } else {
                             it.status == filterStatusMap[filterStatus] ||
-                                    it.category == filterStatusMap[filterStatus]
+                                it.category == filterStatusMap[filterStatus]
                         }
                     }
                 }
@@ -346,9 +346,11 @@ class FolderScreenViewModel @Inject constructor(
     private fun reloadVegetableDetailLast() {
         viewModelScope.launch {
             _vegetables.flatMapLatest { vegetables ->
-                combine(vegetables.map { vegetable ->
-                    getVegeItemDetailLastUseCase(vegetable.id)
-                }) {
+                combine(
+                    vegetables.map { vegetable ->
+                        getVegeItemDetailLastUseCase(vegetable.id)
+                    }
+                ) {
                     it.toList()
                 }
             }.collect {
