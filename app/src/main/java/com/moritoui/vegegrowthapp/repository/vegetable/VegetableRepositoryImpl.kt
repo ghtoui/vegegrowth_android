@@ -6,6 +6,7 @@ import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.toVegeTableEntity
 import java.io.File
 import java.nio.file.Files
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -33,7 +34,7 @@ class VegetableRepositoryImpl @Inject constructor(private val vegetableDao: Vege
         it.toVegeItem()
     }
 
-    override suspend fun getVegetablesFromFolderId(folderId: Int?): List<VegeItem> = vegetableDao.getVegetableFromFolderId(folderId).map {
-        it.toVegeItem()
+    override fun getVegetablesFromFolderId(folderId: Int?): Flow<List<VegeItem>> = vegetableDao.getVegetableFromFolderId(folderId).map { vegetables ->
+        vegetables.map { it.toVegeItem() }
     }
 }

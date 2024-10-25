@@ -51,5 +51,5 @@ interface VegetableDao {
      */
     @Transaction
     @Query("SELECT * FROM vegetable_resources WHERE folder_id IS :folderId")
-    suspend fun getVegetableFromFolderId(folderId: Int?): List<VegetableEntity>
+    fun getVegetableFromFolderId(folderId: Int?): Flow<List<VegetableEntity>>
 }

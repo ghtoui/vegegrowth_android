@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.moritoui.vegegrowthapp.data.room.model.VegetableFolderEntity
+import kotlinx.coroutines.flow.Flow
 
 /**
  * [VegetableFolderEntity]に関するDao
@@ -30,7 +31,7 @@ interface VegetableFolderDao {
      * 保存されているフォルダーを取得する
      */
     @Query("SELECT * FROM vegetable_folder_resources")
-    suspend fun getVegetableFolder(): List<VegetableFolderEntity>
+    fun getVegetableFolder(): Flow<List<VegetableFolderEntity>>
 
     /**
      * 選択したものを削除する
