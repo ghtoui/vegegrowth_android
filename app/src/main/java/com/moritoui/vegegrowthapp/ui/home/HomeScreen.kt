@@ -88,7 +88,6 @@ fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel(), navController: 
         onManualClick = navController::navigateToManual,
         onRegisterDateSwitch = viewModel::onRegisterDateSwitch
     )
-
     SendScreenEvent(screen = Screen.HomeScreen)
 }
 

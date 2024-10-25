@@ -38,8 +38,10 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -60,7 +62,7 @@ class HomeScreenViewModel @Inject constructor(
     private val changeRegisterSelectDateUseCase: ChangeRegisterSelectDateUseCase,
     private val analytics: AnalyticsHelper,
 ) : ViewModel() {
-    // ホーム画面では未分類のフォルダーIDnullのみを表示する
+    // ホーム画面では未分類のフォルダー(ID: null)のみを表示する
     private val folderId = null
 
     private val _uiState = MutableStateFlow(HomeScreenUiState.initialState())
@@ -100,7 +102,9 @@ class HomeScreenViewModel @Inject constructor(
             updateRegisterSelectDate()
         }
         reloadVegetableDetailLast()
+
         observeVegetables()
+        observeFolders()
     }
 
     fun closeDialog() {
@@ -378,11 +382,13 @@ class HomeScreenViewModel @Inject constructor(
      */
     private fun observeVegetables() {
         viewModelScope.launch {
-            val filterStatus = _uiState.value.filterStatus
-            // フォルダーの変更を反映させる
-            getVegeItemFromFolderIdUseCase(folderId).collect { item ->
+            // アイテムの変更を監視
+            combine(
+                _uiState.map { it.filterStatus },
+                getVegeItemFromFolderIdUseCase(folderId)
+            ) { filterStatus, vegetables ->
                 _vegetables.update {
-                    item.filter {
+                    vegetables.filter {
                         if (filterStatus == FilterStatus.All) {
                             true
                         } else {
@@ -391,10 +397,20 @@ class HomeScreenViewModel @Inject constructor(
                         }
                     }
                 }
-            }
+            }.collect()
+        }
+    }
 
-            _vegetableFolders.update {
-                getVegetableFolderUseCase()
+    /**
+     * フォルダーの変更を監視
+     */
+    private fun observeFolders() {
+        viewModelScope.launch {
+            // フォルダーの変更を監視
+            getVegetableFolderUseCase().collect { folders ->
+                _vegetableFolders.update {
+                    folders
+                }
             }
         }
     }

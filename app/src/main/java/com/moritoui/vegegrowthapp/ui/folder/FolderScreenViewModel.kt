@@ -23,7 +23,6 @@ import com.moritoui.vegegrowthapp.usecases.DeleteVegeItemUseCase
 import com.moritoui.vegegrowthapp.usecases.GetSelectedVegeFolderUseCase
 import com.moritoui.vegegrowthapp.usecases.GetVegeItemDetailLastUseCase
 import com.moritoui.vegegrowthapp.usecases.GetVegeItemFromFolderIdUseCase
-import com.moritoui.vegegrowthapp.usecases.GetVegetableFolderUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.UUID
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -31,9 +30,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -49,7 +50,6 @@ class FolderScreenViewModel @Inject constructor(
     private val addVegeItemUseCase: AddVegeItemUseCase,
     private val changeVegeItemStatusUseCase: ChangeVegeItemStatusUseCase,
     private val getSelectedVegeFolderUseCase: GetSelectedVegeFolderUseCase,
-    private val getVegetableFolderUseCase: GetVegetableFolderUseCase,
     private val analytics: AnalyticsHelper,
 ) : ViewModel() {
     private val args = checkNotNull(savedStateHandle.get<Int>("folderId"))
@@ -320,11 +320,13 @@ class FolderScreenViewModel @Inject constructor(
      */
     private fun observeVegetables() {
         viewModelScope.launch {
-            val filterStatus = _uiState.value.filterStatus
-            // フォルダーの変更を反映させる
-            getVegetableFromFolderIdUseCase(args).collect { item ->
+            // アイテムの変更を監視
+            combine(
+                _uiState.map { it.filterStatus },
+                getVegetableFromFolderIdUseCase(args)
+            ) { filterStatus, vegetables ->
                 _vegetables.update {
-                    item.filter {
+                    vegetables.filter {
                         if (filterStatus == FilterStatus.All) {
                             true
                         } else {
@@ -333,11 +335,7 @@ class FolderScreenViewModel @Inject constructor(
                         }
                     }
                 }
-            }
-
-            _vegetableFolders.update {
-                getVegetableFolderUseCase()
-            }
+            }.collect()
         }
     }
 
