@@ -86,6 +86,7 @@ class FolderScreenViewModel @Inject constructor(
         }
         monitorUiState()
         reloadVegetableDetailLast()
+        observeVegetables()
     }
 
     fun closeDialog() {
@@ -154,7 +155,6 @@ class FolderScreenViewModel @Inject constructor(
                     )
                 viewModelScope.launch {
                     addVegeItemUseCase(vegeItem)
-                    reloadVegetables()
                     closeDialog()
                 }
 
@@ -318,20 +318,21 @@ class FolderScreenViewModel @Inject constructor(
     /**
      * 登録されている野菜のリストを更新する
      */
-    fun reloadVegetables() {
+    private fun observeVegetables() {
         viewModelScope.launch {
             val filterStatus = _uiState.value.filterStatus
-            val filteredVegetables = getVegetableFromFolderIdUseCase(args).filter { item ->
-                if (filterStatus == FilterStatus.All) {
-                    true
-                } else {
-                    item.status == filterStatusMap[filterStatus] ||
-                        item.category == filterStatusMap[filterStatus]
+            // フォルダーの変更を反映させる
+            getVegetableFromFolderIdUseCase(args).collect { item ->
+                _vegetables.update {
+                    item.filter {
+                        if (filterStatus == FilterStatus.All) {
+                            true
+                        } else {
+                            it.status == filterStatusMap[filterStatus] ||
+                                    it.category == filterStatusMap[filterStatus]
+                        }
+                    }
                 }
-            }
-
-            _vegetables.update {
-                filteredVegetables
             }
 
             _vegetableFolders.update {
@@ -366,7 +367,6 @@ class FolderScreenViewModel @Inject constructor(
             _uiState.update {
                 it.copy(isLoading = true)
             }
-            reloadVegetables()
             _uiState.update {
                 it.copy(isLoading = false)
             }
@@ -391,7 +391,6 @@ class FolderScreenViewModel @Inject constructor(
                     old
                 }
             }
-            reloadVegetables()
         }
     }
 

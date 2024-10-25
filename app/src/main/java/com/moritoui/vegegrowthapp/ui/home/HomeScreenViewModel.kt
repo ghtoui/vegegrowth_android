@@ -40,8 +40,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -101,8 +99,8 @@ class HomeScreenViewModel @Inject constructor(
             dataMigrationRepository.dataMigration()
             updateRegisterSelectDate()
         }
-        monitorUiState()
         reloadVegetableDetailLast()
+        observeVegetables()
     }
 
     fun closeDialog() {
@@ -168,7 +166,6 @@ class HomeScreenViewModel @Inject constructor(
                     )
                 viewModelScope.launch {
                     addVegeItemUseCase(vegeItem)
-                    reloadVegetables()
                     closeDialog()
                 }
                 analytics.logEvent(
@@ -188,7 +185,6 @@ class HomeScreenViewModel @Inject constructor(
                 viewModelScope.launch {
                     insertVegetableFolderUseCase(vegeFolder)
                         .onSuccess {
-                            reloadVegetables()
                             closeDialog()
                         }.onFailure {
                             _insertVegetableFolderEvent.emit(true)
@@ -380,20 +376,21 @@ class HomeScreenViewModel @Inject constructor(
     /**
      * 登録されている野菜のリストを更新する
      */
-    fun reloadVegetables() {
+    private fun observeVegetables() {
         viewModelScope.launch {
             val filterStatus = _uiState.value.filterStatus
-            val filteredVegetables = getVegeItemFromFolderIdUseCase(folderId).filter { item ->
-                if (filterStatus == FilterStatus.All) {
-                    true
-                } else {
-                    item.status == filterStatusMap[filterStatus] ||
-                        item.category == filterStatusMap[filterStatus]
+            // フォルダーの変更を反映させる
+            getVegeItemFromFolderIdUseCase(folderId).collect { item ->
+                _vegetables.update {
+                    item.filter {
+                        if (filterStatus == FilterStatus.All) {
+                            true
+                        } else {
+                            it.status == filterStatusMap[filterStatus] ||
+                                    it.category == filterStatusMap[filterStatus]
+                        }
+                    }
                 }
-            }
-
-            _vegetables.update {
-                filteredVegetables
             }
 
             _vegetableFolders.update {
@@ -443,21 +440,6 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     /**
-     * uiStateの変更を監視する
-     */
-    private fun monitorUiState() {
-        _uiState.onEach {
-            _uiState.update {
-                it.copy(isLoading = true)
-            }
-            reloadVegetables()
-            _uiState.update {
-                it.copy(isLoading = false)
-            }
-        }.launchIn(viewModelScope)
-    }
-
-    /**
      * 登録されている野菜の情報を更新する
      */
     private fun changeVegeItem(vegeItem: VegeItem) {
@@ -470,7 +452,6 @@ class HomeScreenViewModel @Inject constructor(
                     old
                 }
             }
-            reloadVegetables()
         }
     }
 
