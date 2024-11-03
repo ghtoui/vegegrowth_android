@@ -3,11 +3,11 @@ package com.moritoui.vegegrowthapp.model
 import androidx.compose.ui.graphics.Color
 import com.moritoui.vegegrowthapp.R
 
-enum class VegeCategory {
-    None,
-    Leaf,
-    Flower,
-    Other,
+enum class VegeCategory(val value: Int) {
+    None(value = 0),
+    Leaf(value = 1),
+    Flower(value = 2),
+    Other(value = 3),
 }
 
 fun VegeCategory.getIconId(): Int? = when (this) {
