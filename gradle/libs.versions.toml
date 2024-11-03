@@ -4,6 +4,8 @@ androidGradlePlugin = "7.4.2"
 kotlin = "1.8.10"
 androidLibrary = "8.1.4"
 kotlinSerialization = "1.6.21"
+ksp = "1.8.10-1.0.9"
+
 hiltAndroid = "2.51.1"
 googleServices = "4.4.2"
 compose = "2024.10.01"
@@ -26,7 +28,6 @@ datastorePreferences = "1.1.1"
 firebaseBom = "33.1.0"
 hiltNavigationCompose = "1.2.0"
 hilt = "2.51.1"
-ksp = "1.8.10-1.0.9"
 
 [libraries]
 # android core
@@ -103,3 +104,6 @@ android-library = {id = "com.android.library", version.ref = "androidLibrary"}
 kotlin-serialization = {id = "org.jetbrains.kotlin.plugin.serialization", version.ref ="kotlinSerialization"}
 hilt-android = {id = "com.google.dagger.hilt.android", version.ref = "hiltAndroid"}
 google-services = {id = "com.google.gms.google-services", version.ref = "googleServices"}
+
+# ksp
+devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
