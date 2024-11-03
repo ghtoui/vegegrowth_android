@@ -2,18 +2,18 @@ import java.io.FileInputStream
 import java.util.Properties
 
 plugins {
-    kotlin("kapt")
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.google.services)
     alias(libs.plugins.devtools.ksp)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
     namespace = "com.moritoui.vegegrowthapp"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.moritoui.vegegrowthapp"
@@ -64,9 +64,6 @@ android {
         compose = true
         buildConfig = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
-    }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -74,16 +71,11 @@ android {
     }
 }
 
-// Allow references to generated code
-kapt {
-    correctErrorTypes = true
-
-    arguments {
-        /**
-         * schema定義を出力しておくと、AutoMigrationできるようになる
-         */
-        arg("room.schemaLocation", "$projectDir/schemas")
-    }
+ksp {
+    /**
+     * schema定義を出力しておくと、AutoMigrationできるようになる
+     */
+    arg("room.schemaLocation", "$projectDir/schemas")
 }
 
 val ktlint by configurations.creating
@@ -151,12 +143,12 @@ dependencies {
     implementation(libs.accompanist.permissions)
     implementation(libs.truth)
     implementation(libs.hilt.android)
-    kapt(libs.hilt.android.compiler)
+    ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.coil)
     implementation(libs.coil.compose)
     implementation(libs.androidx.room.runtime)
-    kapt(libs.androidx.room.compiler)
+    ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.lottie.compose)
