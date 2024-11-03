@@ -3,6 +3,7 @@ package com.moritoui.vegegrowthapp.data.network.model
 import com.google.gson.annotations.SerializedName
 import com.moritoui.vegegrowthapp.model.VegeCategory
 import com.moritoui.vegegrowthapp.model.VegeItem
+import com.moritoui.vegegrowthapp.model.VegeItemData
 import com.moritoui.vegegrowthapp.model.VegeStatus
 import java.util.UUID
 import kotlinx.serialization.Serializable
@@ -14,7 +15,12 @@ data class VegeItemData(
     val page: Int,
     val limit: Int,
     val total: Int,
-)
+) {
+    fun toDomain(): VegeItemData = VegeItemData(
+        datas = datas.map {it.toDomain()},
+        page = page,
+    )
+}
 
 /**
  * API から取得する野菜の情報

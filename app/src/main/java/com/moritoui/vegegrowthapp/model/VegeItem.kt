@@ -3,6 +3,11 @@ package com.moritoui.vegegrowthapp.model
 import com.moritoui.vegegrowthapp.data.room.model.VegetableEntity
 import kotlinx.serialization.Serializable
 
+data class VegeItemData (
+    val datas: List<VegeItem>,
+    val page: Int,
+)
+
 @Serializable
 data class VegeItem(
     val id: Int = 0,
