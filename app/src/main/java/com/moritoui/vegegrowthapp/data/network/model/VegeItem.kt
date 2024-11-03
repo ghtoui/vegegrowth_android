@@ -1,10 +1,20 @@
 package com.moritoui.vegegrowthapp.data.network.model
 
+import com.google.gson.annotations.SerializedName
 import com.moritoui.vegegrowthapp.model.VegeCategory
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegeStatus
 import java.util.UUID
 import kotlinx.serialization.Serializable
+
+@Serializable
+data class VegeItemData(
+    @SerializedName("data")
+    val datas: List<com.moritoui.vegegrowthapp.data.network.model.VegeItem>,
+    val page: Int,
+    val limit: Int,
+    val total: Int,
+)
 
 /**
  * API から取得する野菜の情報

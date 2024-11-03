@@ -7,7 +7,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import java.util.concurrent.TimeUnit
-import kotlinx.serialization.ExperimentalSerializationApi
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -32,7 +31,6 @@ object ApiModule {
     @Provides
     fun provideGson(): Gson = GsonBuilder().create()
 
-    @OptIn(ExperimentalSerializationApi::class)
     @Singleton
     @Provides
     fun provideRetrofit(
@@ -40,7 +38,7 @@ object ApiModule {
         gson: Gson,
     ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://localhost:8000")
+            .baseUrl("http://10.0.2.2:8000")
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
