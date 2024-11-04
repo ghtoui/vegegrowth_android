@@ -6,9 +6,7 @@ import androidx.navigation.compose.composable
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ManageScreenRoute(
-    val vegetableId: Int
-) {
+data class ManageScreenRoute(val vegetableId: Int) {
     companion object {
         const val SCREEN = "manageScreen"
     }

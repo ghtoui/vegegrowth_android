@@ -6,9 +6,7 @@ import androidx.navigation.compose.composable
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class FolderScreenRoute(
-    val folderId: Int
-) {
+data class FolderScreenRoute(val folderId: Int) {
     companion object {
         const val SCREEN = "folderScreen"
     }
