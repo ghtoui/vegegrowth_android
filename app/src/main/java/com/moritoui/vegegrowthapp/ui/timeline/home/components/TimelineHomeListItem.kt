@@ -1,4 +1,4 @@
-package com.moritoui.vegegrowthapp.ui.community.home.components
+package com.moritoui.vegegrowthapp.ui.timeline.home.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -28,7 +28,7 @@ import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 import java.util.UUID
 
 @Composable
-fun TimelineListItem(
+fun TimelineHomeListItem(
     vegeItem: VegeItem,
     modifier: Modifier = Modifier
 ) {
@@ -68,10 +68,10 @@ fun TimelineListItem(
 
 @Preview
 @Composable
-private fun TimelineListItemPreview() {
+private fun TimelineHomeListItemPreview() {
     VegegrowthAppTheme {
         Surface {
-            TimelineListItem(
+            TimelineHomeListItem(
                 vegeItem = VegeItem(
                     id = 0,
                     name = "test",

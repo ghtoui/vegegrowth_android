@@ -1,4 +1,4 @@
-package com.moritoui.vegegrowthapp.ui.community.home
+package com.moritoui.vegegrowthapp.ui.timeline.home
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,9 +27,9 @@ import androidx.navigation.NavController
 import com.moritoui.vegegrowthapp.navigation.BaseLayout
 import com.moritoui.vegegrowthapp.navigation.NavigationBarItems
 import com.moritoui.vegegrowthapp.navigation.VegeGrowthBottomNavigationBar
-import com.moritoui.vegegrowthapp.ui.community.home.components.TimelineListItem
-import com.moritoui.vegegrowthapp.ui.community.home.model.TimelineState
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
+import com.moritoui.vegegrowthapp.ui.timeline.home.components.TimelineHomeListItem
+import com.moritoui.vegegrowthapp.ui.timeline.home.model.TimelineHomeState
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 
@@ -37,9 +37,9 @@ import kotlinx.coroutines.flow.filter
  * 掲示板のホーム
  */
 @Composable
-fun TimelineScreen(
+fun TimelineHomeScreen(
     navController: NavController,
-    viewModel: TimelineViewModel = hiltViewModel(),
+    viewModel: TimelineHomeViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val lazyListState = rememberLazyListState()
@@ -51,7 +51,7 @@ fun TimelineScreen(
             .collect { viewModel.autoAppend() }
     }
 
-    TimelineScreen(
+    TimelineHomeScreen(
         modifier = Modifier,
         uiState = uiState,
         lazyListState = lazyListState,
@@ -62,10 +62,10 @@ fun TimelineScreen(
 }
 
 @Composable
-private fun TimelineScreen(
+private fun TimelineHomeScreen(
     modifier: Modifier = Modifier,
     lazyListState: LazyListState,
-    uiState: TimelineState,
+    uiState: TimelineHomeState,
     currentSelectItem: NavigationBarItems,
     onClickHome: () -> Unit,
     onClickTimeline: () -> Unit,
@@ -87,7 +87,7 @@ private fun TimelineScreen(
         ) {
             items(uiState.datas, key = {it.id}) {
                 Column {
-                    TimelineListItem(vegeItem = it)
+                    TimelineHomeListItem(vegeItem = it)
                     Spacer(modifier = Modifier.height(8.dp))
                 }
             }
@@ -111,15 +111,15 @@ private fun TimelineScreen(
 
 @Preview
 @Composable
-private fun TimelineScreenPreview() {
+private fun TimelineHomeScreenPreview() {
     VegegrowthAppTheme {
         Surface {
-            TimelineScreen(
+            TimelineHomeScreen(
                 onClickHome = {},
                 onClickTimeline = {},
                 lazyListState = rememberLazyListState(),
                 currentSelectItem = NavigationBarItems.Timeline,
-                uiState = TimelineState.initial()
+                uiState = TimelineHomeState.initial()
             )
         }
     }

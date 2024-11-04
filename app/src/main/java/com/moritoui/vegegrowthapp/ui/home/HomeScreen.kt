@@ -42,7 +42,6 @@ import com.moritoui.vegegrowthapp.ui.analytics.SendScreenEvent
 import com.moritoui.vegegrowthapp.ui.common.VegeGrowthLoading
 import com.moritoui.vegegrowthapp.ui.common.bottomsheet.FolderMoveBottomSheet
 import com.moritoui.vegegrowthapp.ui.common.drawer.VegeGrowthNavigationDrawer
-import com.moritoui.vegegrowthapp.ui.community.home.navigateToTimeline
 import com.moritoui.vegegrowthapp.ui.folder.navigateToFolder
 import com.moritoui.vegegrowthapp.ui.home.model.AddDialogType
 import com.moritoui.vegegrowthapp.ui.home.model.HomeScreenUiState
@@ -55,6 +54,7 @@ import com.moritoui.vegegrowthapp.ui.manual.navigateToManual
 import com.moritoui.vegegrowthapp.ui.navigation.NavigationAppTopBar
 import com.moritoui.vegegrowthapp.ui.takepicture.navigateToTakePicture
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
+import com.moritoui.vegegrowthapp.ui.timeline.home.navigateToTimelineHome
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
@@ -89,7 +89,7 @@ fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel(), navController: 
         onFolderItemClick = viewModel::vegeItemMoveFolder,
         onManualClick = navController::navigateToManual,
         onRegisterDateSwitch = viewModel::onRegisterDateSwitch,
-        onClickTimeline = navController::navigateToTimeline,
+        onClickTimeline = navController::navigateToTimelineHome,
         currentSelectItem = NavigationBarItems.Home
     )
     SendScreenEvent(screen = HomeScreenRoute.SCREEN)

@@ -1,11 +1,11 @@
-package com.moritoui.vegegrowthapp.ui.community.home
+package com.moritoui.vegegrowthapp.ui.timeline.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.moritoui.vegegrowthapp.data.network.VegetableApi
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegeItemData
-import com.moritoui.vegegrowthapp.ui.community.home.model.TimelineState
+import com.moritoui.vegegrowthapp.ui.timeline.home.model.TimelineHomeState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class TimelineViewModel @Inject constructor(
+class TimelineHomeViewModel @Inject constructor(
     private val vegetableApi: VegetableApi,
 ) : ViewModel() {
     private val vegeItemData: MutableStateFlow<VegeItemData?> = MutableStateFlow<VegeItemData?>(null).apply {
@@ -29,18 +29,18 @@ class TimelineViewModel @Inject constructor(
 
     private val isAutoAppendLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
-    val uiState: StateFlow<TimelineState> = combine(
+    val uiState: StateFlow<TimelineHomeState> = combine(
         vegeItemData,
         isAutoAppendLoading,
     ) { vegeItemData, isAutoAppendLoading ->
-        TimelineState(
+        TimelineHomeState(
             datas = vegeItemData?.datas ?: emptyList(),
             isAutoAppendLoading = isAutoAppendLoading,
         )
     }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = TimelineState.initial()
+            initialValue = TimelineHomeState.initial()
         )
 
     fun getList() {

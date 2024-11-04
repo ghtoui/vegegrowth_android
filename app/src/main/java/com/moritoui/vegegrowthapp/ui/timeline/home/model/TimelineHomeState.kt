@@ -1,13 +1,13 @@
-package com.moritoui.vegegrowthapp.ui.community.home.model
+package com.moritoui.vegegrowthapp.ui.timeline.home.model
 
 import com.moritoui.vegegrowthapp.model.VegeItem
 
-data class TimelineState(
+data class TimelineHomeState(
     val datas: List<VegeItem>,
     val isAutoAppendLoading: Boolean,
 ) {
     companion object {
-        fun initial(): TimelineState = TimelineState(
+        fun initial(): TimelineHomeState = TimelineHomeState(
             datas = emptyList(),
             isAutoAppendLoading = false,
         )
