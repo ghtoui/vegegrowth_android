@@ -8,7 +8,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.moritoui.vegegrowthapp.navigation.Screen
 import com.moritoui.vegegrowthapp.ui.analytics.SendScreenEvent
 import com.moritoui.vegegrowthapp.ui.home.navigateToHome
 import com.moritoui.vegegrowthapp.ui.manual.view.ManualContent
@@ -36,7 +35,7 @@ private fun InitialManualScreen(modifier: Modifier = Modifier, navigateToHome: (
         }
     )
 
-    SendScreenEvent(screen = Screen.InitialManualScreen)
+    SendScreenEvent(screen = InitialManualScreenRoute.SCREEN)
 }
 
 @Preview

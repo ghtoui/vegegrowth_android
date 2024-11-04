@@ -2,22 +2,26 @@ package com.moritoui.vegegrowthapp.ui.folder
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
-import com.moritoui.vegegrowthapp.navigation.Screen
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class FolderScreenRoute(
+    val folderId: Int
+) {
+    companion object {
+        const val SCREEN = "folderScreen"
+    }
+}
 
 fun NavGraphBuilder.folderScreenRoute(navController: NavController) {
-    composable(
-        "${Screen.FolderScreen.route}/{folderId}",
-        arguments = listOf(navArgument("folderId") { type = NavType.IntType })
-    ) {
+    composable<FolderScreenRoute> {
         FolderScreen(navController = navController)
     }
 }
 
 fun NavController.navigateToFolder(folderId: Int) {
-    navigate("${Screen.FolderScreen.route}/$folderId") {
+    navigate(FolderScreenRoute(folderId = folderId)) {
         launchSingleTop = true
     }
 }

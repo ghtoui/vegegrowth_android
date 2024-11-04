@@ -7,6 +7,7 @@ import androidx.camera.core.ImageProxy
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.analytics.logEvent
@@ -44,7 +45,7 @@ class TakePictureScreenViewModel @Inject constructor(
     private val analytics: AnalyticsHelper,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-    val args = checkNotNull(savedStateHandle.get<Int>("vegetableId"))
+    val args = savedStateHandle.toRoute<TakePictureScreenRoute>().vegetableId
 
     private val firebaseAnalytics = Firebase.analytics
     private val selectedVegeItem = viewModelScope.async { getSelectedVegeItemUseCase(args) }

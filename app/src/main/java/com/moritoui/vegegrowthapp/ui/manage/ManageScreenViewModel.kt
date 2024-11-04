@@ -3,6 +3,7 @@ package com.moritoui.vegegrowthapp.ui.manage
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.moritoui.vegegrowthapp.model.VegeItemDetail
 import com.moritoui.vegegrowthapp.model.toVegetableEntity
 import com.moritoui.vegegrowthapp.repository.vegetabledetail.VegetableDetailRepository
@@ -28,7 +29,7 @@ constructor(
     private val deleteVegeItemDetailUseCase: DeleteVegeItemDetailUseCase,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-    private val args = checkNotNull(savedStateHandle.get<Int>("vegetableId"))
+    private val args = savedStateHandle.toRoute<ManageScreenRoute>().vegetableId
     private var vegeItemDetailList: List<VegeItemDetail> = emptyList()
 
     private val _uiState = MutableStateFlow(ManageScreenUiState.initialState())

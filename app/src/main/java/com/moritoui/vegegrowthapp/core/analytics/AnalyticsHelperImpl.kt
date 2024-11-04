@@ -2,15 +2,14 @@ package com.moritoui.vegegrowthapp.core.analytics
 
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
-import com.moritoui.vegegrowthapp.navigation.Screen
 import timber.log.Timber
 import javax.inject.Inject
 
 class AnalyticsHelperImpl @Inject constructor(private val firebaseAnalytics: FirebaseAnalytics) : AnalyticsHelper {
-    override fun logScreen(screen: Screen) {
+    override fun logScreen(screen: String) {
         firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
-            Timber.d("screenLog: ${screen.route}")
-            param(FirebaseAnalytics.Param.SCREEN_NAME, screen.route)
+            Timber.d("screenLog: $screen")
+            param(FirebaseAnalytics.Param.SCREEN_NAME, screen)
         }
     }
 

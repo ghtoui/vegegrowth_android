@@ -3,18 +3,21 @@ package com.moritoui.vegegrowthapp.ui.initialmanual
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.moritoui.vegegrowthapp.navigation.Screen
+import kotlinx.serialization.Serializable
+
+@Serializable
+data object InitialManualScreenRoute {
+    const val SCREEN = "initialManualScreen"
+}
 
 fun NavGraphBuilder.initialManualScreenRoute(navController: NavController) {
-    composable(
-        Screen.InitialManualScreen.route
-    ) {
+    composable<InitialManualScreenRoute> {
         InitialManualScreen(navController = navController)
     }
 }
 
 fun NavController.navigateToInitialManual() {
-    navigate(Screen.InitialManualScreen.route) {
+    navigate(InitialManualScreenRoute) {
         launchSingleTop = true
     }
 }
