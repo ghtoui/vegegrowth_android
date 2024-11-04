@@ -37,10 +37,7 @@ import kotlinx.coroutines.flow.filter
  * 掲示板のホーム
  */
 @Composable
-fun TimelineHomeScreen(
-    navController: NavController,
-    viewModel: TimelineHomeViewModel = hiltViewModel(),
-) {
+fun TimelineHomeScreen(navController: NavController, viewModel: TimelineHomeViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val lazyListState = rememberLazyListState()
 
@@ -57,7 +54,7 @@ fun TimelineHomeScreen(
         lazyListState = lazyListState,
         onClickHome = {},
         onClickTimeline = {},
-        currentSelectItem = NavigationBarItems.Timeline,
+        currentSelectItem = NavigationBarItems.Timeline
     )
 }
 
@@ -83,9 +80,9 @@ private fun TimelineHomeScreen(
             modifier = modifier
                 .padding(bottom = innerPadding.calculateBottomPadding()),
             state = lazyListState,
-            contentPadding = PaddingValues(horizontal = 24.dp),
+            contentPadding = PaddingValues(horizontal = 24.dp)
         ) {
-            items(uiState.datas, key = {it.id}) {
+            items(uiState.datas, key = { it.id }) {
                 Column {
                     TimelineHomeListItem(vegeItem = it)
                     Spacer(modifier = Modifier.height(8.dp))

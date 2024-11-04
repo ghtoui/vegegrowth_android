@@ -18,9 +18,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class TimelineHomeViewModel @Inject constructor(
-    private val vegetableApi: VegetableApi,
-) : ViewModel() {
+class TimelineHomeViewModel @Inject constructor(private val vegetableApi: VegetableApi) : ViewModel() {
     private val vegeItemData: MutableStateFlow<VegeItemData?> = MutableStateFlow<VegeItemData?>(null).apply {
         viewModelScope.launch {
             value = vegetableApi.getVegetables(page = 0).body()?.toDomain()
@@ -31,26 +29,17 @@ class TimelineHomeViewModel @Inject constructor(
 
     val uiState: StateFlow<TimelineHomeState> = combine(
         vegeItemData,
-        isAutoAppendLoading,
+        isAutoAppendLoading
     ) { vegeItemData, isAutoAppendLoading ->
         TimelineHomeState(
             datas = vegeItemData?.datas ?: emptyList(),
-            isAutoAppendLoading = isAutoAppendLoading,
+            isAutoAppendLoading = isAutoAppendLoading
         )
     }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = TimelineHomeState.initial()
-        )
-
-    fun getList() {
-        viewModelScope.launch {
-            val data = vegetableApi.getVegetables(page = 0)
-            vegeItemData.update {
-                data.body()?.toDomain()
-            }
-        }
-    }
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = TimelineHomeState.initial()
+    )
 
     fun autoAppend() {
         viewModelScope.launch {
@@ -58,7 +47,7 @@ class TimelineHomeViewModel @Inject constructor(
             // TODO: ダミーのローディング
             delay(1000L)
 
-            val data = vegetableApi.getVegetables(page = vegeItemData.value?.page?.plus(1)  ?: 0)
+            val data = vegetableApi.getVegetables(page = vegeItemData.value?.page?.plus(1) ?: 0)
             val updateList: MutableList<VegeItem> = mutableListOf()
             vegeItemData.value?.datas?.map {
                 updateList.add(it)

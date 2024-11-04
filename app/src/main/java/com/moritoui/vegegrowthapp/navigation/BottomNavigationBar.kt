@@ -20,14 +20,9 @@ import androidx.compose.ui.tooling.preview.datasource.CollectionPreviewParameter
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 
 @Composable
-fun VegeGrowthBottomNavigationBar(
-    currentSelectItem: NavigationBarItems,
-    onClickHome: () -> Unit,
-    onClickTimeline: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun VegeGrowthBottomNavigationBar(currentSelectItem: NavigationBarItems, onClickHome: () -> Unit, onClickTimeline: () -> Unit, modifier: Modifier = Modifier) {
     NavigationBar(
-        modifier = modifier,
+        modifier = modifier
     ) {
         NavigationBarItems.entries.forEach {
             BottomBarItem(
@@ -38,7 +33,7 @@ fun VegeGrowthBottomNavigationBar(
                 },
                 iconResId = it.iconResId,
                 disableIconResId = it.disableIconResId,
-                labelResId = it.labelResId,
+                labelResId = it.labelResId
             )
         }
     }
@@ -51,7 +46,7 @@ private fun RowScope.BottomBarItem(
     onItemClick: () -> Unit,
     @DrawableRes iconResId: Int,
     @DrawableRes disableIconResId: Int,
-    @StringRes labelResId: Int
+    @StringRes labelResId: Int,
 ) {
     NavigationBarItem(
         modifier = modifier,
@@ -64,12 +59,12 @@ private fun RowScope.BottomBarItem(
             Icon(
                 painter = painterResource(
                     id =
-                    when(selected) {
+                    when (selected) {
                         true -> iconResId
                         false -> disableIconResId
                     }
                 ),
-                contentDescription = null,
+                contentDescription = null
             )
         },
         label = {
@@ -80,27 +75,24 @@ private fun RowScope.BottomBarItem(
 
 @Preview
 @Composable
-private fun BottomBarItemPreview(
-    @PreviewParameter(BottomBarItemPPP::class) params: BottomBarItemPPP.Parameter
-) {
+private fun BottomBarItemPreview(@PreviewParameter(BottomBarItemPPP::class) params: BottomBarItemPPP.Parameter) {
     VegegrowthAppTheme {
         Surface {
             VegeGrowthBottomNavigationBar(
                 currentSelectItem = params.currentSelectItem,
                 onClickHome = {},
-                onClickTimeline = {},
+                onClickTimeline = {}
             )
         }
     }
 }
 
-private class BottomBarItemPPP : CollectionPreviewParameterProvider<BottomBarItemPPP.Parameter>(
-    listOf(
-        Parameter(NavigationBarItems.Home),
-        Parameter(NavigationBarItems.Timeline),
-    )
-) {
-    data class Parameter(
-        val currentSelectItem: NavigationBarItems
-    )
+private class BottomBarItemPPP :
+    CollectionPreviewParameterProvider<BottomBarItemPPP.Parameter>(
+        listOf(
+            Parameter(NavigationBarItems.Home),
+            Parameter(NavigationBarItems.Timeline)
+        )
+    ) {
+    data class Parameter(val currentSelectItem: NavigationBarItems)
 }

@@ -7,7 +7,5 @@ import retrofit2.http.Query
 
 interface VegetableApi {
     @GET("/api/vegetables")
-    suspend fun getVegetables(
-        @Query("page") page: Int,
-    ): Response<VegeItemData>
+    suspend fun getVegetables(@Query("page") page: Int): Response<VegeItemData>
 }

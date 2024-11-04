@@ -152,7 +152,7 @@ private fun HomeScreen(
                     VegeGrowthBottomNavigationBar(
                         currentSelectItem = currentSelectItem,
                         onClickHome = {},
-                        onClickTimeline = onClickTimeline,
+                        onClickTimeline = onClickTimeline
                     )
                 },
                 topBar = {
@@ -339,7 +339,7 @@ fun HomeScreenPreview(@PreviewParameter(HomePreviewParameterProvider::class) par
             onManualClick = {},
             onRegisterDateSwitch = {},
             onClickTimeline = {},
-            currentSelectItem = NavigationBarItems.Home,
+            currentSelectItem = NavigationBarItems.Home
         )
     }
 }
