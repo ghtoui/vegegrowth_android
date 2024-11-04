@@ -30,6 +30,7 @@ import androidx.navigation.NavController
 import com.moritoui.vegegrowthapp.ui.community.home.components.CommunityListItem
 import com.moritoui.vegegrowthapp.ui.community.home.model.CommunityHomeState
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 
 /**
  * 掲示板のホーム
@@ -45,6 +46,7 @@ fun CommunityHomeScreen(
     LaunchedEffect(lazyListState) {
         snapshotFlow { lazyListState.canScrollForward }
             .distinctUntilChanged()
+            .filter { it }
             .collect { viewModel.autoAppend() }
     }
 

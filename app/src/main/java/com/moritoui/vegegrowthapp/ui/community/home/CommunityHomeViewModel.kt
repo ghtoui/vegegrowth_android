@@ -55,7 +55,9 @@ class CommunityHomeViewModel @Inject constructor(
     fun autoAppend() {
         viewModelScope.launch {
             isAutoAppendLoading.value = true
+            // TODO: ダミーのローディング
             delay(1000L)
+
             val data = vegetableApi.getVegetables(page = vegeItemData.value?.page?.plus(1)  ?: 0)
             val updateList: MutableList<VegeItem> = mutableListOf()
             vegeItemData.value?.datas?.map {

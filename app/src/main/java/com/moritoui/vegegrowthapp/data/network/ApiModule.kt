@@ -38,6 +38,7 @@ object ApiModule {
         gson: Gson,
     ): Retrofit {
         return Retrofit.Builder()
+            // localhostは10.0.2.2でアクセスできる
             .baseUrl("http://10.0.2.2:8000")
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create(gson))
