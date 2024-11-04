@@ -9,7 +9,5 @@ interface TimelineRepository {
     /**
      * @param page: 読み込むページ
      */
-    suspend fun getVegetables(
-        page: Int
-    ): Result<VegeItemData>
+    suspend fun getVegetables(page: Int): Result<VegeItemData>
 }

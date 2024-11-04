@@ -6,12 +6,8 @@ import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.repository.timeline.TimelineRepository
 import javax.inject.Inject
 
-class TimelinePagingDataSource @Inject constructor(
-    private val timelineRepository: TimelineRepository
-) : PagingSource<Int, VegeItem>() {
-    override fun getRefreshKey(state: PagingState<Int, VegeItem>): Int? {
-        return state.anchorPosition
-    }
+class TimelinePagingDataSource @Inject constructor(private val timelineRepository: TimelineRepository) : PagingSource<Int, VegeItem>() {
+    override fun getRefreshKey(state: PagingState<Int, VegeItem>): Int? = state.anchorPosition
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, VegeItem> {
         val page = params.key ?: 0

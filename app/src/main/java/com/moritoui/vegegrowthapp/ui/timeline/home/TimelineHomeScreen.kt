@@ -79,7 +79,7 @@ private fun TimelineHomeScreen(
             state = lazyListState,
             contentPadding = PaddingValues(horizontal = 24.dp)
         ) {
-            items(vegetablesState.itemCount, key = vegetablesState.itemKey{ it.id }) {
+            items(vegetablesState.itemCount, key = vegetablesState.itemKey { it.id }) {
                 Column {
                     vegetablesState[it]?.let {
                         TimelineHomeListItem(vegeItem = it)
@@ -98,8 +98,7 @@ private fun TimelineHomeScreen(
                         Text(
                             text = "loading中..."
                         )
-                    }
-                    else if (vegetablesState.loadState.append is LoadState.Error) {
+                    } else if (vegetablesState.loadState.append is LoadState.Error) {
                         Text(
                             text = "paging エラー"
                         )

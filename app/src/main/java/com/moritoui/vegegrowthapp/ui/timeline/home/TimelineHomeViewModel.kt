@@ -19,17 +19,16 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class TimelineHomeViewModel @Inject constructor(
-    private val timelinePagingDataSource: TimelinePagingDataSource
-) : ViewModel() {
+class TimelineHomeViewModel @Inject constructor(private val timelinePagingDataSource: TimelinePagingDataSource) : ViewModel() {
     private val vegetables: MutableStateFlow<PagingData<VegeItem>> = MutableStateFlow<PagingData<VegeItem>>(
         PagingData.empty()
     ).apply {
         viewModelScope.launch {
             Pager(
                 config = PagingConfig(
-                        10, enablePlaceholders = true
-                        )
+                    10,
+                    enablePlaceholders = true
+                )
             ) {
                 timelinePagingDataSource
             }.flow.cachedIn(viewModelScope).collect {
