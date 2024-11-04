@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.moritoui.vegegrowthapp.data.network.VegetableApi
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegeItemData
-import com.moritoui.vegegrowthapp.ui.community.home.model.CommunityHomeState
+import com.moritoui.vegegrowthapp.ui.community.home.model.TimelineState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CommunityHomeViewModel @Inject constructor(
+class TimelineViewModel @Inject constructor(
     private val vegetableApi: VegetableApi,
 ) : ViewModel() {
     private val vegeItemData: MutableStateFlow<VegeItemData?> = MutableStateFlow<VegeItemData?>(null).apply {
@@ -29,18 +29,18 @@ class CommunityHomeViewModel @Inject constructor(
 
     private val isAutoAppendLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
-    val uiState: StateFlow<CommunityHomeState> = combine(
+    val uiState: StateFlow<TimelineState> = combine(
         vegeItemData,
         isAutoAppendLoading,
     ) { vegeItemData, isAutoAppendLoading ->
-        CommunityHomeState(
+        TimelineState(
             datas = vegeItemData?.datas ?: emptyList(),
             isAutoAppendLoading = isAutoAppendLoading,
         )
     }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = CommunityHomeState.initial()
+            initialValue = TimelineState.initial()
         )
 
     fun getList() {

@@ -28,7 +28,7 @@ import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 import java.util.UUID
 
 @Composable
-fun CommunityListItem(
+fun TimelineListItem(
     vegeItem: VegeItem,
     modifier: Modifier = Modifier
 ) {
@@ -68,10 +68,10 @@ fun CommunityListItem(
 
 @Preview
 @Composable
-private fun CommunityListItemPreview() {
+private fun TimelineListItemPreview() {
     VegegrowthAppTheme {
         Surface {
-            CommunityListItem(
+            TimelineListItem(
                 vegeItem = VegeItem(
                     id = 0,
                     name = "test",

@@ -27,8 +27,8 @@ import androidx.navigation.NavController
 import com.moritoui.vegegrowthapp.navigation.BaseLayout
 import com.moritoui.vegegrowthapp.navigation.NavigationBarItems
 import com.moritoui.vegegrowthapp.navigation.VegeGrowthBottomNavigationBar
-import com.moritoui.vegegrowthapp.ui.community.home.components.CommunityListItem
-import com.moritoui.vegegrowthapp.ui.community.home.model.CommunityHomeState
+import com.moritoui.vegegrowthapp.ui.community.home.components.TimelineListItem
+import com.moritoui.vegegrowthapp.ui.community.home.model.TimelineState
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
@@ -37,9 +37,9 @@ import kotlinx.coroutines.flow.filter
  * 掲示板のホーム
  */
 @Composable
-fun CommunityHomeScreen(
+fun TimelineScreen(
     navController: NavController,
-    viewModel: CommunityHomeViewModel = hiltViewModel(),
+    viewModel: TimelineViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val lazyListState = rememberLazyListState()
@@ -51,7 +51,7 @@ fun CommunityHomeScreen(
             .collect { viewModel.autoAppend() }
     }
 
-    CommunityHomeScreen(
+    TimelineScreen(
         modifier = Modifier,
         uiState = uiState,
         lazyListState = lazyListState,
@@ -62,10 +62,10 @@ fun CommunityHomeScreen(
 }
 
 @Composable
-private fun CommunityHomeScreen(
+private fun TimelineScreen(
     modifier: Modifier = Modifier,
     lazyListState: LazyListState,
-    uiState: CommunityHomeState,
+    uiState: TimelineState,
     currentSelectItem: NavigationBarItems,
     onClickHome: () -> Unit,
     onClickTimeline: () -> Unit,
@@ -87,7 +87,7 @@ private fun CommunityHomeScreen(
         ) {
             items(uiState.datas, key = {it.id}) {
                 Column {
-                    CommunityListItem(vegeItem = it)
+                    TimelineListItem(vegeItem = it)
                     Spacer(modifier = Modifier.height(8.dp))
                 }
             }
@@ -111,15 +111,15 @@ private fun CommunityHomeScreen(
 
 @Preview
 @Composable
-private fun CommunityHomeScreenPreview() {
+private fun TimelineScreenPreview() {
     VegegrowthAppTheme {
         Surface {
-            CommunityHomeScreen(
+            TimelineScreen(
                 onClickHome = {},
                 onClickTimeline = {},
                 lazyListState = rememberLazyListState(),
                 currentSelectItem = NavigationBarItems.Timeline,
-                uiState = CommunityHomeState.initial()
+                uiState = TimelineState.initial()
             )
         }
     }
