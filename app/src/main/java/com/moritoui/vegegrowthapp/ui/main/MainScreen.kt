@@ -18,7 +18,9 @@ import com.google.firebase.analytics.logEvent
 import com.moritoui.vegegrowthapp.navigation.Screen
 import com.moritoui.vegegrowthapp.ui.community.home.communityHomeScreenRoute
 import com.moritoui.vegegrowthapp.ui.folder.folderScreenRoute
+import com.moritoui.vegegrowthapp.ui.home.HomeScreenRoute
 import com.moritoui.vegegrowthapp.ui.home.homeScreenRoute
+import com.moritoui.vegegrowthapp.ui.initialmanual.InitialManualScreenRoute
 import com.moritoui.vegegrowthapp.ui.initialmanual.initialManualScreenRoute
 import com.moritoui.vegegrowthapp.ui.manage.manageScreenRoute
 import com.moritoui.vegegrowthapp.ui.manual.manualScreenRoute
@@ -42,9 +44,9 @@ fun MainScreen(modifier: Modifier = Modifier, firebaseAnalytics: FirebaseAnalyti
         modifier = modifier,
         navController = navController,
         startDestination = if (mainState.isInitialStartApp) {
-            Screen.InitialManualScreen.route
+            InitialManualScreenRoute
         } else {
-            Screen.HomeScreen.route
+            HomeScreenRoute
         },
         enterTransition = {
             slideInHorizontally(

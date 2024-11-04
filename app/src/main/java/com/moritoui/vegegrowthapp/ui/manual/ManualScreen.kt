@@ -11,7 +11,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.moritoui.vegegrowthapp.R
-import com.moritoui.vegegrowthapp.navigation.Screen
 import com.moritoui.vegegrowthapp.ui.analytics.SendScreenEvent
 import com.moritoui.vegegrowthapp.ui.manual.view.ManualContent
 import com.moritoui.vegegrowthapp.ui.navigation.NavigationAppTopBar
@@ -25,7 +24,7 @@ fun ManualScreen(navController: NavController, viewModel: ManualViewModel = hilt
         finishedLookingPage = viewModel::finishedLookingPage,
         finishedReadManual = viewModel::finishedReadManual
     )
-    SendScreenEvent(screen = Screen.ManualScreen)
+    SendScreenEvent(screen = ManualScreenRoute.SCREEN)
 }
 
 @Composable
