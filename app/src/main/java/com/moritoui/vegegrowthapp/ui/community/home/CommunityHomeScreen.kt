@@ -4,17 +4,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Button
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,8 +24,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.moritoui.vegegrowthapp.navigation.BaseLayout
+import com.moritoui.vegegrowthapp.navigation.NavigationBarItems
+import com.moritoui.vegegrowthapp.navigation.VegeGrowthBottomNavigationBar
 import com.moritoui.vegegrowthapp.ui.community.home.components.CommunityListItem
 import com.moritoui.vegegrowthapp.ui.community.home.model.CommunityHomeState
+import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 
@@ -54,7 +55,9 @@ fun CommunityHomeScreen(
         modifier = Modifier,
         uiState = uiState,
         lazyListState = lazyListState,
-        onReloadClick = viewModel::getList
+        onClickHome = {},
+        onClickTimeline = {},
+        currentSelectItem = NavigationBarItems.Timeline,
     )
 }
 
@@ -63,18 +66,22 @@ private fun CommunityHomeScreen(
     modifier: Modifier = Modifier,
     lazyListState: LazyListState,
     uiState: CommunityHomeState,
-    onReloadClick: () -> Unit,
+    currentSelectItem: NavigationBarItems,
+    onClickHome: () -> Unit,
+    onClickTimeline: () -> Unit,
 ) {
-    Column {
-        Button(
-            modifier = Modifier
-                .padding(top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()),
-            onClick = onReloadClick
-        ) {
-            Text("reload")
+    BaseLayout(
+        bottomBar = {
+            VegeGrowthBottomNavigationBar(
+                currentSelectItem = currentSelectItem,
+                onClickHome = onClickHome,
+                onClickTimeline = onClickTimeline
+            )
         }
+    ) { innerPadding ->
         LazyColumn(
-            modifier = modifier,
+            modifier = modifier
+                .padding(bottom = innerPadding.calculateBottomPadding()),
             state = lazyListState,
             contentPadding = PaddingValues(horizontal = 24.dp),
         ) {
@@ -105,5 +112,15 @@ private fun CommunityHomeScreen(
 @Preview
 @Composable
 private fun CommunityHomeScreenPreview() {
-
+    VegegrowthAppTheme {
+        Surface {
+            CommunityHomeScreen(
+                onClickHome = {},
+                onClickTimeline = {},
+                lazyListState = rememberLazyListState(),
+                currentSelectItem = NavigationBarItems.Timeline,
+                uiState = CommunityHomeState.initial()
+            )
+        }
+    }
 }

@@ -1,4 +1,8 @@
 <resources>
+    <!--  ナビゲーションバー  -->
+    <string name="navigation_bar_home">ホーム</string>
+    <string name="navigation_bar_timeline">タイムライン</string>
+
     <!--  共通  -->
     <string name="app_name">植物成長管理アプリ</string>
     <string name="first_number">1</string>

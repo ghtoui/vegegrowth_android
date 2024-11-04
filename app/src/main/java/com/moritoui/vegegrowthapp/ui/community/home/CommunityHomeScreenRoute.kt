@@ -3,16 +3,21 @@ package com.moritoui.vegegrowthapp.ui.community.home
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.moritoui.vegegrowthapp.navigation.Screen
+import kotlinx.serialization.Serializable
+
+@Serializable
+data object CommunityHomeScreenRoute {
+    const val SCREEN = "communityHomeScreen"
+}
 
 fun NavGraphBuilder.communityHomeScreenRoute(navController: NavController) {
-    composable(Screen.CommunityHomeScreen.route) {
+    composable<CommunityHomeScreenRoute> {
         CommunityHomeScreen(navController = navController)
     }
 }
 
 fun NavController.navigateToCommunityHome() {
-    navigate(Screen.CommunityHomeScreen.route) {
+    navigate(CommunityHomeScreenRoute) {
         launchSingleTop = true
     }
 }
