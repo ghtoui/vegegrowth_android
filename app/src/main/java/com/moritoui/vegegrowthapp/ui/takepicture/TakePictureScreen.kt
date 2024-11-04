@@ -46,7 +46,6 @@ import androidx.navigation.NavController
 import com.moritoui.vegegrowthapp.R
 import com.moritoui.vegegrowthapp.core.extensions.toDateFormat
 import com.moritoui.vegegrowthapp.navigation.GoToManageItem
-import com.moritoui.vegegrowthapp.navigation.Screen
 import com.moritoui.vegegrowthapp.ui.analytics.SendScreenEvent
 import com.moritoui.vegegrowthapp.ui.manage.navigateToManage
 import com.moritoui.vegegrowthapp.ui.navigation.NavigationAppTopBar
@@ -75,7 +74,7 @@ fun TakePictureScreen(navController: NavController, viewModel: TakePictureScreen
         onDateSelectClick = viewModel::selectRegisterDate
     )
 
-    SendScreenEvent(screen = Screen.TakePictureScreen)
+    SendScreenEvent(screen = TakePictureScreenRoute.SCREEN)
 }
 
 @Composable
