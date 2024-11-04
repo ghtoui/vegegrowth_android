@@ -16,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 import com.moritoui.vegegrowthapp.navigation.Screen
+import com.moritoui.vegegrowthapp.ui.community.home.communityHomeScreenRoute
 import com.moritoui.vegegrowthapp.ui.folder.folderScreenRoute
 import com.moritoui.vegegrowthapp.ui.home.homeScreenRoute
 import com.moritoui.vegegrowthapp.ui.initialmanual.initialManualScreenRoute
@@ -76,6 +77,7 @@ fun MainScreen(modifier: Modifier = Modifier, firebaseAnalytics: FirebaseAnalyti
         folderScreenRoute(navController)
         initialManualScreenRoute(navController)
         manualScreenRoute(navController)
+        communityHomeScreenRoute(navController)
     }
 }
 

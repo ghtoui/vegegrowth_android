@@ -3,10 +3,10 @@ package com.moritoui.vegegrowthapp.model
 import androidx.compose.ui.graphics.Color
 import com.moritoui.vegegrowthapp.R
 
-enum class VegeStatus {
-    Default,
-    Favorite,
-    End,
+enum class VegeStatus(val value: Int) {
+    Default(value = 0),
+    Favorite(value = 1),
+    End(value = 2),
 }
 
 object VegeStatusMethod {
