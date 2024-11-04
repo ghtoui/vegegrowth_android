@@ -29,6 +29,7 @@ import com.moritoui.vegegrowthapp.usecases.InsertVegetableFolderUseCase
 import com.moritoui.vegegrowthapp.usecases.IsRegisterSelectDateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.UUID
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -37,9 +38,10 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -60,7 +62,7 @@ class HomeScreenViewModel @Inject constructor(
     private val changeRegisterSelectDateUseCase: ChangeRegisterSelectDateUseCase,
     private val analytics: AnalyticsHelper,
 ) : ViewModel() {
-    // ホーム画面では未分類のフォルダーIDnullのみを表示する
+    // ホーム画面では未分類のフォルダー(ID: null)のみを表示する
     private val folderId = null
 
     private val _uiState = MutableStateFlow(HomeScreenUiState.initialState())
@@ -99,7 +101,10 @@ class HomeScreenViewModel @Inject constructor(
             dataMigrationRepository.dataMigration()
             updateRegisterSelectDate()
         }
-        monitorUiState()
+        reloadVegetableDetailLast()
+
+        observeVegetables()
+        observeFolders()
     }
 
     fun closeDialog() {
@@ -165,7 +170,6 @@ class HomeScreenViewModel @Inject constructor(
                     )
                 viewModelScope.launch {
                     addVegeItemUseCase(vegeItem)
-                    reloadVegetables()
                     closeDialog()
                 }
                 analytics.logEvent(
@@ -185,7 +189,6 @@ class HomeScreenViewModel @Inject constructor(
                 viewModelScope.launch {
                     insertVegetableFolderUseCase(vegeFolder)
                         .onSuccess {
-                            reloadVegetables()
                             closeDialog()
                         }.onFailure {
                             _insertVegetableFolderEvent.emit(true)
@@ -377,28 +380,37 @@ class HomeScreenViewModel @Inject constructor(
     /**
      * 登録されている野菜のリストを更新する
      */
-    fun reloadVegetables() {
+    private fun observeVegetables() {
         viewModelScope.launch {
-            val filterStatus = _uiState.value.filterStatus
-            val filteredVegetables = getVegeItemFromFolderIdUseCase(folderId).filter { item ->
-                if (filterStatus == FilterStatus.All) {
-                    true
-                } else {
-                    item.status == filterStatusMap[filterStatus] ||
-                        item.category == filterStatusMap[filterStatus]
+            // アイテムの変更を監視
+            combine(
+                _uiState.map { it.filterStatus },
+                getVegeItemFromFolderIdUseCase(folderId)
+            ) { filterStatus, vegetables ->
+                _vegetables.update {
+                    vegetables.filter {
+                        if (filterStatus == FilterStatus.All) {
+                            true
+                        } else {
+                            it.status == filterStatusMap[filterStatus] ||
+                                it.category == filterStatusMap[filterStatus]
+                        }
+                    }
                 }
-            }
+            }.collect()
+        }
+    }
 
-            _vegetables.update {
-                filteredVegetables
-            }
-
-            _vegetableDetails.update {
-                filteredVegetables.map { reloadVegetableDetailLast(it) }
-            }
-
-            _vegetableFolders.update {
-                getVegetableFolderUseCase()
+    /**
+     * フォルダーの変更を監視
+     */
+    private fun observeFolders() {
+        viewModelScope.launch {
+            // フォルダーの変更を監視
+            getVegetableFolderUseCase().collect { folders ->
+                _vegetableFolders.update {
+                    folders
+                }
             }
         }
     }
@@ -428,21 +440,21 @@ class HomeScreenViewModel @Inject constructor(
     /**
      * 指定された野菜の最新登録情報を取得する
      */
-    private suspend fun reloadVegetableDetailLast(vegeItem: VegeItem): VegeItemDetail? = getVegeItemDetailLastUseCase(vegeItem.id)
-
-    /**
-     * uiStateの変更を監視する
-     */
-    private fun monitorUiState() {
-        _uiState.onEach {
-            _uiState.update {
-                it.copy(isLoading = true)
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun reloadVegetableDetailLast() {
+        viewModelScope.launch {
+            _vegetables.flatMapLatest { vegetables ->
+                combine(
+                    vegetables.map { vegetable ->
+                        getVegeItemDetailLastUseCase(vegetable.id)
+                    }
+                ) {
+                    it.toList()
+                }
+            }.collect {
+                _vegetableDetails.value = it
             }
-            reloadVegetables()
-            _uiState.update {
-                it.copy(isLoading = false)
-            }
-        }.launchIn(viewModelScope)
+        }
     }
 
     /**
@@ -458,7 +470,6 @@ class HomeScreenViewModel @Inject constructor(
                     old
                 }
             }
-            reloadVegetables()
         }
     }
 

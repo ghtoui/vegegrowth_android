@@ -23,15 +23,18 @@ import com.moritoui.vegegrowthapp.usecases.DeleteVegeItemUseCase
 import com.moritoui.vegegrowthapp.usecases.GetSelectedVegeFolderUseCase
 import com.moritoui.vegegrowthapp.usecases.GetVegeItemDetailLastUseCase
 import com.moritoui.vegegrowthapp.usecases.GetVegeItemFromFolderIdUseCase
-import com.moritoui.vegegrowthapp.usecases.GetVegetableFolderUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.UUID
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -47,7 +50,6 @@ class FolderScreenViewModel @Inject constructor(
     private val addVegeItemUseCase: AddVegeItemUseCase,
     private val changeVegeItemStatusUseCase: ChangeVegeItemStatusUseCase,
     private val getSelectedVegeFolderUseCase: GetSelectedVegeFolderUseCase,
-    private val getVegetableFolderUseCase: GetVegetableFolderUseCase,
     private val analytics: AnalyticsHelper,
 ) : ViewModel() {
     private val args = checkNotNull(savedStateHandle.get<Int>("folderId"))
@@ -83,6 +85,8 @@ class FolderScreenViewModel @Inject constructor(
             }
         }
         monitorUiState()
+        reloadVegetableDetailLast()
+        observeVegetables()
     }
 
     fun closeDialog() {
@@ -151,7 +155,6 @@ class FolderScreenViewModel @Inject constructor(
                     )
                 viewModelScope.launch {
                     addVegeItemUseCase(vegeItem)
-                    reloadVegetables()
                     closeDialog()
                 }
 
@@ -315,36 +318,46 @@ class FolderScreenViewModel @Inject constructor(
     /**
      * 登録されている野菜のリストを更新する
      */
-    fun reloadVegetables() {
+    private fun observeVegetables() {
         viewModelScope.launch {
-            val filterStatus = _uiState.value.filterStatus
-            val filteredVegetables = getVegetableFromFolderIdUseCase(args).filter { item ->
-                if (filterStatus == FilterStatus.All) {
-                    true
-                } else {
-                    item.status == filterStatusMap[filterStatus] ||
-                        item.category == filterStatusMap[filterStatus]
+            // アイテムの変更を監視
+            combine(
+                _uiState.map { it.filterStatus },
+                getVegetableFromFolderIdUseCase(args)
+            ) { filterStatus, vegetables ->
+                _vegetables.update {
+                    vegetables.filter {
+                        if (filterStatus == FilterStatus.All) {
+                            true
+                        } else {
+                            it.status == filterStatusMap[filterStatus] ||
+                                it.category == filterStatusMap[filterStatus]
+                        }
+                    }
                 }
-            }
-
-            _vegetables.update {
-                filteredVegetables
-            }
-
-            _vegetableDetails.update {
-                filteredVegetables.map { reloadVegetableDetailLast(it) }
-            }
-
-            _vegetableFolders.update {
-                getVegetableFolderUseCase()
-            }
+            }.collect()
         }
     }
 
     /**
      * 指定された野菜の最新登録情報を取得する
      */
-    private suspend fun reloadVegetableDetailLast(vegeItem: VegeItem): VegeItemDetail? = getVegeItemDetailLastUseCase(vegeItem.id)
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun reloadVegetableDetailLast() {
+        viewModelScope.launch {
+            _vegetables.flatMapLatest { vegetables ->
+                combine(
+                    vegetables.map { vegetable ->
+                        getVegeItemDetailLastUseCase(vegetable.id)
+                    }
+                ) {
+                    it.toList()
+                }
+            }.collect {
+                _vegetableDetails.value = it
+            }
+        }
+    }
 
     /**
      * uiStateの変更を監視する
@@ -354,7 +367,6 @@ class FolderScreenViewModel @Inject constructor(
             _uiState.update {
                 it.copy(isLoading = true)
             }
-            reloadVegetables()
             _uiState.update {
                 it.copy(isLoading = false)
             }
@@ -379,7 +391,6 @@ class FolderScreenViewModel @Inject constructor(
                     old
                 }
             }
-            reloadVegetables()
         }
     }
 

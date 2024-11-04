@@ -1,6 +1,7 @@
 package com.moritoui.vegegrowthapp.repository.vegetable
 
 import com.moritoui.vegegrowthapp.model.VegeItem
+import kotlinx.coroutines.flow.Flow
 
 interface VegetableRepository {
     /**
@@ -27,5 +28,5 @@ interface VegetableRepository {
     /**
      * フォルダIDが一致する野菜を取得する
      */
-    suspend fun getVegetablesFromFolderId(folderId: Int?): List<VegeItem>
+    fun getVegetablesFromFolderId(folderId: Int?): Flow<List<VegeItem>>
 }
