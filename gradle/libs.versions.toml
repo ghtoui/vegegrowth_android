@@ -30,7 +30,6 @@ hiltNavigationCompose = "1.2.0"
 hilt = "2.51.1"
 retrofit = "2.9.0"
 okhttp = "4.12.0"
-paging = "3.3.2"
 
 [libraries]
 # android core
@@ -106,11 +105,6 @@ retrofit-gson = { group = "com.squareup.retrofit2", name = "converter-gson", ver
 
 # okhttp
 okhttp = {group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
-
-#paging3
-paging = { group = "androidx.paging", name = "paging-runtime", version.ref = "paging" }
-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "paging" }
-
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }

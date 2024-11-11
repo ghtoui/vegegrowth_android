@@ -9,39 +9,38 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import androidx.paging.LoadState
-import androidx.paging.PagingData
-import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.itemKey
-import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.navigation.BaseLayout
 import com.moritoui.vegegrowthapp.navigation.NavigationBarItems
 import com.moritoui.vegegrowthapp.navigation.VegeGrowthBottomNavigationBar
 import com.moritoui.vegegrowthapp.ui.home.navigateToHome
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 import com.moritoui.vegegrowthapp.ui.timeline.home.components.TimelineHomeListItem
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
+import com.moritoui.vegegrowthapp.ui.timeline.home.model.TimelineHomeState
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 
 /**
  * タイムライン
  */
 @Composable
 fun TimelineHomeScreen(navController: NavController, viewModel: TimelineHomeViewModel = hiltViewModel()) {
-    val vegetablesState = viewModel.uiState.map {
-        it.vegetables
-    }.collectAsLazyPagingItems()
+    val vegetablesState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val lazyListState = rememberLazyListState()
 
@@ -51,7 +50,8 @@ fun TimelineHomeScreen(navController: NavController, viewModel: TimelineHomeView
         lazyListState = lazyListState,
         onClickHome = navController::navigateToHome,
         onClickTimeline = {},
-        currentSelectItem = NavigationBarItems.Timeline
+        currentSelectItem = NavigationBarItems.Timeline,
+        addPage = viewModel::pageAdd
     )
 }
 
@@ -59,11 +59,29 @@ fun TimelineHomeScreen(navController: NavController, viewModel: TimelineHomeView
 private fun TimelineHomeScreen(
     modifier: Modifier = Modifier,
     lazyListState: LazyListState,
-    vegetablesState: LazyPagingItems<VegeItem>,
+    vegetablesState: TimelineHomeState,
     currentSelectItem: NavigationBarItems,
     onClickHome: () -> Unit,
     onClickTimeline: () -> Unit,
+    addPage: () -> Unit,
 ) {
+    LaunchedEffect(
+        lazyListState,
+        vegetablesState,
+    ) {
+        combine(
+            snapshotFlow { lazyListState.canScrollForward },
+            snapshotFlow { vegetablesState.pagingListState },
+        ) { canScrollForward, pagingListState ->
+            !canScrollForward && pagingListState == PagingListState.Success
+        }
+            .distinctUntilChanged()
+            .filter { it }
+            .collect {
+                addPage()
+            }
+    }
+
     BaseLayout(
         bottomBar = {
             VegeGrowthBottomNavigationBar(
@@ -79,12 +97,10 @@ private fun TimelineHomeScreen(
             state = lazyListState,
             contentPadding = PaddingValues(horizontal = 24.dp)
         ) {
-            items(vegetablesState.itemCount, key = vegetablesState.itemKey { it.id }) {
+            items(vegetablesState.vegetables, key = { it.uuid }) {
                 Column {
-                    vegetablesState[it]?.let {
-                        TimelineHomeListItem(vegeItem = it)
-                        Spacer(modifier = Modifier.height(8.dp))
-                    }
+                    TimelineHomeListItem(vegeItem = it)
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
             }
             item {
@@ -94,14 +110,18 @@ private fun TimelineHomeScreen(
                         .height(50.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    if (vegetablesState.loadState.append is LoadState.Loading) {
-                        Text(
-                            text = "loading中..."
-                        )
-                    } else if (vegetablesState.loadState.append is LoadState.Error) {
-                        Text(
-                            text = "paging エラー"
-                        )
+                    when (vegetablesState.pagingListState) {
+                        PagingListState.Paginating -> {
+                            Text(
+                                text = "loading中..."
+                            )
+                        }
+                        PagingListState.PaginateError -> {
+                            Text(
+                                text = "paging エラー"
+                            )
+                        }
+                        else -> Unit
                     }
                 }
             }
@@ -119,7 +139,8 @@ private fun TimelineHomeScreenPreview() {
                 onClickTimeline = {},
                 lazyListState = rememberLazyListState(),
                 currentSelectItem = NavigationBarItems.Timeline,
-                vegetablesState = flowOf(PagingData.empty<VegeItem>()).collectAsLazyPagingItems()
+                vegetablesState = TimelineHomeState.initial(),
+                addPage = {},
             )
         }
     }
