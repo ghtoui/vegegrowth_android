@@ -29,8 +29,7 @@ firebaseBom = "33.5.1"
 hiltNavigationCompose = "1.2.0"
 hilt = "2.51.1"
 retrofit = "2.9.0"
-retrofitSeralizeConverter = "1.0.0"
-okhttp = "4.11.0"
+okhttp = "4.12.0"
 
 [libraries]
 # android core

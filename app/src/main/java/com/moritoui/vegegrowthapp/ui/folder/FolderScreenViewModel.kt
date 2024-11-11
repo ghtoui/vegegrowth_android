@@ -3,6 +3,7 @@ package com.moritoui.vegegrowthapp.ui.folder
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.moritoui.vegegrowthapp.core.analytics.AnalyticsEvent
 import com.moritoui.vegegrowthapp.core.analytics.AnalyticsHelper
 import com.moritoui.vegegrowthapp.data.room.model.VegetableFolderEntity
@@ -52,7 +53,7 @@ class FolderScreenViewModel @Inject constructor(
     private val getSelectedVegeFolderUseCase: GetSelectedVegeFolderUseCase,
     private val analytics: AnalyticsHelper,
 ) : ViewModel() {
-    private val args = checkNotNull(savedStateHandle.get<Int>("folderId"))
+    private val args = savedStateHandle.toRoute<FolderScreenRoute>().folderId
 
     private val _uiState = MutableStateFlow(FolderScreenUiState.initial())
     val uiState: StateFlow<FolderScreenUiState> = _uiState.asStateFlow()

@@ -17,8 +17,8 @@ data class VegeItemData(
     val total: Int,
 ) {
     fun toDomain(): VegeItemData = VegeItemData(
-        datas = datas.map {it.toDomain()},
-        page = page,
+        datas = datas.map { it.toDomain() },
+        page = page
     )
 }
 
@@ -26,18 +26,13 @@ data class VegeItemData(
  * API から取得する野菜の情報
  */
 @Serializable
-data class VegeItem(
-    val id: Int,
-    val name: String,
-    val category: Int,
-    val status: Int,
-) {
+data class VegeItem(val id: Int, val name: String, val category: Int, val status: Int) {
     fun toDomain(): VegeItem = VegeItem(
         id = id,
         name = name,
         category = VegeCategory.entries.first { it.value == category },
         status = VegeStatus.entries.first { it.value == status },
         folderId = null,
-        uuid = UUID.randomUUID().toString(),
+        uuid = UUID.randomUUID().toString()
     )
 }

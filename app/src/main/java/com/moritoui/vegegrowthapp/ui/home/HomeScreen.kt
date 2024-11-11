@@ -1,19 +1,13 @@
 package com.moritoui.vegegrowthapp.ui.home
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -39,14 +33,15 @@ import com.moritoui.vegegrowthapp.model.FilterStatus
 import com.moritoui.vegegrowthapp.model.SelectMenu
 import com.moritoui.vegegrowthapp.model.VegeCategory
 import com.moritoui.vegegrowthapp.model.VegeItem
+import com.moritoui.vegegrowthapp.navigation.BaseLayout
 import com.moritoui.vegegrowthapp.navigation.HomeAddItem
-import com.moritoui.vegegrowthapp.navigation.Screen
+import com.moritoui.vegegrowthapp.navigation.NavigationBarItems
+import com.moritoui.vegegrowthapp.navigation.VegeGrowthBottomNavigationBar
 import com.moritoui.vegegrowthapp.previews.DarkLightPreview
 import com.moritoui.vegegrowthapp.ui.analytics.SendScreenEvent
 import com.moritoui.vegegrowthapp.ui.common.VegeGrowthLoading
 import com.moritoui.vegegrowthapp.ui.common.bottomsheet.FolderMoveBottomSheet
 import com.moritoui.vegegrowthapp.ui.common.drawer.VegeGrowthNavigationDrawer
-import com.moritoui.vegegrowthapp.ui.community.home.navigateToCommunityHome
 import com.moritoui.vegegrowthapp.ui.folder.navigateToFolder
 import com.moritoui.vegegrowthapp.ui.home.model.AddDialogType
 import com.moritoui.vegegrowthapp.ui.home.model.HomeScreenUiState
@@ -59,6 +54,7 @@ import com.moritoui.vegegrowthapp.ui.manual.navigateToManual
 import com.moritoui.vegegrowthapp.ui.navigation.NavigationAppTopBar
 import com.moritoui.vegegrowthapp.ui.takepicture.navigateToTakePicture
 import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
+import com.moritoui.vegegrowthapp.ui.timeline.home.navigateToTimelineHome
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
@@ -67,53 +63,41 @@ import kotlinx.coroutines.launch
 fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel(), navController: NavController) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val vegetablesState by viewModel.vegetablesState.collectAsStateWithLifecycle()
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        HomeScreen(
-            modifier = Modifier.weight(1f),
-            uiState = uiState,
-            vegetablesState = vegetablesState,
-            onDeleteVegeItem = viewModel::changeDeleteMode,
-            openAddDialogType = viewModel::openAddDialog,
-            onCancelMenuClick = viewModel::onCancelMenuClick,
-            onEditIconClick = viewModel::changeEditMode,
-            onFolderMoveIconClick = viewModel::changeFolderMoveMode,
-            onFilterItemClick = viewModel::setFilterItemList,
-            confirmItemDelete = viewModel::deleteItem,
-            onSelectVegeStatus = viewModel::selectStatus,
-            onVegeItemClick = navController::navigateToTakePicture,
-            changeInputText = viewModel::changeInputText,
-            onAddDialogConfirmClick = viewModel::onAddDialogConfirm,
-            onDismiss = viewModel::closeDialog,
-            onSelectVegeCategory = viewModel::selectCategory,
-            closeDeleteDialog = viewModel::closeDeleteDialog,
-            insertErrorEvent = viewModel.insertVegetableFolderEvent,
-            openDeleteDialog = viewModel::openDeleteVegeItemDialog,
-            onDeleteFolderItem = viewModel::openDeleteFolderDialog,
-            onFolderClick = navController::navigateToFolder,
-            onSelectMoveFolder = viewModel::openFolderMoveBottomSheetState,
-            closeFolderBottomSheet = viewModel::closeFolderMoveBottomSheetState,
-            onFolderItemClick = viewModel::vegeItemMoveFolder,
-            onManualClick = navController::navigateToManual,
-            onRegisterDateSwitch = viewModel::onRegisterDateSwitch
-        )
-        // TODO: Columnでしているが，BottomNavigationBarで実装する．
-        Button(
-            modifier = Modifier.padding(bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()),
-            onClick = navController::navigateToCommunityHome
-        ) {
-            Text("コミュニティーに移動")
-        }
-    }
-    SendScreenEvent(screen = Screen.HomeScreen)
+    HomeScreen(
+        uiState = uiState,
+        vegetablesState = vegetablesState,
+        onDeleteVegeItem = viewModel::changeDeleteMode,
+        openAddDialogType = viewModel::openAddDialog,
+        onCancelMenuClick = viewModel::onCancelMenuClick,
+        onEditIconClick = viewModel::changeEditMode,
+        onFolderMoveIconClick = viewModel::changeFolderMoveMode,
+        onFilterItemClick = viewModel::setFilterItemList,
+        confirmItemDelete = viewModel::deleteItem,
+        onSelectVegeStatus = viewModel::selectStatus,
+        onVegeItemClick = navController::navigateToTakePicture,
+        changeInputText = viewModel::changeInputText,
+        onAddDialogConfirmClick = viewModel::onAddDialogConfirm,
+        onDismiss = viewModel::closeDialog,
+        onSelectVegeCategory = viewModel::selectCategory,
+        closeDeleteDialog = viewModel::closeDeleteDialog,
+        insertErrorEvent = viewModel.insertVegetableFolderEvent,
+        openDeleteDialog = viewModel::openDeleteVegeItemDialog,
+        onDeleteFolderItem = viewModel::openDeleteFolderDialog,
+        onFolderClick = navController::navigateToFolder,
+        onSelectMoveFolder = viewModel::openFolderMoveBottomSheetState,
+        closeFolderBottomSheet = viewModel::closeFolderMoveBottomSheetState,
+        onFolderItemClick = viewModel::vegeItemMoveFolder,
+        onManualClick = navController::navigateToManual,
+        onRegisterDateSwitch = viewModel::onRegisterDateSwitch,
+        onClickTimeline = navController::navigateToTimelineHome,
+        currentSelectItem = NavigationBarItems.Home
+    )
+    SendScreenEvent(screen = HomeScreenRoute.SCREEN)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HomeScreen(
-    // TODO: ボトムナビゲーションを実装したら削除する
-    modifier: Modifier = Modifier,
     uiState: HomeScreenUiState,
     vegetablesState: VegetablesState,
     openAddDialogType: (AddDialogType) -> Unit,
@@ -139,6 +123,8 @@ private fun HomeScreen(
     onFolderItemClick: (VegeItem, VegetableFolderEntity?) -> Unit,
     onManualClick: () -> Unit,
     onRegisterDateSwitch: (Boolean) -> Unit,
+    onClickTimeline: () -> Unit,
+    currentSelectItem: NavigationBarItems,
 ) {
     var selectMenuExpanded by rememberSaveable { mutableStateOf(false) }
     var filterMenuExpanded by rememberSaveable { mutableStateOf(false) }
@@ -147,7 +133,7 @@ private fun HomeScreen(
     val scope = rememberCoroutineScope()
 
     VegeGrowthNavigationDrawer(
-        modifier = modifier,
+        modifier = Modifier,
         drawerState = drawerState,
         onManualClick = {
             scope.launch {
@@ -160,7 +146,15 @@ private fun HomeScreen(
         onRegisterDateSwitch = onRegisterDateSwitch,
         isRegisterSelectDate = uiState.isRegisterSelectDate,
         content = {
-            Scaffold(
+            BaseLayout(
+                modifier = Modifier,
+                bottomBar = {
+                    VegeGrowthBottomNavigationBar(
+                        currentSelectItem = currentSelectItem,
+                        onClickHome = {},
+                        onClickTimeline = onClickTimeline
+                    )
+                },
                 topBar = {
                     NavigationAppTopBar(
                         title = stringResource(R.string.home_screen_title),
@@ -343,7 +337,9 @@ fun HomeScreenPreview(@PreviewParameter(HomePreviewParameterProvider::class) par
             closeFolderBottomSheet = {},
             onFolderItemClick = { _, _ -> },
             onManualClick = {},
-            onRegisterDateSwitch = {}
+            onRegisterDateSwitch = {},
+            onClickTimeline = {},
+            currentSelectItem = NavigationBarItems.Home
         )
     }
 }

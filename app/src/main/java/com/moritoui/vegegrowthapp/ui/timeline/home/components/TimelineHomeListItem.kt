@@ -1,4 +1,4 @@
-package com.moritoui.vegegrowthapp.ui.community.home.components
+package com.moritoui.vegegrowthapp.ui.timeline.home.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -28,27 +28,24 @@ import com.moritoui.vegegrowthapp.ui.theme.VegegrowthAppTheme
 import java.util.UUID
 
 @Composable
-fun CommunityListItem(
-    vegeItem: VegeItem,
-    modifier: Modifier = Modifier
-) {
+fun TimelineHomeListItem(vegeItem: VegeItem, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .height(100.dp)
             .background(
                 color = MaterialTheme.colorScheme.secondaryContainer,
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(12.dp)
             ),
-        contentAlignment = Alignment.Center,
+        contentAlignment = Alignment.Center
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 12.dp, vertical = 4.dp),
-            verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "${vegeItem.name}",
+                text = "${vegeItem.name}"
             )
             Spacer(modifier = Modifier.width(8.dp))
             vegeItem.category.getIconId()?.let {
@@ -68,10 +65,10 @@ fun CommunityListItem(
 
 @Preview
 @Composable
-private fun CommunityListItemPreview() {
+private fun TimelineHomeListItemPreview() {
     VegegrowthAppTheme {
         Surface {
-            CommunityListItem(
+            TimelineHomeListItem(
                 vegeItem = VegeItem(
                     id = 0,
                     name = "test",

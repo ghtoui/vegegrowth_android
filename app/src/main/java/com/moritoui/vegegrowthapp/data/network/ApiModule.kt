@@ -33,15 +33,10 @@ object ApiModule {
 
     @Singleton
     @Provides
-    fun provideRetrofit(
-        okHttpClient: OkHttpClient,
-        gson: Gson,
-    ): Retrofit {
-        return Retrofit.Builder()
-            // localhostは10.0.2.2でアクセスできる
-            .baseUrl("http://10.0.2.2:8000")
-            .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .build()
-    }
+    fun provideRetrofit(okHttpClient: OkHttpClient, gson: Gson): Retrofit = Retrofit.Builder()
+        // localhostは10.0.2.2でアクセスできる
+        .baseUrl("http://10.0.2.2:8000")
+        .client(okHttpClient)
+        .addConverterFactory(GsonConverterFactory.create(gson))
+        .build()
 }

@@ -2,24 +2,24 @@ package com.moritoui.vegegrowthapp.ui.takepicture
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
-import com.moritoui.vegegrowthapp.navigation.Screen
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class TakePictureScreenRoute(val vegetableId: Int) {
+    companion object {
+        const val SCREEN = "takePictureScreen"
+    }
+}
 
 fun NavGraphBuilder.takePictureScreenRoute(navController: NavController) {
-    composable(
-        "${Screen.TakePictureScreen.route}/{vegetableId}",
-        // Intで受け取るように
-        arguments = listOf(navArgument("vegetableId") { type = NavType.IntType })
-    ) {
-        it.arguments?.getString("vegetableId")
+    composable<TakePictureScreenRoute> {
         TakePictureScreen(navController = navController)
     }
 }
 
 fun NavController.navigateToTakePicture(vegetableId: Int) {
-    navigate("${Screen.TakePictureScreen.route}/$vegetableId") {
+    navigate(TakePictureScreenRoute(vegetableId = vegetableId)) {
         launchSingleTop = true
     }
 }
