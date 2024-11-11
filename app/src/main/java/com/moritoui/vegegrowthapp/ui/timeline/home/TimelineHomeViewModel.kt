@@ -18,9 +18,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class TimelineHomeViewModel @Inject constructor(
-    private val timelineRepository: TimelineRepository
-) : ViewModel() {
+class TimelineHomeViewModel @Inject constructor(private val timelineRepository: TimelineRepository) : ViewModel() {
     private var page: Int = 0
     private val loadState: MutableStateFlow<PagingListState> = MutableStateFlow(
         PagingListState.Initial
@@ -57,10 +55,7 @@ class TimelineHomeViewModel @Inject constructor(
         }
     }
 
-    private fun load(
-        isInitialLoad: Boolean = false,
-        load: suspend() -> Result<VegeItemData>
-    ) {
+    private fun load(isInitialLoad: Boolean = false, load: suspend () -> Result<VegeItemData>) {
         viewModelScope.launch {
             if (isInitialLoad) {
                 loadState.update { PagingListState.Loading }

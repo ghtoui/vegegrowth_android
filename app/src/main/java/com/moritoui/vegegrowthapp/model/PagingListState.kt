@@ -9,4 +9,3 @@ enum class PagingListState {
     PaginateError,
     End,
 }
-

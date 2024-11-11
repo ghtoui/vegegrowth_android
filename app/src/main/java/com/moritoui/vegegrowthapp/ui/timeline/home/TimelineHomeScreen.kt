@@ -68,11 +68,11 @@ private fun TimelineHomeScreen(
 ) {
     LaunchedEffect(
         lazyListState,
-        vegetablesState,
+        vegetablesState
     ) {
         combine(
             snapshotFlow { lazyListState.canScrollForward },
-            snapshotFlow { vegetablesState.pagingListState },
+            snapshotFlow { vegetablesState.pagingListState }
         ) { canScrollForward, pagingListState ->
             !canScrollForward && pagingListState == PagingListState.Success
         }
@@ -141,7 +141,7 @@ private fun TimelineHomeScreenPreview() {
                 lazyListState = rememberLazyListState(),
                 currentSelectItem = NavigationBarItems.Timeline,
                 vegetablesState = TimelineHomeState.initial(),
-                addPage = {},
+                addPage = {}
             )
         }
     }
