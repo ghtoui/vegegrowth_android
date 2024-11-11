@@ -1,7 +1,7 @@
 package com.moritoui.vegegrowthapp.ui.timeline.home.model
 
+import com.moritoui.vegegrowthapp.model.PagingListState
 import com.moritoui.vegegrowthapp.model.VegeItem
-import com.moritoui.vegegrowthapp.ui.timeline.home.PagingListState
 
 data class TimelineHomeState(
     val vegetables: List<VegeItem>,

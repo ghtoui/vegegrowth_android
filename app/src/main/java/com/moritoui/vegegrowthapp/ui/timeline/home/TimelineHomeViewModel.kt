@@ -1,8 +1,8 @@
 package com.moritoui.vegegrowthapp.ui.timeline.home
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.moritoui.vegegrowthapp.model.PagingListState
 import com.moritoui.vegegrowthapp.model.VegeItem
 import com.moritoui.vegegrowthapp.model.VegeItemData
 import com.moritoui.vegegrowthapp.repository.timeline.TimelineRepository
@@ -52,7 +52,6 @@ class TimelineHomeViewModel @Inject constructor(
     }
 
     fun pageAdd() {
-        Log.d("test", "add")
         load {
             timelineRepository.getVegetables(page + 1)
         }
@@ -91,14 +90,4 @@ class TimelineHomeViewModel @Inject constructor(
                 }
         }
     }
-}
-
-enum class PagingListState {
-    Initial,
-    Loading,
-    Error,
-    Success,
-    Paginating,
-    PaginateError,
-    End,
 }
