@@ -30,7 +30,6 @@ constructor(
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     private val args = savedStateHandle.toRoute<ManageScreenRoute>().vegetableId
-    private var vegeItemDetailList: List<VegeItemDetail> = emptyList()
 
     private val _uiState = MutableStateFlow(ManageScreenUiState.initialState())
     val uiState: StateFlow<ManageScreenUiState> = _uiState.asStateFlow()
@@ -102,6 +101,7 @@ constructor(
 
     fun changeOpenMemoEditorBottomSheet(index: Int) {
         if (!_uiState.value.isOpenMemoEditorBottomSheet) {
+            val vegeItemDetailList = _uiState.value.vegeRepositoryList
             updateState(inputMemoText = vegeItemDetailList[index].memo)
         }
         updateState(
