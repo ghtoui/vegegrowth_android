@@ -39,6 +39,7 @@ constructor(
      * Roomに保存されていないデータを保存する
      */
     override suspend fun dataMigration() {
+        return
         val isMigrate: Boolean = migratePreferences.data.first().isMigrated
         if (isMigrate) {
             return
